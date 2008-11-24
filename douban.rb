@@ -5,7 +5,6 @@ $:.unshift base + "/douban/classes"
 $:.unshift base + "/douban/helper"
 require'authorize.rb'
 require'people.rb'
-require'friends.rb'
 require'helper'
 module Douban
 #if  you set MY_SITE ,when user click the 'agree' button he will be redirect to  MY_SITE
