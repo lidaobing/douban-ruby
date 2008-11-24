@@ -73,9 +73,7 @@ def get_people(uid="@me")
   resp=get("/people/#{url_encode(uid)}")
   if resp.code=="200"
     atom=resp.body
-     doc=REXML::Document.new(atom)
-    entry=doc.root.elements
-    People.new(entry)
+    People.new(atom)
     else
     nil
   end
@@ -84,27 +82,55 @@ end#end of get_people
 def get_friends(uid="@me",option={'start-index'=>1,'max-results'=>10})
   resp=get("/people/#{url_encode(uid)}/friends?start-index=#{option['start-index']}&max-results=#{option['max-results']}")
 if resp.code=="200"
-  option={}
-  people=[]
+  friends=[]
 atom=resp.body
 doc=REXML::Document.new(atom)
-elements=doc.root.elements
-elements.each do |e|
-      if e.name=='entry'
-       people << People.new(REXML::Document.new(e))
-       elsif e.name=='author'
-      
-       else
-       option[e.name]=e.text
-       end#end of if
-    
-    option['people']=people
-    Friends.new(option)
-    end #end of each
+REXML::XPath.each(doc,"//entry") do |entry|
+   friend = People.new    
+        %w[id title content db:location db:uid].each do |attr|
+          eval <<-RUBY
+            entry.each_element("#{attr}") do |e|
+              friend.#{attr.split(':').pop} = e.text if e.text
+            end
+          RUBY
+        end
+        entry.each_element("link") do |e|
+          friend.link ||= {}
+          friend.link["#{e.attributes['rel']}"] = e.attributes['href']
+        end
+        friends << friend
+  end#end of each
+  friends
 else
  nil
 end#end of if
 end#end of get_friends
+def get_contacts(uid="@me",option={'start-index'=>1,'max-results'=>10})
+    resp=get("/people/#{url_encode(uid)}/contacts?start-index=#{option['start-index']}&max-results=#{option['max-results']}")
+if resp.code=="200"
+  contacts=[]
+atom=resp.body
+doc=REXML::Document.new(atom)
+REXML::XPath.each(doc,"//entry") do |entry|
+   contact = People.new    
+        %w[id title content db:location db:uid].each do |attr|
+          eval <<-RUBY
+            entry.each_element("#{attr}") do |e|
+              contact.#{attr.split(':').pop} = e.text if e.text
+            end
+          RUBY
+        end
+        entry.each_element("link") do |e|
+          contact.link ||= {}
+          contact.link["#{e.attributes['rel']}"] = e.attributes['href']
+        end
+        contacts << contact
+  end#end of each
+  contacts
+else
+ nil
+end#end of if
+  end#end of get_contacts
 
 
 
