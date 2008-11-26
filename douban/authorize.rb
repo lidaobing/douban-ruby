@@ -10,8 +10,8 @@ class Authorize
   attr_reader :request_token
   attr_reader :access_token
   def initialize(attributes={})
-    @apiKey=attributes[:api_key] ||=CONF["api_key"]
-    @secretKey=attributes[:secret_key]||=CONF["secret_key"]
+    @api_key=attributes[:api_key] ||=CONF["api_key"]
+    @secret_key=attributes[:secret_key]||=CONF["secret_key"]
     @oauth_option={
      :site=>OAUTH_HOST,
      :request_token_path=>REQUEST_TOKEN_PATH,
