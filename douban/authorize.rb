@@ -3,16 +3,16 @@ require'rexml/document'
 module Douban
 class Authorize
   include Douban
-  attr_reader :apiKey
-  attr_reader :apiSecret
+  attr_reader :api_key
+  attr_reader :api_secret
   attr_reader :authorize_url
   attr_reader :consumer
   attr_reader :request_token
   attr_reader :access_token
   def initialize(attributes={})
-    @apiKey=attributes[:apiKey] ||=CONF["apiKey"]
-    @secretKey=attributes[:secretKey]||=CONF["secretKey"]
-    @oauthOption={
+    @apiKey=attributes[:api_key] ||=CONF["api_key"]
+    @secretKey=attributes[:secret_key]||=CONF["secret_key"]
+    @oauth_option={
      :site=>OAUTH_HOST,
      :request_token_path=>REQUEST_TOKEN_PATH,
      :access_token_path=>ACCESS_TOKEN_PATH,
@@ -27,7 +27,7 @@ class Authorize
   end
   
   def get_authorize_url
-    @consumer=OAuth::Consumer.new(@apiKey,@secretKey,@oauthOption)
+    @consumer=OAuth::Consumer.new(@api_key,@secret_key,@oauth_option)
     @request_token=@consumer.get_request_token
     @authorzie_url=@request_token.authorize_url<<"&oauth_callback="<<MY_SITE
   end
@@ -35,8 +35,8 @@ class Authorize
   def auth
     begin
       @access_token=@request_token.get_access_token
-      @access_token=OAuth::AccessToken.new OAuth::Consumer.new(@apiKey,
-                                                                                         @secretKey,
+      @access_token=OAuth::AccessToken.new OAuth::Consumer.new(@api_key,
+                                                                                         @secret_key,
                                                                                          {:site=>API_HOST}),
                                                                                          @access_token.token,
                                                                                          @access_token.secret
