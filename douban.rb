@@ -18,7 +18,7 @@ require'authorize.rb'
 require'people.rb'
 require'helper'
 module Douban
-  API_CONF     =File.dirname(__FILE__)+"/"+"douban/douban.yaml"
+  API_CONF     =File.dirname(__FILE__)+"/"+"douban.yaml"
   CONF = YAML.load(File.open(API_CONF)) 
   MY_SITE                     =CONF['mysite']
   API_HOST                   = "http://api.douban.com"
