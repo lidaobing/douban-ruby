@@ -3,7 +3,6 @@ require'rexml/document'
 module Douban
 class Authorize
   include Douban
-  #attr:authorized
   attr_reader :apiKey
   attr_reader :apiSecret
   attr_reader :authorize_url
@@ -11,7 +10,6 @@ class Authorize
   attr_reader :request_token
   attr_reader :access_token
   def initialize(attributes={})
-    #@authorized=false
     @apiKey=attributes[:apiKey] ||=CONF["apiKey"]
     @secretKey=attributes[:secretKey]||=CONF["secretKey"]
     @oauthOption={
@@ -22,17 +20,17 @@ class Authorize
     }
     yield self if block_given?
     self 
-  end#end of initialize
+  end
   
   def authorized?
     !@access_token.nil?
-  end#end of authorized?
+  end
   
   def get_authorize_url
     @consumer=OAuth::Consumer.new(@apiKey,@secretKey,@oauthOption)
     @request_token=@consumer.get_request_token
     @authorzie_url=@request_token.authorize_url<<"&oauth_callback="<<MY_SITE
-  end#end of get_authorize_url
+  end
   
   def auth
     begin
@@ -48,30 +46,28 @@ class Authorize
       yield self if block_given?
       return self
     end
-  end#end of  auth
+  end
   
 def get(path,headers={})
   @access_token.get(path,headers)
-end#end of get
+end
 
 def post(path,data="",headers={})
   @access_token.post(path,data,headers)
-end#end of post
+end
 
 def put(path,body="",headers={})
   @access_token.put(path,body,headers)
-end#end of put 
+end
 
 def delete(path,headers={})
   @access_token.delete(path,headers)
-end#end of delete
+end
 
 def head(path,headers={})
   @access_token.head(path,headers)
-end#end of head 
-#===================================
+end
 
-#===================================
 def get_people(uid="@me")
   resp=get("/people/#{url_encode(uid)}")
   if resp.code=="200"
@@ -80,16 +76,12 @@ def get_people(uid="@me")
     else
     nil
   end
-end#end of get_people
+end
 
 def get_friends(uid="@me",option={'start-index'=>1,'max-results'=>10})
   resp=get("/people/#{url_encode(uid)}/friends?start-index=#{option['start-index']}&max-results=#{option['max-results']}")
 if resp.code=="200"
-<<<<<<< .mine
 friends=[]
-=======
-  friends=[]
->>>>>>> .r3
 atom=resp.body
 doc=REXML::Document.new(atom)
 REXML::XPath.each(doc,"//entry") do |entry|
@@ -106,12 +98,12 @@ REXML::XPath.each(doc,"//entry") do |entry|
           friend.link["#{e.attributes['rel']}"] = e.attributes['href']
         end
         friends << friend
-  end#end of each
+  end
   friends
 else
  nil
-end#end of if
-end#end of get_friends
+end
+end
 def get_contacts(uid="@me",option={'start-index'=>1,'max-results'=>10})
     resp=get("/people/#{url_encode(uid)}/contacts?start-index=#{option['start-index']}&max-results=#{option['max-results']}")
 if resp.code=="200"
@@ -132,12 +124,12 @@ REXML::XPath.each(doc,"//entry") do |entry|
           contact.link["#{e.attributes['rel']}"] = e.attributes['href']
         end
         contacts << contact
-  end#end of each
+  end
   contacts
 else
  nil
-end#end of if
-  end#end of get_contacts
+end
+end
 
 
 def get_contacts(uid="@me",option={'start-index'=>1,'max-results'=>10})
@@ -160,16 +152,16 @@ REXML::XPath.each(doc,"//entry") do |entry|
           contact.link["#{e.attributes['rel']}"] = e.attributes['href']
         end
         contacts << contact
-  end#end of each
+  end
 contacts
 else
  nil
-end#end of if
-  end#end of get_contacts
+end
+end
   
   
 def search_people(q="",option={'start-index'=>1,'max-results'=>10})
-    esp=get("/people/?q=#{url_encode(q)}&start-index=#{option['start-index']}&max-results=#{option['max-results']}")
+resp=get("/people/?q=#{url_encode(q)}&start-index=#{option['start-index']}&max-results=#{option['max-results']}")
 if resp.code=="200"
 results=[]
 atom=resp.body
@@ -188,12 +180,12 @@ REXML::XPath.each(doc,"//entry") do |entry|
           result.link["#{e.attributes['rel']}"] = e.attributes['href']
         end
         results << result
-  end#end of each
+  end
   results
 else
  nil
-end#end of if
-end#end of search
+end
+end
 
-end#end of class
-end#end of moudel
+end
+end

@@ -16,11 +16,11 @@ class People
         @link[e.attributes['rel']]=e.attributes['href']
         else
           instance_variable_set("@#{e.name}",e.text) 
-        end#end of if
+        end
        self
-        end#end of each
-      end#end of initizlize
-    end#end of if
+        end
+      end
+    end
 =end
 class People
     include Douban
@@ -62,5 +62,5 @@ class People
       end
      
     end
-end#end of class
-end#end of module
+end
+end
