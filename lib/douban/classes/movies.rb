@@ -51,7 +51,10 @@ module Douban
       else
         nil
       end
-      @summary=REXML::XPath.first(doc,"//summary").text
+      summary=REXML::XPath.first(doc,"//summary")
+      if !summary.nil?
+        @summary=summary.text
+      end
       REXML::XPath.each(doc,"//link") do |link|
         @link||={}
         @link[link.attributes['rel']]=link.attributes['href']
@@ -62,10 +65,12 @@ module Douban
       end
       @rating={}
       rating=REXML::XPath.first(doc,"//gd:rating")
-      @rating['min']=rating.attributes['min']
-      @rating['numRaters']=rating.attributes['numRaters']
-      @rating['average']=rating.attributes['average']
-      @rating['max']=rating.attributes['max']
+      if !rating.nil?
+        @rating['min']=rating.attributes['min']
+        @rating['numRaters']=rating.attributes['numRaters']
+        @rating['average']=rating.attributes['average']
+        @rating['max']=rating.attributes['max']
+      end
      rescue
      ensure
       self
