@@ -186,8 +186,8 @@ class Authorize
       nil
     end
   end
-  def get_book(id='',isbn=false)
-    if isbn
+  def get_book(id='')
+    if id.to_s.size >=10
       resp=get("/book/subject/isbn/#{id}")
     else
       resp=get("/book/subject/#{id}")
@@ -199,8 +199,8 @@ class Authorize
       nil
     end
   end
-  def get_movie(id="",imdb=false)
-    if imdb
+  def get_movie(id="")
+    if id.to_s=~/^tt\d+/
       resp=get("/movie/subject/imdb/#{id}")
     else
       resp=get("/movie/subject/#{id}")
