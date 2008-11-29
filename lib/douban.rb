@@ -17,6 +17,7 @@ $:.unshift base + "/douban/helper"
 require'authorize.rb'
 require'people.rb'
 require'subjects.rb'
+require'reviews.rb'
 require'helper'
 module Douban
   API_CONF     =File.dirname(__FILE__)+"/../conf/douban.yaml"

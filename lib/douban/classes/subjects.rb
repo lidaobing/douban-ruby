@@ -85,7 +85,7 @@ module Douban
        REXML::XPath.each(doc,"//link") do|link|
         @link||={}
         @link[link.attributes['rel']]=link.attributes['href']
-      end
+       end
        name=REXML::XPath.first(doc,"//author/name")
        @name=name.text if !name.nil?
        uri=REXML::XPath.first(doc,"//author/uri")

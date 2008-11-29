@@ -263,6 +263,70 @@ class Authorize
     end
     music
   end
-  
+  def get_review(id='')
+    resp=get("/review/#{id}")
+    if resp.code=="200"
+      atom=resp.body
+      Review.new(atom)
+    else
+      nil
+    end
+  end
+  def get_user_reviews(user_id="@me",option={'start-index'=>1,'max-results'=>10,'orderby'=>'score'})
+    resp=get("/people/#{url_encode(user_id)}/reviews?start-index=#{option['start-index']}&max-results=#{option['max-results']}&orderby=#{option['orderby']}")
+    if resp.code=="200"
+      atom=resp.body
+      reviews=[]
+      doc=REXML::Document.new(atom)
+      REXML::XPath.each(doc,"//entry") do |entry|
+        reviews<<Review.new(entry.to_s)
+      end
+      reviews
+    else
+      nil
+    end
+  end
+  def get_movie_reviews(subject_id,option={'start-index'=>1,'max-results'=>10,'orderby'=>'score'})
+    resp=get("/movie/subject/#{url_encode(subject_id)}/reviews?start-index=#{option['start-index']}&max-results=#{option['max-results']}&orderby=#{option['orderby']}")
+    if resp.code=="200"
+      atom=resp.body
+      reviews=[]
+      doc=REXML::Document.new(atom)
+      REXML::XPath.each(doc,"//entry") do |entry|
+        reviews<<Review.new(entry.to_s)
+      end
+      reviews
+    else
+      nil
+    end
+  end
+  def get_music_reviews(subject_id,option={'start-index'=>1,'max-results'=>10,'orderby'=>'score'})
+    resp=get("/music/subject/#{url_encode(subject_id)}/reviews?start-index=#{option['start-index']}&max-results=#{option['max-results']}&orderby=#{option['orderby']}")
+    if resp.code=="200"
+      atom=resp.body
+      reviews=[]
+      doc=REXML::Document.new(atom)
+      REXML::XPath.each(doc,"//entry") do |entry|
+        reviews<<Review.new(entry.to_s)
+      end
+      reviews
+    else
+      nil
+    end
+  end
+  def get_book_reviews(subject_id,option={'start-index'=>1,'max-results'=>10,'orderby'=>'score'})
+    resp=get("/book/subject/#{url_encode(subject_id)}/reviews?start-index=#{option['start-index']}&max-results=#{option['max-results']}&orderby=#{option['orderby']}")
+    if resp.code=="200"
+      atom=resp.body
+      reviews=[]
+      doc=REXML::Document.new(atom)
+      REXML::XPath.each(doc,"//entry") do |entry|
+        reviews<<Review.new(entry.to_s)
+      end
+      reviews
+    else
+      nil
+    end
+  end
 end
 end
