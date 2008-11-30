@@ -186,7 +186,7 @@ class Authorize
       nil
     end
   end
-  def get_book(id='')
+  def get_book(id="")
     if id.to_s.size >=10
       resp=get("/book/subject/isbn/#{id}")
     else
@@ -328,5 +328,50 @@ class Authorize
       nil
     end
   end
+  def delete_review(review_id="")
+    resp=delete("/review/#{url_encode(review_id)}")
+    if resp.code=="200"
+      true
+    else
+      false
+    end
+  end
+  def create_review(subject_link="",title="",content="",rating=5)
+    entry=%Q{<?xml version='1.0' encoding='UTF-8'?>
+          <entry xmlns:ns0="http://www.w3.org/2005/Atom">
+          <db:subject xmlns:db="http://www.douban.com/xmlns/">
+          <id>#{subject_link}</id>
+          </db:subject>
+          <content>#{gbk_to_utf8(content)}</content>
+          <gd:rating xmlns:gd="http://schemas.google.com/g/2005" value="#{rating}" ></gd:rating>
+          <title>#{gbk_to_utf8(title)}</title>
+          </entry>
+          }
+          resp=post("/reviews",entry,{"Content-Type" => "application/atom+xml"})
+          if resp.code=="201"
+            true
+          else
+            false
+          end
+        end
+        def modify_review(review_id="",subject_link="",title="",content="",rating=5)
+          entry=%Q{<?xml version='1.0' encoding='UTF-8'?>
+              <entry xmlns:ns0="http://www.w3.org/2005/Atom">
+              <id>http://api.douban.com/review/#{review_id}</id>
+              <db:subject xmlns:db="http://www.douban.com/xmlns/">
+              <id>#{subject_link}</id>
+              </db:subject>
+              <content>#{gbk_to_utf8(content)}</content>
+              <gd:rating xmlns:gd="http://schemas.google.com/g/2005" value="#{rating}" ></gd:rating>
+              <title>#{gbk_to_utf8(title)}</title>
+              </entry>
+              }
+            resp=put("/review/#{url_encode(review_id)}",entry,{"Content-Type" => "application/atom+xml"})
+            if resp.code=="200"
+              true
+            else
+              false
+            end
+          end
 end
 end
