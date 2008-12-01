@@ -1,30 +1,7 @@
 require'rexml/document'
 module Douban
-=begin
-class People
-  attr_accessor :id
-  attr_accessor:location
-  attr_accessor:title
-  attr_accessor:link
-  attr_accessor :content
-  attr_accessor :uid
-  def initialize(entry=nil)
-    if entry
-      @link={}
-    entry.each do |e|
-        if e.name=="link"
-        @link[e.attributes['rel']]=e.attributes['href']
-        else
-          instance_variable_set("@#{e.name}",e.text) 
-        end
-       self
-        end
-      end
-    end
-=end
 class People
     include Douban
-    
     class << self
       def attr_names
         [ 

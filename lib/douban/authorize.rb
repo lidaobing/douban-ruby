@@ -373,5 +373,125 @@ class Authorize
               false
             end
           end
+        def get_collection(option={:collection_id=>""})
+          resp=get("/collection/#{url_encode(option[:collection_id].to_s)}")
+          if resp.code=="200"
+            atom=resp.body
+            Collection.new(atom)
+          else
+            nil
+          end
+        end
+        def get_user_collection(option={:user_id=>"@me",
+                                                        :cat=>'',
+                                                        :tag=>'',
+                                                        :status=>'',
+                                                        :start_index=>1,
+                                                        :max_results=>10,
+                                                        :updated_max=>'',
+                                                        :updated_min=>''
+                                                      }
+                                            )
+          resp=get("/people/#{url_encode(option[:user_id].to_s)}/collection?cat=#{option[:cat]}&tag=#{option[:tag]}&status=#{option[:status]}&start-index=#{option[:start_index]}&max-results=#{option[:max_results]}&updated-max=#{option[:updated_max]}&updated-min=#{option[:updated_min]}")
+          if resp.code=="200"
+            atom=resp.body
+            doc=REXML::Document.new(atom)
+            author=REXML::XPath.first(doc,"//feed/author")
+            author=Author.new(author.to_s) if author
+            title=REXML::XPath.first(doc,"//feed/title")
+            title=title.text if title
+            collections=[]
+            REXML::XPath.each(doc,"//entry") do |entry|
+              collection=Collection.new(entry.to_s)
+              collection.author=author
+              collection.title=title
+              collections<<collection
+            end
+            collections
+          else
+            nil
+          end
+        end
+        def create_collection(option={ :subject_id=>"",
+                                                      :content=>"",
+                                                      :rating=>5,
+                                                      :privacy=>"private",
+                                                      :tag=>[],
+                                                      :status=>"",
+                                                    }
+                                        )
+          db_tag=""
+          if option[:tag].size==0
+            db_tag='<db:tag name="" />'
+          else
+            option[:tag].each do |t|
+              db_tag+='<db:tag name="'+t.to_s+'" />'
+            end
+          end
+          entry=%Q{<?xml version='1.0' encoding='UTF-8'?>
+          <entry xmlns:ns0="http://www.w3.org/2005/Atom" xmlns:db="http://www.douban.com/xmlns/">
+          <db:status>#{option[:status]}</db:status>
+         #{db_tag}
+          <gd:rating xmlns:gd="http://schemas.google.com/g/2005" value="#{option[:rating]}" />
+          <content>#{option[:content]}</content>
+          <db:subject>
+          <id>#{option[:subject_id]}</id>
+          </db:subject>
+          <db:attribute name="privacy">#{option[:privacy]}</db:attribute>
+          </entry>
+          }
+          resp=post("/collection",gbk_to_utf8(entry),{"Content-Type"=>"application/atom+xml"})
+          if resp.code=="201"
+            true
+          else
+            false
+          end
+        end
+        def modify_collection(option={ :collection_id=>"",
+                                                      :subject_id=>"",
+                                                      :content=>"",
+                                                      :rating=>5,
+                                                      :privacy=>"private",
+                                                      :tag=>[],
+                                                      :status=>"read"
+                                                    }
+                                        )
+              db_tag=""
+          if option[:tag].size==0
+            db_tag='<db:tag name="" />'
+          else
+            option[:tag].each do |t|
+              db_tag+='<db:tag name="'+t.to_s+'" />'
+            end
+          end
+          entry=%Q{<?xml version='1.0' encoding='UTF-8'?>
+          <entry xmlns:ns0="http://www.w3.org/2005/Atom" xmlns:db="http://www.douban.com/xmlns/">
+          <id>http://api.douban.com/collection/#{option[:collection_id]}</id>
+          <db:status>#{option[:status]}</db:status>
+          
+         #{db_tag}
+          <gd:rating xmlns:gd="http://schemas.google.com/g/2005" value="#{option[:rating]}" />
+          <content>#{option[:content]}</content>
+          <db:subject>
+          <id>#{option[:subject_id]}</id>
+          </db:subject>
+          <db:attribute name="privacy">#{option[:privacy]}</db:attribute>
+          </entry>
+          }
+          resp=put("/collection/#{url_encode(option[:collection_id].to_s)}",gbk_to_utf8(entry),{"Content-Type"=>"application/atom+xml"})
+          if resp.code=="200"
+            true
+          else
+            false
+          end
+        end
+        def delete_collection(option={:collection_id=>""})
+          resp=delete("/collection/#{url_encode(option[:collection_id].to_s)}")
+          if resp.code=="200"
+            true
+          else
+            false
+          end
+        end
 end
 end
