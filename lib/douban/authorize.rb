@@ -543,5 +543,72 @@ class Authorize
             false
           end
         end
+        def get_note(note_id="")
+          resp=get("/note/#{url_encode(note_id.to_s)}")
+          if resp.code=="200"
+            atom=resp.body
+            Note.new(atom)
+          else
+            nil
+          end
+        end
+        def get_user_notes(user_id="@me",option={:start_index=>1,:max_results=>10})
+          resp=get("/people/#{url_encode(user_id.to_s)}/notes?start-index=#{option[:start_index]}&max-results=#{option[:max_results]}")
+          if resp.code=="200"
+            atom=resp.body
+            doc=REXML::Document.new(atom)
+            author=REXML::XPath.first(doc,"//feed/author")
+            author=Author.new(author.to_s) if author
+            notes=[]
+            REXML::XPath.each(doc,"//feed/entry") do |entry|
+              note=Note.new(entry.to_s)
+              note.author=author
+              notes<<note
+            end
+            notes
+          else
+            nil
+          end
+        end
+        def create_note(title="",content="",option={:privacy=>"public",:can_reply=>"yes"})
+          entry=%Q{<?xml version="1.0" encoding="UTF-8"?>
+              <entry xmlns="http://www.w3.org/2005/Atom" xmlns:db="http://www.douban.com/xmlns/">
+              <title>#{title}</title>
+              <content>#{content}</content>
+              <db:attribute name="privacy">#{option[:privacy]}</db:attribute>
+              <db:attribute name="can_reply">#{option[:can_reply]}</db:attribute>
+              </entry>
+              }
+          resp=post("/notes",gbk_to_utf8(entry),{"Content-Type"=>"application/atom+xml"})
+          if resp.code=="201"
+            true
+          else
+            false
+          end
+        end
+      def delete_note(note_id="")
+        resp=delete("/note/#{url_encode(note_id.to_s)}")
+        if resp.code=="200"
+          true
+        else
+          false
+        end
+      end
+      def modify_note(note_id,title="",content="",option={:privacy=>"public",:can_reply=>"yes"})
+        entry=%Q{<?xml version="1.0" encoding="UTF-8"?>
+              <entry xmlns="http://www.w3.org/2005/Atom" xmlns:db="http://www.douban.com/xmlns/">
+              <title>#{title}</title>
+              <content>#{content}</content>
+              <db:attribute name="privacy">#{option[:privacy]}</db:attribute>
+              <db:attribute name="can_reply">#{option[:can_reply]}</db:attribute>
+              </entry>
+              }
+        resp=put("/note/#{url_encode(note_id.to_s)}",gbk_to_utf8(entry),{"Content-Type"=>"application/atom+xml"})
+        if resp.code=="200"
+          true
+        else
+          false
+        end
+      end
 end
 end

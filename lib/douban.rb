@@ -20,6 +20,7 @@ require'subjects'
 require'reviews'
 require'collections'
 require'miniblogs'
+require'notes'
 require'helper'
 module Douban
   API_CONF     =File.dirname(__FILE__)+"/../conf/douban.yaml"
