@@ -493,5 +493,55 @@ class Authorize
             false
           end
         end
+        def get_user_miniblog(option={:user_id=>"@me",:start_index=>1,:max_results=>10})
+          resp=get("/people/#{url_encode(option[:user_id].to_s)}/miniblog?start-index=#{option[:start_index]}&max-results=#{option[:max_results]}")
+          if resp.code=="200"
+            atom=resp.body
+            doc=REXML::Document.new(atom)
+            author=REXML::XPath.first(doc,"//feed/author")
+            author=Author.new(author.to_s) if author
+            miniblogs=[]
+            REXML::XPath.each(doc,"//feed/entry") do |entry|
+              miniblog=Miniblog.new(entry.to_s)
+              miniblog.author=author
+              miniblogs<<miniblog
+            end
+            miniblogs
+          else
+            nil
+          end
+        end
+        def get_user_contact_miniblog(option={:user_id=>"@me",:start_index=>1,:max_results=>10})
+            resp=get("/people/#{url_encode(option[:user_id].to_s)}/miniblog/contacts?start-index=#{option[:start_index]}&max-results=#{option[:max_results]}")
+          if resp.code=="200"
+            atom=resp.body
+            doc=REXML::Document.new(atom)
+            miniblogs=[]
+            REXML::XPath.each(doc,"//feed/entry") do |entry|
+              miniblog=Miniblog.new(entry.to_s)
+              miniblogs<<miniblog
+            end
+            miniblogs
+          else
+            nil
+          end
+        end
+        def create_miniblog(content="")
+          entry=%Q{<?xml version='1.0' encoding='UTF-8'?><entry xmlns:ns0="http://www.w3.org/2005/Atom" xmlns:db="http://www.douban.com/xmlns/"><content>#{content}</content></entry>}
+          resp=post("/miniblog/saying",gbk_to_utf8(entry),{"Content-Type"=>"application/atom+xml"})
+          if resp.code=="201"
+            true
+          else
+            false
+          end
+        end
+        def delete_miniblog(miniblog_id="")
+          resp=delete("/miniblog/#{url_encode(miniblog_id.to_s)}")
+          if resp.code=="200"
+            true
+          else
+            false
+          end
+        end
 end
 end
