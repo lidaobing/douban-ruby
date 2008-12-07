@@ -14,16 +14,9 @@ base = File.expand_path(File.dirname(__FILE__))
 $:.unshift base + "/douban"
 $:.unshift base + "/douban/classes"
 $:.unshift base + "/douban/helper"
-require'authorize'
-require'people'
-require'subjects'
-require'reviews'
-require'collections'
-require'miniblogs'
-require'notes'
-require'helper'
+%w(authorize people subjects reviews collections miniblogs notes events helper).each(&method(:require))
 module Douban
-  API_CONF     =File.dirname(__FILE__)+"/../conf/douban.yaml"
+  API_CONF     =File.dirname(__FILE__)+"/douban.yaml"
   CONF = YAML.load(File.open(API_CONF)) 
   MY_SITE                     =CONF['mysite']
   API_HOST                   = "http://api.douban.com"

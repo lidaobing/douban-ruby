@@ -69,7 +69,7 @@ class Authorize
   end
 
   def get_people(uid="@me")
-    resp=get("/people/#{url_encode(uid)}")
+    resp=get("/people/#{url_encode(uid.to_s)}")
     if resp.code=="200"
       atom=resp.body
       People.new(atom)
@@ -78,52 +78,28 @@ class Authorize
     end
   end
 
-  def get_friends(uid="@me",option={'start-index'=>1,'max-results'=>10})
-    resp=get("/people/#{url_encode(uid)}/friends?start-index=#{option['start-index']}&max-results=#{option['max-results']}")
+  def get_friends(uid="@me",option={:start_index=>1,:max_results=>10})
+    resp=get("/people/#{url_encode(uid.to_s)}/friends?start-index=#{option[:start_index]}&max-results=#{option[:max_results]}")
     if resp.code=="200"
       friends=[]
       atom=resp.body
       doc=REXML::Document.new(atom)
       REXML::XPath.each(doc,"//entry") do |entry|
-      friend = People.new    
-        %w[id title content db:location db:uid].each do |attr|
-          eval <<-RUBY
-            entry.each_element("#{attr}") do |e|
-              friend.#{attr.split(':').pop} = e.text if e.text
-            end
-          RUBY
-        end
-        entry.each_element("link") do |e|
-          friend.link ||= {}
-          friend.link["#{e.attributes['rel']}"] = e.attributes['href']
-        end
-        friends << friend
+        friends << People.new(entry.to_s)
       end
     friends
     else
       nil
     end
   end
-  def get_contacts(uid="@me",option={'start-index'=>1,'max-results'=>10})
-    resp=get("/people/#{url_encode(uid)}/contacts?start-index=#{option['start-index']}&max-results=#{option['max-results']}")
+  def get_contacts(uid="@me",option={:start_index=>1,:max_results=>10})
+    resp=get("/people/#{url_encode(uid.to_s)}/contacts?start-index=#{option[:start_index]}&max-results=#{option[:max_results]}")
     if resp.code=="200"
       contacts=[]
       atom=resp.body
       doc=REXML::Document.new(atom)
       REXML::XPath.each(doc,"//entry") do |entry|
-      contact = People.new    
-        %w[id title content db:location db:uid].each do |attr|
-          eval <<-RUBY
-            entry.each_element("#{attr}") do |e|
-              contact.#{attr.split(':').pop} = e.text if e.text
-            end
-          RUBY
-        end
-        entry.each_element("link") do |e|
-          contact.link ||= {}
-          contact.link["#{e.attributes['rel']}"] = e.attributes['href']
-        end
-        contacts << contact
+        contacts << People.new(entry.to_s)
       end
       contacts
     else
@@ -132,26 +108,14 @@ class Authorize
   end
 
 
-  def get_contacts(uid="@me",option={'start-index'=>1,'max-results'=>10})
-    resp=get("/people/#{url_encode(uid)}/contacts?start-index=#{option['start-index']}&max-results=#{option['max-results']}")
+  def get_contacts(uid="@me",option={:start_index=>1,:max_results=>10})
+    resp=get("/people/#{url_encode(uid.to_s)}/contacts?start-index=#{option[:start_index]}&max-results=#{option[:max_results]}")
     if resp.code=="200"
       contacts=[]
       atom=resp.body
       doc=REXML::Document.new(atom)
       REXML::XPath.each(doc,"//entry") do |entry|
-      contact = People.new    
-        %w[id title content db:location db:uid].each do |attr|
-          eval <<-RUBY
-            entry.each_element("#{attr}") do |e|
-              contact.#{attr.split(':').pop} = e.text if e.text
-            end
-          RUBY
-        end
-        entry.each_element("link") do |e|
-          contact.link ||= {}
-          contact.link["#{e.attributes['rel']}"] = e.attributes['href']
-        end
-        contacts << contact
+        contacts << People.new(entry.to_s)
       end
       contacts
     else
@@ -160,37 +124,25 @@ class Authorize
   end
   
   
-  def search_people(q="",option={'start-index'=>1,'max-results'=>10})
-    resp=get("/people/?q=#{url_encode(q)}&start-index=#{option['start-index']}&max-results=#{option['max-results']}")
+  def search_people(q=nil,option={:start_index=>1,:max_results=>10})
+    resp=get("/people/?q=#{url_encode(q.to_s)}&start-index=#{option[:start_index]}&max-results=#{option[:max_results]}")
     if resp.code=="200"
       results=[]
       atom=resp.body
       doc=REXML::Document.new(atom)
       REXML::XPath.each(doc,"//entry") do |entry|
-      result = People.new    
-        %w[id title content db:location db:uid].each do |attr|
-          eval <<-RUBY
-            entry.each_element("#{attr}") do |e|
-              result.#{attr.split(':').pop} = e.text if e.text
-            end
-          RUBY
-        end
-        entry.each_element("link") do |e|
-          result.link ||= {}
-          result.link["#{e.attributes['rel']}"] = e.attributes['href']
-        end
-        results << result
+        results << People.new(entry.to_s)
       end
       results
     else
       nil
     end
   end
-  def get_book(id="")
+  def get_book(id=nil)
     if id.to_s.size >=10
-      resp=get("/book/subject/isbn/#{id}")
+      resp=get("/book/subject/isbn/#{url_encode(id.to_s)}")
     else
-      resp=get("/book/subject/#{id}")
+      resp=get("/book/subject/#{url_encode(id.to_s)}")
     end
     if resp.code=="200"
       atom=resp.body
@@ -199,11 +151,11 @@ class Authorize
       nil
     end
   end
-  def get_movie(id="")
+  def get_movie(id=nil)
     if id.to_s=~/^tt\d+/
-      resp=get("/movie/subject/imdb/#{id}")
+      resp=get("/movie/subject/imdb/#{url_encode(id.to_s)}")
     else
-      resp=get("/movie/subject/#{id}")
+      resp=get("/movie/subject/#{url_encode(id.to_s)}")
     end
     if resp.code=="200"
       atom=resp.body
@@ -212,8 +164,8 @@ class Authorize
       nil
     end
   end
-  def get_music(id="")
-    resp=get("/music/subject/#{id}")
+  def get_music(id=nil)
+    resp=get("/music/subject/#{url_encode(id.to_s)}")
     if resp.code=="200"
       atom=resp.body
       Music.new(atom)
@@ -221,8 +173,8 @@ class Authorize
       nil
     end
   end
-  def search_book(tag='',option={'start-index'=>1,'max-results'=>10})
-    resp=get("/book/subjects?tag=#{url_encode(tag)}&start-index=#{option['start-index']}&max-results=#{option['max-results']}")
+  def search_book(tag=nil,option={:start_index=>1,:max_results=>10})
+    resp=get("/book/subjects?tag=#{url_encode(tag.to_s)}&start-index=#{option[:start_index]}&max-results=#{option[:max_results]}")
     if resp.code=="200"
       atom=resp.body
       doc=REXML::Document.new(atom)
@@ -230,13 +182,14 @@ class Authorize
       REXML::XPath.each(doc,"//entry") do |entry|
         books << Book.new(entry.to_s)
       end
+      books
     else
       nil
     end
-    books
+
   end
-  def search_movie(tag='',option={'start-index'=>1,'max-results'=>10})
-    resp=get("/movie/subjects?tag=#{url_encode(tag)}&start-index=#{option['start-index']}&max-results=#{option['max-results']}")
+  def search_movie(tag=nil,option={:start_index=>1,:max_results=>10})
+    resp=get("/movie/subjects?tag=#{url_encode(tag.to_s)}&start-index=#{option[:start_index]}&max-results=#{option[:max_results]}")
     if resp.code=="200"
       atom=resp.body
       doc=REXML::Document.new(atom)
@@ -244,10 +197,10 @@ class Authorize
       REXML::XPath.each(doc,"//entry") do |entry|
         Movies << Movie.new(entry.to_s)
       end
+      movies
     else
       nil
     end
-    movies
   end
   def search_music(tag='',option={'start-index'=>1,'max-results'=>10})
     resp=get("/music/subjects?tag=#{url_encode(tag)}&start-index=#{option['start-index']}&max-results=#{option['max-results']}")
@@ -258,13 +211,13 @@ class Authorize
       REXML::XPath.each(doc,"//entry") do |entry|
         music << Music.new(entry.to_s)
       end
+      music
     else
       nil
     end
-    music
   end
-  def get_review(id='')
-    resp=get("/review/#{id}")
+  def get_review(id=nil)
+    resp=get("/review/#{url_encode(id.to_s)}")
     if resp.code=="200"
       atom=resp.body
       Review.new(atom)
@@ -272,8 +225,8 @@ class Authorize
       nil
     end
   end
-  def get_user_reviews(user_id="@me",option={'start-index'=>1,'max-results'=>10,'orderby'=>'score'})
-    resp=get("/people/#{url_encode(user_id)}/reviews?start-index=#{option['start-index']}&max-results=#{option['max-results']}&orderby=#{option['orderby']}")
+  def get_user_reviews(user_id="@me",option={:start_index=>1,:max_results=>10,:orderby=>'score'})
+    resp=get("/people/#{url_encode(user_id.to_s)}/reviews?start-index=#{option[:start_index]}&max-results=#{option[:max_results]}&orderby=#{option[:orderby]}")
     if resp.code=="200"
       atom=resp.body
       reviews=[]
@@ -286,8 +239,8 @@ class Authorize
       nil
     end
   end
-  def get_movie_reviews(subject_id,option={'start-index'=>1,'max-results'=>10,'orderby'=>'score'})
-    resp=get("/movie/subject/#{url_encode(subject_id)}/reviews?start-index=#{option['start-index']}&max-results=#{option['max-results']}&orderby=#{option['orderby']}")
+  def get_movie_reviews(subject_id=nil,option={:start_index=>1,:max_results=>10,:orderby=>'score'})
+    resp=get("/movie/subject/#{url_encode(subject_id.to_s)}/reviews?start-index=#{option[:start_index]}&max-results=#{option[:max_results]}&orderby=#{option[:orderby]}")
     if resp.code=="200"
       atom=resp.body
       reviews=[]
@@ -300,8 +253,8 @@ class Authorize
       nil
     end
   end
-  def get_music_reviews(subject_id,option={'start-index'=>1,'max-results'=>10,'orderby'=>'score'})
-    resp=get("/music/subject/#{url_encode(subject_id)}/reviews?start-index=#{option['start-index']}&max-results=#{option['max-results']}&orderby=#{option['orderby']}")
+  def get_music_reviews(subject_id=nil,option={:start_index=>1,:max_results=>10,:orderby=>'score'})
+    resp=get("/music/subject/#{url_encode(subject_id.to_s)}/reviews?start-index=#{option[:start_index]}&max-results=#{option[:max_results]}&orderby=#{option[:orderby]}")
     if resp.code=="200"
       atom=resp.body
       reviews=[]
@@ -314,8 +267,8 @@ class Authorize
       nil
     end
   end
-  def get_book_reviews(subject_id,option={'start-index'=>1,'max-results'=>10,'orderby'=>'score'})
-    resp=get("/book/subject/#{url_encode(subject_id)}/reviews?start-index=#{option['start-index']}&max-results=#{option['max-results']}&orderby=#{option['orderby']}")
+  def get_book_reviews(subject_id,option={:start_index=>1,:max_results=>10,:orderby=>'score'})
+    resp=get("/book/subject/#{url_encode(subject_id.to_s)}/reviews?start-index=#{option[:start_index]}&max-results=#{option[:max_results]}&orderby=#{option[:orderby]}")
     if resp.code=="200"
       atom=resp.body
       reviews=[]
@@ -328,53 +281,53 @@ class Authorize
       nil
     end
   end
-  def delete_review(review_id="")
-    resp=delete("/review/#{url_encode(review_id)}")
+  def delete_review(review_id=nil)
+    resp=delete("/review/#{url_encode(review_id.to_s)}")
     if resp.code=="200"
       true
     else
       false
     end
   end
-  def create_review(subject_link="",title="",content="",rating=5)
+  def create_review(subject_link=nil,title=nil,content=nil,rating=5)
     entry=%Q{<?xml version='1.0' encoding='UTF-8'?>
           <entry xmlns:ns0="http://www.w3.org/2005/Atom">
           <db:subject xmlns:db="http://www.douban.com/xmlns/">
           <id>#{subject_link}</id>
           </db:subject>
-          <content>#{gbk_to_utf8(content)}</content>
+          <content>#{content}</content>
           <gd:rating xmlns:gd="http://schemas.google.com/g/2005" value="#{rating}" ></gd:rating>
-          <title>#{gbk_to_utf8(title)}</title>
+          <title>#{title}</title>
           </entry>
           }
-          resp=post("/reviews",entry,{"Content-Type" => "application/atom+xml"})
+          resp=post("/reviews",gbk_to_utf8(entry),{"Content-Type" => "application/atom+xml"})
           if resp.code=="201"
             true
           else
             false
           end
         end
-        def modify_review(review_id="",subject_link="",title="",content="",rating=5)
+        def modify_review(review_id=nil,subject_link=nil,title=nil,content=nil,rating=5)
           entry=%Q{<?xml version='1.0' encoding='UTF-8'?>
               <entry xmlns:ns0="http://www.w3.org/2005/Atom">
               <id>http://api.douban.com/review/#{review_id}</id>
               <db:subject xmlns:db="http://www.douban.com/xmlns/">
               <id>#{subject_link}</id>
               </db:subject>
-              <content>#{gbk_to_utf8(content)}</content>
+              <content>#{content}</content>
               <gd:rating xmlns:gd="http://schemas.google.com/g/2005" value="#{rating}" ></gd:rating>
-              <title>#{gbk_to_utf8(title)}</title>
+              <title>#{title}</title>
               </entry>
               }
-            resp=put("/review/#{url_encode(review_id)}",entry,{"Content-Type" => "application/atom+xml"})
+            resp=put("/review/#{url_encode(review_id)}",gbk_to_utf8(entry),{"Content-Type" => "application/atom+xml"})
             if resp.code=="200"
               true
             else
               false
             end
           end
-        def get_collection(option={:collection_id=>""})
-          resp=get("/collection/#{url_encode(option[:collection_id].to_s)}")
+        def get_collection(collection_id=nil)
+          resp=get("/collection/#{url_encode(collection_id.to_s)}")
           if resp.code=="200"
             atom=resp.body
             Collection.new(atom)
@@ -382,7 +335,7 @@ class Authorize
             nil
           end
         end
-        def get_user_collection(option={:user_id=>"@me",
+        def get_user_collection(user_id="@me",option={
                                                         :cat=>'',
                                                         :tag=>'',
                                                         :status=>'',
@@ -392,7 +345,7 @@ class Authorize
                                                         :updated_min=>''
                                                       }
                                             )
-          resp=get("/people/#{url_encode(option[:user_id].to_s)}/collection?cat=#{option[:cat]}&tag=#{option[:tag]}&status=#{option[:status]}&start-index=#{option[:start_index]}&max-results=#{option[:max_results]}&updated-max=#{option[:updated_max]}&updated-min=#{option[:updated_min]}")
+          resp=get("/people/#{url_encode(user_id.to_s)}/collection?cat=#{option[:cat]}&tag=#{option[:tag]}&status=#{option[:status]}&start-index=#{option[:start_index]}&max-results=#{option[:max_results]}&updated-max=#{option[:updated_max]}&updated-min=#{option[:updated_min]}")
           if resp.code=="200"
             atom=resp.body
             doc=REXML::Document.new(atom)
@@ -412,30 +365,24 @@ class Authorize
             nil
           end
         end
-        def create_collection(option={ :subject_id=>"",
-                                                      :content=>"",
-                                                      :rating=>5,
-                                                      :privacy=>"private",
-                                                      :tag=>[],
-                                                      :status=>"",
-                                                    }
-                                        )
+        def create_collection( subject_id=nil,content=nil,rating=5,status=nil,tag=[],option={ :privacy=>"public"})
+                                                  
           db_tag=""
-          if option[:tag].size==0
+          if tag.size==0
             db_tag='<db:tag name="" />'
           else
-            option[:tag].each do |t|
+            tag.each do |t|
               db_tag+='<db:tag name="'+t.to_s+'" />'
             end
           end
           entry=%Q{<?xml version='1.0' encoding='UTF-8'?>
           <entry xmlns:ns0="http://www.w3.org/2005/Atom" xmlns:db="http://www.douban.com/xmlns/">
-          <db:status>#{option[:status]}</db:status>
+          <db:status>#{status}</db:status>
          #{db_tag}
-          <gd:rating xmlns:gd="http://schemas.google.com/g/2005" value="#{option[:rating]}" />
-          <content>#{option[:content]}</content>
+          <gd:rating xmlns:gd="http://schemas.google.com/g/2005" value="#{rating}" />
+          <content>#{content}</content>
           <db:subject>
-          <id>#{option[:subject_id]}</id>
+          <id>#{subject_id}</id>
           </db:subject>
           <db:attribute name="privacy">#{option[:privacy]}</db:attribute>
           </entry>
@@ -447,54 +394,46 @@ class Authorize
             false
           end
         end
-        def modify_collection(option={ :collection_id=>"",
-                                                      :subject_id=>"",
-                                                      :content=>"",
-                                                      :rating=>5,
-                                                      :privacy=>"private",
-                                                      :tag=>[],
-                                                      :status=>"read"
-                                                    }
-                                        )
+        def modify_collection(collection_id=nil,subject_id=nil,content=nil,rating=5,tag=[],status=nil,option={:privacy=>"public"})
               db_tag=""
-          if option[:tag].size==0
+          if tag.size==0
             db_tag='<db:tag name="" />'
           else
-            option[:tag].each do |t|
+            tag.each do |t|
               db_tag+='<db:tag name="'+t.to_s+'" />'
             end
           end
           entry=%Q{<?xml version='1.0' encoding='UTF-8'?>
           <entry xmlns:ns0="http://www.w3.org/2005/Atom" xmlns:db="http://www.douban.com/xmlns/">
-          <id>http://api.douban.com/collection/#{option[:collection_id]}</id>
-          <db:status>#{option[:status]}</db:status>
+          <id>http://api.douban.com/collection/#{collection_id}</id>
+          <db:status>#{status}</db:status>
           
          #{db_tag}
-          <gd:rating xmlns:gd="http://schemas.google.com/g/2005" value="#{option[:rating]}" />
-          <content>#{option[:content]}</content>
+          <gd:rating xmlns:gd="http://schemas.google.com/g/2005" value="#{rating}" />
+          <content>#{content}</content>
           <db:subject>
-          <id>#{option[:subject_id]}</id>
+          <id>#{subject_id}</id>
           </db:subject>
           <db:attribute name="privacy">#{option[:privacy]}</db:attribute>
           </entry>
           }
-          resp=put("/collection/#{url_encode(option[:collection_id].to_s)}",gbk_to_utf8(entry),{"Content-Type"=>"application/atom+xml"})
+          resp=put("/collection/#{url_encode(collection_id.to_s)}",gbk_to_utf8(entry),{"Content-Type"=>"application/atom+xml"})
           if resp.code=="200"
             true
           else
             false
           end
         end
-        def delete_collection(option={:collection_id=>""})
-          resp=delete("/collection/#{url_encode(option[:collection_id].to_s)}")
+        def delete_collection(collection_id=nil)
+          resp=delete("/collection/#{url_encode(collection_id.to_s)}")
           if resp.code=="200"
             true
           else
             false
           end
         end
-        def get_user_miniblog(option={:user_id=>"@me",:start_index=>1,:max_results=>10})
-          resp=get("/people/#{url_encode(option[:user_id].to_s)}/miniblog?start-index=#{option[:start_index]}&max-results=#{option[:max_results]}")
+        def get_user_miniblog(user_id="@me",option={:start_index=>1,:max_results=>10})
+          resp=get("/people/#{url_encode(user_id.to_s)}/miniblog?start-index=#{option[:start_index]}&max-results=#{option[:max_results]}")
           if resp.code=="200"
             atom=resp.body
             doc=REXML::Document.new(atom)
@@ -511,8 +450,8 @@ class Authorize
             nil
           end
         end
-        def get_user_contact_miniblog(option={:user_id=>"@me",:start_index=>1,:max_results=>10})
-            resp=get("/people/#{url_encode(option[:user_id].to_s)}/miniblog/contacts?start-index=#{option[:start_index]}&max-results=#{option[:max_results]}")
+        def get_user_contact_miniblog(user_id="@me",option={:start_index=>1,:max_results=>10})
+            resp=get("/people/#{url_encode(user_id.to_s)}/miniblog/contacts?start-index=#{option[:start_index]}&max-results=#{option[:max_results]}")
           if resp.code=="200"
             atom=resp.body
             doc=REXML::Document.new(atom)
@@ -526,8 +465,8 @@ class Authorize
             nil
           end
         end
-        def create_miniblog(content="")
-          entry=%Q{<?xml version='1.0' encoding='UTF-8'?><entry xmlns:ns0="http://www.w3.org/2005/Atom" xmlns:db="http://www.douban.com/xmlns/"><content>#{content}</content></entry>}
+        def create_miniblog(content=nil)
+          entry=%Q{<?xml version='1.0' encoding='UTF-8'?><entry xmlns:ns0="http://www.w3.org/2005/Atom" xmlns:db="http://www.douban.com/xmlns/"><content>#{content.to_s}</content></entry>}
           resp=post("/miniblog/saying",gbk_to_utf8(entry),{"Content-Type"=>"application/atom+xml"})
           if resp.code=="201"
             true
@@ -535,7 +474,7 @@ class Authorize
             false
           end
         end
-        def delete_miniblog(miniblog_id="")
+        def delete_miniblog(miniblog_id=nil)
           resp=delete("/miniblog/#{url_encode(miniblog_id.to_s)}")
           if resp.code=="200"
             true
@@ -543,7 +482,7 @@ class Authorize
             false
           end
         end
-        def get_note(note_id="")
+        def get_note(note_id=nil)
           resp=get("/note/#{url_encode(note_id.to_s)}")
           if resp.code=="200"
             atom=resp.body
@@ -570,7 +509,7 @@ class Authorize
             nil
           end
         end
-        def create_note(title="",content="",option={:privacy=>"public",:can_reply=>"yes"})
+        def create_note(title=nil,content=nil,option={:privacy=>"public",:can_reply=>"yes"})
           entry=%Q{<?xml version="1.0" encoding="UTF-8"?>
               <entry xmlns="http://www.w3.org/2005/Atom" xmlns:db="http://www.douban.com/xmlns/">
               <title>#{title}</title>
@@ -594,7 +533,7 @@ class Authorize
           false
         end
       end
-      def modify_note(note_id,title="",content="",option={:privacy=>"public",:can_reply=>"yes"})
+      def modify_note(note_id=nil,title=nil,content=nil,option={:privacy=>"public",:can_reply=>"yes"})
         entry=%Q{<?xml version="1.0" encoding="UTF-8"?>
               <entry xmlns="http://www.w3.org/2005/Atom" xmlns:db="http://www.douban.com/xmlns/">
               <title>#{title}</title>
@@ -610,5 +549,214 @@ class Authorize
           false
         end
       end
+      def get_event(event_id=nil)
+        resp=get("/event/#{url_encode(event_id.to_s)}")
+        if resp.code=="200"
+          atom=resp.body
+          Event.new(atom)
+        else
+          nil
+        end
+      end
+      def get_participant_people(event_id=nil,option={:start_index=>1,:max_results=>10})
+        resp=get("/event/#{url_encode(event_id.to_s)}/participants?start-index=#{option[:start_index]}&max-results=#{option[:max_results]}")
+        if resp.code=="200"
+          people=[]
+          atom=resp.body
+          doc=REXML::Document.new(atom)
+          REXML::XPath.each(doc,"//feed/entry") do |entry|
+            people<<People.new(entry.to_s)
+          end
+          people
+        else
+          nil
+        end
+      end
+      def get_wisher_people(event_id=nil,option={:start_index=>1,:max_results=>10})
+        resp=get("/event/#{url_encode(event_id.to_s)}/wishers?start-index=#{option[:start_index]}&max-results=#{option[:max_results]}")
+        if resp.code=="200"
+          people=[]
+          atom=resp.body
+          doc=REXML::Document.new(atom)
+          REXML::XPath.each(doc,"//feed/entry") do |entry|
+            people<<People.new(entry.to_s)
+          end
+          people
+        else
+          nil
+        end
+      end
+      def get_user_events(user_id="@me",option={:start_index=>1,:max_results=>10})
+        resp=get("/people/#{url_encode(user_id.to_s)}/events?start-index=#{option[:start_index]}&max-results=#{option[:max_results]}")
+        if resp.code=="200"
+          events=[]
+          atom=resp.body
+          doc=REXML::Document.new(atom)
+          REXML::XPath.each(doc,"//feed/entry") do |entry|
+            events<<Event.new(entry.to_s)
+          end
+          events
+        else
+          nil
+        end
+      end
+      def get_user_initiate_events(user_id="@me",option={:start_index=>1,:max_results=>10})
+        resp=get("/people/#{url_encode(user_id.to_s)}/events/initiate?start-index=#{option[:start_index]}&max-results=#{option[:max_results]}")
+        if resp.code=="200"
+          events=[]
+          atom=resp.body
+          doc=REXML::Document.new(atom)
+          REXML::XPath.each(doc,"//feed/entry") do |entry|
+            events<<Event.new(entry.to_s)
+          end
+          events
+        else
+          nil
+        end
+      end
+      def get_user_participate_events(user_id="@me",option={:start_index=>1,:max_results=>10})
+        resp=get("/people/#{url_encode(user_id.to_s)}/events/participate?start-index=#{option[:start_index]}&max-results=#{option[:max_results]}")
+        if resp.code=="200"
+          events=[]
+          atom=resp.body
+          doc=REXML::Document.new(atom)
+          REXML::XPath.each(doc,"//feed/entry") do |entry|
+            events<<Event.new(entry.to_s)
+          end
+          events
+        else
+          nil
+        end
+      end
+      def get_user_wish_events(user_id="@me",option={:start_index=>1,:max_results=>10})
+        resp=get("/people/#{url_encode(user_id.to_s)}/events/wish?start-index=#{option[:start_index]}&max-results=#{option[:max_results]}")
+        if resp.code=="200"
+          events=[]
+          atom=resp.body
+          doc=REXML::Document.new(atom)
+          REXML::XPath.each(doc,"//feed/entry") do |entry|
+            events<<Event.new(entry.to_s)
+          end
+          events
+        else
+          nil
+        end
+      end
+      def get_city_events(location_id=nil,option={:type=>"all",:start_index=>1,:max_results=>10})
+        resp=get("/event/location/#{url_encode(location_id.to_s)}?type=#{option[:type]}&start-index=#{option[:start_index]}&max-results=#{option[:max_results]}")
+        if resp.code=="200"
+          events=[]
+          atom=resp.body
+          doc=REXML::Document.new(atom)
+          REXML::XPath.each(doc,"//feed/entry") do |entry|
+            events<<Event.new(entry.to_s)
+          end
+          events
+        else
+          nil
+        end
+      end
+      def search_events(q=nil,option={:location=>"all",:start_index=>1,:max_results=>10})
+        resp=get("/events?q=#{url_encode(gbk_to_utf8(q).to_s)}&location=#{option[:location]}&start-index=#{option[:start_index]}&max-results=#{option[:max_results]}")
+        if resp.code=="200"
+          events=[]
+          atom=resp.body
+          doc=REXML::Document.new(atom)
+          REXML::XPath.each(doc,"//feed/entry") do |entry|
+            events<<Event.new(entry.to_s)
+          end
+          events
+        else
+          nil
+        end
+      end
+      def create_event(title=nil,content=nil,where=nil,option={:kind=>"exhibit",:invite_only=>"no",:can_invite=>"yes",:when=>{"endTime"=>(Time.now+60*60*24*5).strftime("%Y-%m-%dT%H:%M:%S+08:00"),"startTime"=>Time.now.strftime("%Y-%m-%dT%H:%M:%S+08:00")}})
+        entry=%Q{<?xml version="1.0" encoding="UTF-8"?>
+        <entry xmlns="http://www.w3.org/2005/Atom" xmlns:db="http://www.douban.com/xmlns/" xmlns:gd="http://schemas.google.com/g/2005" xmlns:opensearch="http://a9.com/-/spec/opensearchrss/1.0/">
+        <title>#{title}</title>
+        <category scheme="http://www.douban.com/2007#kind" term="http://www.douban.com/2007#event.#{option[:kind]}"/>
+        <content>#{content}</content>
+        <db:attribute name="invite_only">#{option[:invite_only]}</db:attribute>
+        <db:attribute name="can_invite">#{option[:can_invite]}</db:attribute>
+        <gd:when endTime="#{option[:when]["endTime"]}" startTime="#{option[:when]["startTime"]}"/>
+        <gd:where valueString="#{where}" />
+        </entry>
+        }
+        resp=post("/events",gbk_to_utf8(entry),{"Content-Type"=>"application/atom+xml"})
+        if resp.code=="201"
+          true
+        else
+          false
+        end
+      end
+=begin
+      def participate_event(event_id=nil)
+        resp=post("/event/#{url_encode(event_id.to_s)}/participants","")
+        if resp.code=="201"
+          true
+        else
+          false
+        end
+      end
+      def wish_event(event_id=nil)
+        resp=post("/event/#{url_encode(event_id)}/wishers")
+        if resp.code=="201"
+          true
+        else
+          false
+        end
+      end
+      def delete_participant(event_id=nil)
+        resp=delete("/event/#{url_encode(event_id)}/participants")
+        if resp.code=="200"
+          true
+        else
+          false
+        end
+      end
+      def delete_wisher(event_id=nil)
+        resp=delete("/event/#{url_encode(event_id)}/wishers")
+        if resp.code=="200"
+          true
+        else
+          false
+        end
+      end
+=end
+      def modify_event(event_id=nil,title=nil,content=nil,where=nil,option={:kind=>"exhibit",:invite_only=>"no",:can_invite=>"yes",:when=>{"endTime"=>(Time.now+60*60*24*5).strftime("%Y-%m-%dT%H:%M:%S+08:00"),"startTime"=>Time.now.strftime("%Y-%m-%dT%H:%M:%S+08:00")}})
+        entry=%Q{<?xml version="1.0" encoding="UTF-8"?>
+        <entry xmlns="http://www.w3.org/2005/Atom" xmlns:db="http://www.douban.com/xmlns/" xmlns:gd="http://schemas.google.com/g/2005" xmlns:opensearch="http://a9.com/-/spec/opensearchrss/1.0/">
+        <title>#{title}</title>
+        <category scheme="http://www.douban.com/2007#kind" term="http://www.douban.com/2007#event.#{option[:kind]}"/>
+        <content>#{content}</content>
+        <db:attribute name="invite_only">#{option[:invite_only]}</db:attribute>
+        <db:attribute name="can_invite">#{option[:can_invite]}</db:attribute>
+        <gd:when endTime="#{option[:when]["endTime"]}" startTime="#{option[:when]["startTime"]}"/>
+        <gd:where valueString="#{where}" />
+        </entry>
+        }
+        resp=post("/event/#{url_encode(event_id)}",gbk_to_utf8(entry),{"Content-Type"=>"application/atom+xml"})
+        if resp.code=="200"
+          true
+        else
+          false
+        end
+      end
+=begin
+      def delete_event(event_id=nil)
+        entry=%Q{<?xml version='1.0' encoding='UTF-8'?>
+          <entry xmlns:ns0="http://www.w3.org/2005/Atom" xmlns:db="http://www.douban.com/xmlns/">
+          <content>对不起大家，活动因故取消了</content>
+          </entry>
+            }
+            resp=post("/event/#{url_encode(event_id)}/delete",gbk_to_utf8(entry),{"Content-Type"=>"application/atom+xml"})
+            if resp.code=="200"
+              true
+            else
+              false
+            end
+          end
+=end
+          
 end
 end
