@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>each_selected_installers (ToplevelInstallerMulti)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File setup.rb, line 1130</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">each_selected_installers</span>
+    <span class="ruby-constant">Dir</span>.<span class="ruby-identifier">mkdir</span> <span class="ruby-value str">'packages'</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-constant">File</span>.<span class="ruby-identifier">dir?</span>(<span class="ruby-value str">'packages'</span>)
+    <span class="ruby-ivar">@selected</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">pack</span><span class="ruby-operator">|</span>
+      <span class="ruby-identifier">$stderr</span>.<span class="ruby-identifier">puts</span> <span class="ruby-node">&quot;Processing the package `#{pack}' ...&quot;</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">verbose?</span>
+      <span class="ruby-constant">Dir</span>.<span class="ruby-identifier">mkdir</span> <span class="ruby-node">&quot;packages/#{pack}&quot;</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-constant">File</span>.<span class="ruby-identifier">dir?</span>(<span class="ruby-node">&quot;packages/#{pack}&quot;</span>)
+      <span class="ruby-constant">Dir</span>.<span class="ruby-identifier">chdir</span> <span class="ruby-node">&quot;packages/#{pack}&quot;</span>
+      <span class="ruby-keyword kw">yield</span> <span class="ruby-ivar">@installers</span>[<span class="ruby-identifier">pack</span>]
+      <span class="ruby-constant">Dir</span>.<span class="ruby-identifier">chdir</span> <span class="ruby-value str">'../..'</span>
+    <span class="ruby-keyword kw">end</span>
+  <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>
