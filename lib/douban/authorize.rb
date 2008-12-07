@@ -202,7 +202,7 @@ class Authorize
       nil
     end
   end
-  def search_music(tag='',option={'start-index'=>1,'max-results'=>10})
+  def search_music(tag='',option={:start_index=>1,:max_results=>10})
     resp=get("/music/subjects?tag=#{url_encode(tag)}&start-index=#{option['start-index']}&max-results=#{option['max-results']}")
     if resp.code=="200"
       atom=resp.body
@@ -525,7 +525,7 @@ class Authorize
             false
           end
         end
-      def delete_note(note_id="")
+      def delete_note(note_id=nil)
         resp=delete("/note/#{url_encode(note_id.to_s)}")
         if resp.code=="200"
           true

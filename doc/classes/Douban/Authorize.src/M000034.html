@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>create_review (Douban::Authorize)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File douban/authorize.rb, line 292</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">create_review</span>(<span class="ruby-identifier">subject_link</span>=<span class="ruby-keyword kw">nil</span>,<span class="ruby-identifier">title</span>=<span class="ruby-keyword kw">nil</span>,<span class="ruby-identifier">content</span>=<span class="ruby-keyword kw">nil</span>,<span class="ruby-identifier">rating</span>=<span class="ruby-value">5</span>)
+    <span class="ruby-identifier">entry</span>=<span class="ruby-node">%Q{&lt;?xml version='1.0' encoding='UTF-8'?&gt;
+          &lt;entry xmlns:ns0=&quot;http://www.w3.org/2005/Atom&quot;&gt;
+          &lt;db:subject xmlns:db=&quot;http://www.douban.com/xmlns/&quot;&gt;
+          &lt;id&gt;#{subject_link}&lt;/id&gt;
+          &lt;/db:subject&gt;
+          &lt;content&gt;#{content}&lt;/content&gt;
+          &lt;gd:rating xmlns:gd=&quot;http://schemas.google.com/g/2005&quot; value=&quot;#{rating}&quot; &gt;&lt;/gd:rating&gt;
+          &lt;title&gt;#{title}&lt;/title&gt;
+          &lt;/entry&gt;
+          }</span>
+          <span class="ruby-identifier">resp</span>=<span class="ruby-identifier">post</span>(<span class="ruby-value str">&quot;/reviews&quot;</span>,<span class="ruby-identifier">gbk_to_utf8</span>(<span class="ruby-identifier">entry</span>),{<span class="ruby-value str">&quot;Content-Type&quot;</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-value str">&quot;application/atom+xml&quot;</span>})
+          <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">resp</span>.<span class="ruby-identifier">code</span><span class="ruby-operator">==</span><span class="ruby-value str">&quot;201&quot;</span>
+            <span class="ruby-keyword kw">true</span>
+          <span class="ruby-keyword kw">else</span>
+            <span class="ruby-keyword kw">false</span>
+          <span class="ruby-keyword kw">end</span>
+        <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

@@ -1,0 +1,103 @@
+
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<!--
+
+    Methods
+
+  -->
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Methods</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="rdoc-style.css" type="text/css" />
+  <base target="docwin" />
+</head>
+<body>
+<div id="index">
+  <h1 class="section-bar">Methods</h1>
+  <div id="index-entries">
+    <a href="classes/Douban/Review.html#M000067">attr_names (Douban::Review)</a><br />
+    <a href="classes/Douban/People.html#M000065">attr_names (Douban::People)</a><br />
+    <a href="classes/Douban/Event.html#M000071">attr_names (Douban::Event)</a><br />
+    <a href="classes/Douban/Note.html#M000069">attr_names (Douban::Note)</a><br />
+    <a href="classes/Douban/Miniblog.html#M000061">attr_names (Douban::Miniblog)</a><br />
+    <a href="classes/Douban/Subject.html#M000006">attr_names (Douban::Subject)</a><br />
+    <a href="classes/Douban/Author.html#M000063">attr_names (Douban::Author)</a><br />
+    <a href="classes/Douban/Collection.html#M000073">attr_names (Douban::Collection)</a><br />
+    <a href="classes/Douban/Authorize.html#M000011">auth (Douban::Authorize)</a><br />
+    <a href="classes/Douban.html#M000005">authorization (Douban)</a><br />
+    <a href="classes/Douban.html#M000004">authorize (Douban)</a><br />
+    <a href="classes/Douban/Authorize.html#M000009">authorized? (Douban::Authorize)</a><br />
+    <a href="classes/Douban/Authorize.html#M000038">create_collection (Douban::Authorize)</a><br />
+    <a href="classes/Douban/Authorize.html#M000059">create_event (Douban::Authorize)</a><br />
+    <a href="classes/Douban/Authorize.html#M000043">create_miniblog (Douban::Authorize)</a><br />
+    <a href="classes/Douban/Authorize.html#M000047">create_note (Douban::Authorize)</a><br />
+    <a href="classes/Douban/Authorize.html#M000034">create_review (Douban::Authorize)</a><br />
+    <a href="classes/Douban/Authorize.html#M000015">delete (Douban::Authorize)</a><br />
+    <a href="classes/Douban/Authorize.html#M000040">delete_collection (Douban::Authorize)</a><br />
+    <a href="classes/Douban/Authorize.html#M000044">delete_miniblog (Douban::Authorize)</a><br />
+    <a href="classes/Douban/Authorize.html#M000048">delete_note (Douban::Authorize)</a><br />
+    <a href="classes/Douban/Authorize.html#M000033">delete_review (Douban::Authorize)</a><br />
+    <a href="classes/Douban.html#M000003">gbk_to_utf8 (Douban)</a><br />
+    <a href="classes/Douban/Authorize.html#M000012">get (Douban::Authorize)</a><br />
+    <a href="classes/Douban/Authorize.html#M000010">get_authorize_url (Douban::Authorize)</a><br />
+    <a href="classes/Douban/Authorize.html#M000022">get_book (Douban::Authorize)</a><br />
+    <a href="classes/Douban/Authorize.html#M000032">get_book_reviews (Douban::Authorize)</a><br />
+    <a href="classes/Douban/Authorize.html#M000057">get_city_events (Douban::Authorize)</a><br />
+    <a href="classes/Douban/Authorize.html#M000036">get_collection (Douban::Authorize)</a><br />
+    <a href="classes/Douban/Authorize.html#M000020">get_contacts (Douban::Authorize)</a><br />
+    <a href="classes/Douban/Authorize.html#M000019">get_contacts (Douban::Authorize)</a><br />
+    <a href="classes/Douban/Authorize.html#M000050">get_event (Douban::Authorize)</a><br />
+    <a href="classes/Douban/Authorize.html#M000018">get_friends (Douban::Authorize)</a><br />
+    <a href="classes/Douban/Authorize.html#M000023">get_movie (Douban::Authorize)</a><br />
+    <a href="classes/Douban/Authorize.html#M000030">get_movie_reviews (Douban::Authorize)</a><br />
+    <a href="classes/Douban/Authorize.html#M000024">get_music (Douban::Authorize)</a><br />
+    <a href="classes/Douban/Authorize.html#M000031">get_music_reviews (Douban::Authorize)</a><br />
+    <a href="classes/Douban/Authorize.html#M000045">get_note (Douban::Authorize)</a><br />
+    <a href="classes/Douban/Authorize.html#M000051">get_participant_people (Douban::Authorize)</a><br />
+    <a href="classes/Douban/Authorize.html#M000017">get_people (Douban::Authorize)</a><br />
+    <a href="classes/Douban/Authorize.html#M000028">get_review (Douban::Authorize)</a><br />
+    <a href="classes/Douban/Authorize.html#M000037">get_user_collection (Douban::Authorize)</a><br />
+    <a href="classes/Douban/Authorize.html#M000042">get_user_contact_miniblog (Douban::Authorize)</a><br />
+    <a href="classes/Douban/Authorize.html#M000053">get_user_events (Douban::Authorize)</a><br />
+    <a href="classes/Douban/Authorize.html#M000054">get_user_initiate_events (Douban::Authorize)</a><br />
+    <a href="classes/Douban/Authorize.html#M000041">get_user_miniblog (Douban::Authorize)</a><br />
+    <a href="classes/Douban/Authorize.html#M000046">get_user_notes (Douban::Authorize)</a><br />
+    <a href="classes/Douban/Authorize.html#M000055">get_user_participate_events (Douban::Authorize)</a><br />
+    <a href="classes/Douban/Authorize.html#M000029">get_user_reviews (Douban::Authorize)</a><br />
+    <a href="classes/Douban/Authorize.html#M000056">get_user_wish_events (Douban::Authorize)</a><br />
+    <a href="classes/Douban/Authorize.html#M000052">get_wisher_people (Douban::Authorize)</a><br />
+    <a href="classes/Douban/Authorize.html#M000016">head (Douban::Authorize)</a><br />
+    <a href="classes/Douban/Authorize.html#M000039">modify_collection (Douban::Authorize)</a><br />
+    <a href="classes/Douban/Authorize.html#M000060">modify_event (Douban::Authorize)</a><br />
+    <a href="classes/Douban/Authorize.html#M000049">modify_note (Douban::Authorize)</a><br />
+    <a href="classes/Douban/Authorize.html#M000035">modify_review (Douban::Authorize)</a><br />
+    <a href="classes/Douban/Authorize.html#M000008">new (Douban::Authorize)</a><br />
+    <a href="classes/Douban/Collection.html#M000074">new (Douban::Collection)</a><br />
+    <a href="classes/Douban/Music.html#M000075">new (Douban::Music)</a><br />
+    <a href="classes/Douban/Event.html#M000072">new (Douban::Event)</a><br />
+    <a href="classes/Douban/Note.html#M000070">new (Douban::Note)</a><br />
+    <a href="classes/Douban/Miniblog.html#M000062">new (Douban::Miniblog)</a><br />
+    <a href="classes/Douban/Subject.html#M000007">new (Douban::Subject)</a><br />
+    <a href="classes/Douban/Author.html#M000064">new (Douban::Author)</a><br />
+    <a href="classes/Douban/Book.html#M000076">new (Douban::Book)</a><br />
+    <a href="classes/Douban/People.html#M000066">new (Douban::People)</a><br />
+    <a href="classes/Douban/Review.html#M000068">new (Douban::Review)</a><br />
+    <a href="classes/Douban/Movie.html#M000077">new (Douban::Movie)</a><br />
+    <a href="classes/Douban/Authorize.html#M000013">post (Douban::Authorize)</a><br />
+    <a href="classes/Douban/Authorize.html#M000014">put (Douban::Authorize)</a><br />
+    <a href="classes/Douban/Authorize.html#M000025">search_book (Douban::Authorize)</a><br />
+    <a href="classes/Douban/Authorize.html#M000058">search_events (Douban::Authorize)</a><br />
+    <a href="classes/Douban/Authorize.html#M000026">search_movie (Douban::Authorize)</a><br />
+    <a href="classes/Douban/Authorize.html#M000027">search_music (Douban::Authorize)</a><br />
+    <a href="classes/Douban/Authorize.html#M000021">search_people (Douban::Authorize)</a><br />
+    <a href="classes/Douban.html#M000001">url_encode (Douban)</a><br />
+    <a href="classes/Douban.html#M000002">utf8_to_gbk (Douban)</a><br />
+  </div>
+</div>
+</body>
+</html>

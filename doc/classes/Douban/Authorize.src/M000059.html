@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>create_event (Douban::Authorize)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File douban/authorize.rb, line 673</span>
+      <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">create_event</span>(<span class="ruby-identifier">title</span>=<span class="ruby-keyword kw">nil</span>,<span class="ruby-identifier">content</span>=<span class="ruby-keyword kw">nil</span>,<span class="ruby-identifier">where</span>=<span class="ruby-keyword kw">nil</span>,<span class="ruby-identifier">option</span>={<span class="ruby-identifier">:kind=</span><span class="ruby-operator">&gt;</span><span class="ruby-value str">&quot;exhibit&quot;</span>,<span class="ruby-identifier">:invite_only=</span><span class="ruby-operator">&gt;</span><span class="ruby-value str">&quot;no&quot;</span>,<span class="ruby-identifier">:can_invite=</span><span class="ruby-operator">&gt;</span><span class="ruby-value str">&quot;yes&quot;</span>,<span class="ruby-identifier">:when</span>=<span class="ruby-operator">&gt;</span>{<span class="ruby-value str">&quot;endTime&quot;</span>=<span class="ruby-operator">&gt;</span>(<span class="ruby-constant">Time</span>.<span class="ruby-identifier">now</span><span class="ruby-operator">+</span><span class="ruby-value">60</span><span class="ruby-operator">*</span><span class="ruby-value">60</span><span class="ruby-operator">*</span><span class="ruby-value">24</span><span class="ruby-operator">*</span><span class="ruby-value">5</span>).<span class="ruby-identifier">strftime</span>(<span class="ruby-value str">&quot;%Y-%m-%dT%H:%M:%S+08:00&quot;</span>),<span class="ruby-value str">&quot;startTime&quot;</span>=<span class="ruby-operator">&gt;</span><span class="ruby-constant">Time</span>.<span class="ruby-identifier">now</span>.<span class="ruby-identifier">strftime</span>(<span class="ruby-value str">&quot;%Y-%m-%dT%H:%M:%S+08:00&quot;</span>)}})
+        <span class="ruby-identifier">entry</span>=<span class="ruby-node">%Q{&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+        &lt;entry xmlns=&quot;http://www.w3.org/2005/Atom&quot; xmlns:db=&quot;http://www.douban.com/xmlns/&quot; xmlns:gd=&quot;http://schemas.google.com/g/2005&quot; xmlns:opensearch=&quot;http://a9.com/-/spec/opensearchrss/1.0/&quot;&gt;
+        &lt;title&gt;#{title}&lt;/title&gt;
+        &lt;category scheme=&quot;http://www.douban.com/2007#kind&quot; term=&quot;http://www.douban.com/2007#event.#{option[:kind]}&quot;/&gt;
+        &lt;content&gt;#{content}&lt;/content&gt;
+        &lt;db:attribute name=&quot;invite_only&quot;&gt;#{option[:invite_only]}&lt;/db:attribute&gt;
+        &lt;db:attribute name=&quot;can_invite&quot;&gt;#{option[:can_invite]}&lt;/db:attribute&gt;
+        &lt;gd:when endTime=&quot;#{option[:when][&quot;endTime&quot;]}&quot; startTime=&quot;#{option[:when][&quot;startTime&quot;]}&quot;/&gt;
+        &lt;gd:where valueString=&quot;#{where}&quot; /&gt;
+        &lt;/entry&gt;
+        }</span>
+        <span class="ruby-identifier">resp</span>=<span class="ruby-identifier">post</span>(<span class="ruby-value str">&quot;/events&quot;</span>,<span class="ruby-identifier">gbk_to_utf8</span>(<span class="ruby-identifier">entry</span>),{<span class="ruby-value str">&quot;Content-Type&quot;</span>=<span class="ruby-operator">&gt;</span><span class="ruby-value str">&quot;application/atom+xml&quot;</span>})
+        <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">resp</span>.<span class="ruby-identifier">code</span><span class="ruby-operator">==</span><span class="ruby-value str">&quot;201&quot;</span>
+          <span class="ruby-keyword kw">true</span>
+        <span class="ruby-keyword kw">else</span>
+          <span class="ruby-keyword kw">false</span>
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

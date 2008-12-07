@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>new (Douban::Event)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File douban/classes/events.rb, line 24</span>
+   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">initialize</span>(<span class="ruby-identifier">atom</span>=<span class="ruby-value str">''</span>)
+      <span class="ruby-identifier">doc</span>=<span class="ruby-constant">REXML</span><span class="ruby-operator">::</span><span class="ruby-constant">Document</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">atom</span>)
+      <span class="ruby-identifier">id</span>=<span class="ruby-constant">REXML</span><span class="ruby-operator">::</span><span class="ruby-constant">XPath</span>.<span class="ruby-identifier">first</span>(<span class="ruby-identifier">doc</span>,<span class="ruby-value str">&quot;//entry/id&quot;</span>)
+      <span class="ruby-ivar">@id</span>=<span class="ruby-identifier">id</span>.<span class="ruby-identifier">text</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">id</span>
+      <span class="ruby-identifier">title</span>=<span class="ruby-constant">REXML</span><span class="ruby-operator">::</span><span class="ruby-constant">XPath</span>.<span class="ruby-identifier">first</span>(<span class="ruby-identifier">doc</span>,<span class="ruby-value str">&quot;//entry/title&quot;</span>)
+      <span class="ruby-ivar">@title</span>=<span class="ruby-identifier">title</span>.<span class="ruby-identifier">text</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">title</span>
+      <span class="ruby-ivar">@category</span>={}
+      <span class="ruby-identifier">category</span>=<span class="ruby-constant">REXML</span><span class="ruby-operator">::</span><span class="ruby-constant">XPath</span>.<span class="ruby-identifier">first</span>(<span class="ruby-identifier">doc</span>,<span class="ruby-value str">&quot;//entry/category&quot;</span>)
+      <span class="ruby-ivar">@category</span>[<span class="ruby-value str">'term'</span>]=<span class="ruby-identifier">category</span>.<span class="ruby-identifier">attributes</span>[<span class="ruby-value str">'term'</span>] <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">category</span>
+      <span class="ruby-ivar">@category</span>[<span class="ruby-value str">'scheme'</span>]=<span class="ruby-identifier">category</span>.<span class="ruby-identifier">attributes</span>[<span class="ruby-value str">'scheme'</span>] <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">category</span>
+      <span class="ruby-ivar">@author</span><span class="ruby-operator">||=</span><span class="ruby-constant">Author</span>.<span class="ruby-identifier">new</span>
+      <span class="ruby-identifier">name</span>=<span class="ruby-constant">REXML</span><span class="ruby-operator">::</span><span class="ruby-constant">XPath</span>.<span class="ruby-identifier">first</span>(<span class="ruby-identifier">doc</span>,<span class="ruby-value str">&quot;//author/name&quot;</span>)
+      <span class="ruby-ivar">@author</span>.<span class="ruby-identifier">name</span>=<span class="ruby-identifier">name</span>.<span class="ruby-identifier">text</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">name</span>
+      <span class="ruby-identifier">uri</span>=<span class="ruby-constant">REXML</span><span class="ruby-operator">::</span><span class="ruby-constant">XPath</span>.<span class="ruby-identifier">first</span>(<span class="ruby-identifier">doc</span>,<span class="ruby-value str">&quot;//author/uri&quot;</span>)
+      <span class="ruby-ivar">@author</span>.<span class="ruby-identifier">uri</span>=<span class="ruby-identifier">uri</span>.<span class="ruby-identifier">text</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">uri</span>
+      <span class="ruby-constant">REXML</span><span class="ruby-operator">::</span><span class="ruby-constant">XPath</span>.<span class="ruby-identifier">each</span>(<span class="ruby-identifier">doc</span>,<span class="ruby-value str">&quot;//author/link&quot;</span>) <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">link</span><span class="ruby-operator">|</span>
+        <span class="ruby-ivar">@author</span>.<span class="ruby-identifier">link</span><span class="ruby-operator">||=</span>{}
+        <span class="ruby-ivar">@author</span>.<span class="ruby-identifier">link</span>[<span class="ruby-identifier">link</span>.<span class="ruby-identifier">attributes</span>[<span class="ruby-value str">'rel'</span>]]=<span class="ruby-identifier">link</span>.<span class="ruby-identifier">attributes</span>[<span class="ruby-value str">'href'</span>]
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-identifier">summary</span>=<span class="ruby-constant">REXML</span><span class="ruby-operator">::</span><span class="ruby-constant">XPath</span>.<span class="ruby-identifier">first</span>(<span class="ruby-identifier">doc</span>,<span class="ruby-value str">&quot;//entry/summary&quot;</span>)
+      <span class="ruby-ivar">@summary</span>=<span class="ruby-identifier">summary</span>.<span class="ruby-identifier">text</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">summary</span>
+      <span class="ruby-identifier">content</span>=<span class="ruby-constant">REXML</span><span class="ruby-operator">::</span><span class="ruby-constant">XPath</span>.<span class="ruby-identifier">first</span>(<span class="ruby-identifier">doc</span>,<span class="ruby-value str">&quot;//entry/content&quot;</span>)
+      <span class="ruby-ivar">@content</span>=<span class="ruby-identifier">content</span>.<span class="ruby-identifier">text</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">content</span>
+      <span class="ruby-constant">REXML</span><span class="ruby-operator">::</span><span class="ruby-constant">XPath</span>.<span class="ruby-identifier">each</span>(<span class="ruby-identifier">doc</span>,<span class="ruby-value str">&quot;//entry/link&quot;</span>) <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">link</span><span class="ruby-operator">|</span>
+        <span class="ruby-ivar">@link</span><span class="ruby-operator">||=</span>{}
+        <span class="ruby-ivar">@link</span>[<span class="ruby-identifier">link</span>.<span class="ruby-identifier">attributes</span>[<span class="ruby-value str">'rel'</span>]]=<span class="ruby-identifier">link</span>.<span class="ruby-identifier">attributes</span>[<span class="ruby-value str">'href'</span>]
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-constant">REXML</span><span class="ruby-operator">::</span><span class="ruby-constant">XPath</span>.<span class="ruby-identifier">each</span>(<span class="ruby-identifier">doc</span>,<span class="ruby-value str">&quot;//entry/db:attribute&quot;</span>) <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">attribute</span><span class="ruby-operator">|</span>
+        <span class="ruby-ivar">@attribute</span><span class="ruby-operator">||=</span>{}
+        <span class="ruby-ivar">@attribute</span>[<span class="ruby-identifier">attribute</span>.<span class="ruby-identifier">attributes</span>[<span class="ruby-value str">'name'</span>]]=<span class="ruby-identifier">attribute</span>.<span class="ruby-identifier">text</span>
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-identifier">location</span>=<span class="ruby-constant">REXML</span><span class="ruby-operator">::</span><span class="ruby-constant">XPath</span>.<span class="ruby-identifier">first</span>(<span class="ruby-identifier">doc</span>,<span class="ruby-value str">&quot;//entry/db:location&quot;</span>)
+      <span class="ruby-ivar">@location</span>=<span class="ruby-identifier">location</span>.<span class="ruby-identifier">text</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">location</span>
+      <span class="ruby-ivar">@when</span>={}
+      <span class="ruby-identifier">time</span>=<span class="ruby-constant">REXML</span><span class="ruby-operator">::</span><span class="ruby-constant">XPath</span>.<span class="ruby-identifier">first</span>(<span class="ruby-identifier">doc</span>,<span class="ruby-value str">&quot;//entry/gd:when&quot;</span>)
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">time</span>
+       <span class="ruby-ivar">@when</span>[<span class="ruby-value str">'startTime'</span>]=<span class="ruby-identifier">time</span>.<span class="ruby-identifier">attributes</span>[<span class="ruby-value str">'startTime'</span>]
+       <span class="ruby-ivar">@when</span>[<span class="ruby-value str">'endTime'</span>]=<span class="ruby-identifier">time</span>.<span class="ruby-identifier">attributes</span>[<span class="ruby-value str">'endTime'</span>]
+     <span class="ruby-keyword kw">end</span>
+     <span class="ruby-identifier">where</span>=<span class="ruby-constant">REXML</span><span class="ruby-operator">::</span><span class="ruby-constant">XPath</span>.<span class="ruby-identifier">first</span>(<span class="ruby-identifier">doc</span>,<span class="ruby-value str">&quot;//entry/gd:where&quot;</span>)
+     <span class="ruby-ivar">@where</span>=<span class="ruby-identifier">where</span>.<span class="ruby-identifier">attributes</span>[<span class="ruby-value str">'valueString'</span>] <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">where</span>
+   <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>
