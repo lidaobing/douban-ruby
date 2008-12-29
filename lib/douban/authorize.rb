@@ -126,7 +126,7 @@ class Authorize
   
   
   def search_people(q=nil,option={:start_index=>1,:max_results=>10})
-    resp=get("/people/?q=#{url_encode(q.to_s)}&start-index=#{option[:start_index]}&max-results=#{option[:max_results]}")
+    resp=get("/people?q=#{url_encode(q.to_s)}&start-index=#{option[:start_index]}&max-results=#{option[:max_results]}")
     if resp.code=="200"
       results=[]
       atom=resp.body
