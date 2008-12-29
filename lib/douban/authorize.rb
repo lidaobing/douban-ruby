@@ -16,7 +16,8 @@ class Authorize
         :site=>OAUTH_HOST,
         :request_token_path=>REQUEST_TOKEN_PATH,
         :access_token_path=>ACCESS_TOKEN_PATH,
-        :authorize_path=>AUTHORIZE_PATH 
+        :authorize_path=>AUTHORIZE_PATH ,
+        :http_method=>:get
       }
       yield self if block_given?
       self 
