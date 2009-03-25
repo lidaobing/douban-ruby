@@ -13,12 +13,15 @@ class Authorize
       @api_key=attributes[:api_key] ||=CONF["api_key"]
       @secret_key=attributes[:secret_key]||=CONF["secret_key"]
       @oauth_option={
-        :site=>OAUTH_HOST,
-        :request_token_path=>REQUEST_TOKEN_PATH,
-        :access_token_path=>ACCESS_TOKEN_PATH,
-        :authorize_path=>AUTHORIZE_PATH ,
-        :http_method=>:get
-      }
+                              :signature_method=>"HMAC-SHA1",
+                              :site=>OAUTH_HOST,
+                              :request_token_path=>REQUEST_TOKEN_PATH,
+                              :access_token_path=>ACCESS_TOKEN_PATH,
+                              :authorize_path=>AUTHORIZE_PATH ,
+                              #:http_method=>:head,
+                              :scheme=>:header,
+                              :realm=>"http://myapp.com"
+                            }
       yield self if block_given?
       self 
     end
@@ -37,8 +40,14 @@ class Authorize
     begin
       @access_token=@request_token.get_access_token
       @access_token=OAuth::AccessToken.new OAuth::Consumer.new(@api_key,
-                                                                                         @secret_key,
-                                                                                         {:site=>API_HOST}),
+                                                                                              @secret_key,
+                                                                                                {:site=>API_HOST,
+                                                                                                  :scheme=>:header,
+                                                                                                  :signature_method=>"HMAC-SHA1",
+                                                                                                  :realm=>"http://myapp.com"
+                                              
+                                                                                                }
+                                                                                              ),
                                                                                          @access_token.token,
                                                                                          @access_token.secret
     rescue

@@ -1,7 +1,7 @@
 #=douban.rb
 #
 # Copyright (c) 2008 Hooopo
-# Written and maintained by Hooopo<wxz125627771@gmail.com>
+# Written and maintained by Hooopo<hoooopo@gmail.com>
 #
 # 
 # This program is free software. You can re-distribute and/or
