@@ -4,6 +4,12 @@ module Douban
   def url_encode(str)
     CGI.escape(str)
   end
+  def url_decode(str)
+    CGI.unescape(str)
+  end
+  def decode(str)
+    CGI::unescapeHTML(str)
+  end
 
   def utf8_to_gbk(str)
     iconv=Iconv.new("GBK//IGNORE","UTF-8//IGNORE")

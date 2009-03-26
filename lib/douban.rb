@@ -53,17 +53,24 @@ base = File.expand_path(File.dirname(__FILE__))
 $:.unshift base + "/douban"
 $:.unshift base + "/douban/classes"
 $:.unshift base + "/douban/helper"
-%w(authorize people subjects reviews collections miniblogs notes events helper).each(&method(:require))
+%w(mail authorize people subjects reviews collections miniblogs notes events helper).each(&method(:require))
 module Douban
-  API_CONF     =File.dirname(__FILE__)+"/douban.yaml"
-  CONF = YAML.load(File.open(API_CONF)) 
-  MY_SITE                     =CONF['mysite']
-  API_HOST                   = "http://api.douban.com"
-  OAUTH_HOST              ="http://www.douban.com"
+  API_CONF     = if File.exist?("douban.conf")
+                   "douban.conf"
+                 elsif ENV["DOUBAN_CONF"] && File.exist?(ENV["DOUBAN_CONF"])
+                   ENV["DOUBAN_CONF"]
+                 else 
+                   File.dirname(__FILE__)+"/douban.yaml"
+                 end
+  #API_CONF     =File.dirname(__FILE__)+"/douban.yaml"
+  #CONF = YAML.load(File.open(API_CONF)) 
+  CONF = YAML.load(File.open(API_CONF)) or {} rescue CONF = {}
+  MY_SITE=CONF['mysite']
+  API_HOST= "http://api.douban.com"
+  OAUTH_HOST="http://www.douban.com"
   REQUEST_TOKEN_PATH ="/service/auth/request_token"
-  ACCESS_TOKEN_PATH   ="/service/auth/access_token"
-  AUTHORIZE_PATH         ="/service/auth/authorize"
- 
+  ACCESS_TOKEN_PATH="/service/auth/access_token"
+  AUTHORIZE_PATH="/service/auth/authorize"
   def self.authorize
     @client = Authorize.new
     yield @client if block_given?
