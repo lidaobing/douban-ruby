@@ -53,7 +53,7 @@ base = File.expand_path(File.dirname(__FILE__))
 $:.unshift base + "/douban"
 $:.unshift base + "/douban/classes"
 $:.unshift base + "/douban/helper"
-%w(mail authorize people subjects reviews collections miniblogs notes events helper).each(&method(:require))
+%w(mails recommendations tags authorize people subjects reviews collections miniblogs notes events helper).each(&method(:require))
 module Douban
   API_CONF     = if File.exist?("douban.conf")
                    "douban.conf"

@@ -1,6 +1,9 @@
 require'cgi'
 require'iconv'
 module Douban
+  def format_time(time)
+    time.strftime("%Y-%m-%dT%H:%M:%S+08:00").to_s
+  end
   def url_encode(str)
     CGI.escape(str)
   end

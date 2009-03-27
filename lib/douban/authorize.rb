@@ -693,7 +693,7 @@ module Douban
               nil
             end
           end
-          def create_event(title="",content="",where="",option={:kind=>"exhibit",:invite_only=>"no",:can_invite=>"yes",:when=>{"endTime"=>(Time.now+60*60*24*5).strftime("%Y-%m-%dT%H:%M:%S+08:00"),"startTime"=>Time.now.strftime("%Y-%m-%dT%H:%M:%S+08:00")}})
+          def create_event(title="",content="",where="",option={:kind=>"party",:invite_only=>"no",:can_invite=>"yes",:when=>{"endTime"=>(Time.now+60*60*24*5).strftime("%Y-%m-%dT%H:%M:%S+08:00"),"startTime"=>Time.now.strftime("%Y-%m-%dT%H:%M:%S+08:00")}})
             entry=%Q{<?xml version="1.0" encoding="UTF-8"?>
             <entry xmlns="http://www.w3.org/2005/Atom" xmlns:db="http://www.douban.com/xmlns/" xmlns:gd="http://schemas.google.com/g/2005" xmlns:opensearch="http://a9.com/-/spec/opensearchrss/1.0/">
             <title>#{title}</title>
@@ -878,21 +878,59 @@ module Douban
             false
           end
          end
-=begin
-          def delete_event(event_id=nil)
-            entry=%Q{<?xml version='1.0' encoding='UTF-8'?>
-              <entry xmlns:ns0="http://www.w3.org/2005/Atom" xmlns:db="http://www.douban.com/xmlns/">
-              <content>对不起大家，活动因故取消了</content>
-              </entry>
-                }
-                resp=post("/event/#{url_encode(event_id)}/delete",gbk_to_utf8(entry),{"Content-Type"=>"application/atom+xml"})
+         
+          def get_book_tags(subject_id="",flag=:book)
+            case flag
+            when :book
+              resp=get("/book/subject/#{subject_id}/tags")
+            when :music
+              resp=get("/music/subject/#{subject_id}/tags")
+            when :movie
+              resp=get("/movie/subject/#{subject_id}/tags")
+            end
+             if resp.code=="200"
+              tags=[]
+              atom=resp.body
+              doc=REXML::Document.new(atom)
+              REXML::XPath.each(doc,"//entry") do |entry|
+                tags << Tag.new(entry.to_s)
+              end
+               tags
+            else
+               nil
+            end
+          end
+          def get_user_tags(user_id="",flag=:book,option={:max_results=>10})
+            case flag
+            when :book
+              resp=get("/people/#{user_id}/tags?cat=book&max-results=#{option[:max_results]}")
+            when :music
+              resp=get("/people/#{user_id}/tags?cat=music&max-results=#{option[:max_results]}")
+            when :movie
+              resp=get("/people/#{user_id}/tags?cat=movie&max-results=#{option[:max_results]}")
+            end
+            if resp.code=="200"
+              tags=[]
+              atom=resp.body
+              doc=REXML::Document.new(atom)
+              REXML::XPath.each(doc,"//entry") do |entry|
+                tags << Tag.new(entry.to_s)
+              end
+               tags
+            else
+               nil
+            end 
+          end
+
+          def delete_event(event_id="")
+            entry=%Q{<?xml version='1.0' encoding='UTF-8'?><entry xmlns:ns0="http://www.w3.org/2005/Atom" xmlns:db="http://www.douban.com/xmlns/"><content>sorry!!!</content></entry>}
+                resp=post("/event/#{url_encode(event_id)}/delete",entry,{"Content-Type"=>"application/atom+xml"})
                 if resp.code=="200"
                   true
                 else
                   false
                 end
               end
-=end
 
     end
 end

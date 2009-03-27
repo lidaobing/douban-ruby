@@ -1,4 +1,5 @@
 require'rexml/document'
+require'tags'
 module Douban
   class Subject
     class<<self
@@ -30,8 +31,11 @@ module Douban
       @category['term']=category.attributes['term'] if category
       @category['scheme']=category.attributes['scheme'] if category
       REXML::XPath.each(doc,"//db:tag") do |tag|
-        @tag||={}
-        @tag[tag.attributes['name']]=tag.attributes['count']
+        @tag||=[]
+        t=Tag.new
+        t.title=tag.attributes['name']
+        t.count=tag.attributes['count']
+        @tag<<t
       end
       @author||=Author.new
       name=REXML::XPath.first(doc,"//author/name")
