@@ -1,3 +1,4 @@
+require'oauth'
 require'oauth/consumer'
 require'rexml/document'
 require'net/http'
