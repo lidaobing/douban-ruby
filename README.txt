@@ -18,8 +18,7 @@ Douban API reference: http://www.douban.com/service/apidoc/reference/
 
 == Usage:
 
-
-
+http://github.com/lidaobing/doubanclient-ruby/blob/master/examples/example.rb
 
 == LICENSE:
 
