@@ -31,26 +31,9 @@ module Douban
     end
 
     def authorized?
-      if @access_token.nil?
-        false
-      else
-        if get("access_token/#{@access_token.token}").code=="200"
-          true
-        else
-          false
-        end
-        #          url=API_HOST+"/access_token/" + @access_token.token
-        #          url=URI.parse(url)
-        #          Net::HTTP.start(url.host,url.port) do |http|
-        #            resp=http.get(url.path)
-        #            if resp.code=="200"
-        #              true
-        #            else
-        #              false
-        #            end
-        #          end
-      end
+      ! @access_token.nil?
     end
+    
     def get_authorize_url
       @consumer=OAuth::Consumer.new(@api_key,@secret_key,@oauth_option)
       @request_token=@consumer.get_request_token

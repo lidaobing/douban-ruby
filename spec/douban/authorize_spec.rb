@@ -49,19 +49,23 @@ module Douban
         @access_token = '0306646daca492b609132d4905edb822'
         @access_secret = '22070cec426cb925'
         @authorize = Douban.authorize
+        @authorize.access_token = OAuth::Token.new(@access_token, @access_secret)
       end
         
       
+      it "should authorized?" do
+        @authorize.authorized?.should == true
+      end
+
       it "should support set access token" do
-        @authorize.access_token = OAuth::Token.new(@access_token, @access_secret)
         #@authorize.authorized?.should == true
         people = @authorize.get_people
         people.nil?.should == false
         people.uid.should == "41502874"
       end
       
-      
       it "should publish miniblog with html characters"
+      
     end
   end
 end
