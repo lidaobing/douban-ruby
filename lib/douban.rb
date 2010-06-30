@@ -55,6 +55,7 @@ $:.unshift base + "/douban/classes"
 $:.unshift base + "/douban/helper"
 %w(mails recommendations tags authorize people subjects reviews collections miniblogs notes events helper).each(&method(:require))
 module Douban
+  VERSION      = "0.0.1"
   API_CONF     = if File.exist?("douban.conf")
                    "douban.conf"
                  elsif ENV["DOUBAN_CONF"] && File.exist?(ENV["DOUBAN_CONF"])
