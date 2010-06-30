@@ -936,10 +936,13 @@ module Douban
     end
     
     def request_token=(token)
-      @request_token = OAuth::RequestToken.new(
-        new_request_consumer,
-        token.token,
-        token.secret)
+      unless token.kind_of? OAuth::RequestToken
+        token = OAuth::RequestToken.new(
+          new_request_consumer,
+          token.token,
+          token.secret)
+      end
+      @request_token = token
     end
     
     private
