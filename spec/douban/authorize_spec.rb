@@ -2,14 +2,19 @@ require File.join(File.dirname(__FILE__), '/../spec_helper')
 
 module Douban
   describe Authorize do
+    before(:each) do
+      @api_key = '042bc009d7d4a04d0c83401d877de0e7'
+      @secret_key = 'a9bb2d7f8cc00110'
+      @authorize = Authorize.new(@api_key, @secret_key)
+    end
+
     context "when oauth login" do
       it "should return login url and request token" do
-        authorize = Douban.authorize
-        authorize.authorized?.should be_false
-        authorize.get_authorize_url.should =~ %r{^http://.*oauth_token=[0-9a-f]{32}&oauth_callback=.*$}
-        authorize.authorized?.should be_false
-        authorize.request_token.token.should =~ /[0-9a-f]{32}/
-        authorize.request_token.secret.should =~ /[0-9a-f]{16}/
+        @authorize.authorized?.should be_false
+        @authorize.get_authorize_url.should =~ %r{^http://.*oauth_token=[0-9a-f]{32}&oauth_callback=.*$}
+        @authorize.authorized?.should be_false
+        @authorize.request_token.token.should =~ /[0-9a-f]{32}/
+        @authorize.request_token.secret.should =~ /[0-9a-f]{16}/
       end
     end
     
@@ -23,9 +28,8 @@ module Douban
       end
       
       it "should support set request token" do
-        authorize = Douban.authorize
-        authorize.request_token = OAuth::Token.new(@request_token, @request_secret)
-        authorize.request_token.kind_of?(OAuth::RequestToken).should == true
+        @authorize.request_token = OAuth::Token.new(@request_token, @request_secret)
+        @authorize.request_token.kind_of?(OAuth::RequestToken).should == true
       end
       
       it "auth should works" do
@@ -35,12 +39,11 @@ module Douban
           OAuth::Token.new(@access_token, @access_secret)
         )
         
-        authorize = Douban.authorize
-        authorize.request_token = request_token_mock
-        authorize.auth
-        authorize.access_token.kind_of?(OAuth::AccessToken).should == true
-        authorize.access_token.token.should == @access_token
-        authorize.access_token.secret.should == @access_secret
+        @authorize.request_token = request_token_mock
+        @authorize.auth
+        @authorize.access_token.class.should == OAuth::AccessToken
+        @authorize.access_token.token.should == @access_token
+        @authorize.access_token.secret.should == @access_secret
       end
     end
     
@@ -48,7 +51,6 @@ module Douban
       before(:each) do
         @access_token = '0306646daca492b609132d4905edb822'
         @access_secret = '22070cec426cb925'
-        @authorize = Douban.authorize
         @authorize.access_token = OAuth::Token.new(@access_token, @access_secret)
       end
         

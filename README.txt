@@ -18,7 +18,7 @@ Douban API reference: http://www.douban.com/service/apidoc/reference/
 
 == Usage:
 
-:include:examples/example.rb
+
 
 
 == LICENSE:

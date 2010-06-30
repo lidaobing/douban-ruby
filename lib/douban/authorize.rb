@@ -13,19 +13,20 @@ module Douban
     attr_reader :consumer
     attr_reader :request_token
     attr_reader :access_token
-    def initialize(attributes={})
-      @api_key=attributes[:api_key] ||=CONF["api_key"]
-      @secret_key=attributes[:secret_key]||=CONF["secret_key"]
-      @oauth_option={
+
+    def initialize(api_key, secret_key, options={})
+      @api_key=api_key
+      @secret_key=secret_key
+      default_options = {
         :signature_method=>"HMAC-SHA1",
         :site=>OAUTH_HOST,
         :request_token_path=>REQUEST_TOKEN_PATH,
         :access_token_path=>ACCESS_TOKEN_PATH,
         :authorize_path=>AUTHORIZE_PATH ,
-        #:http_method=>:head,
         :scheme=>:header,
-        :realm=>MY_SITE
+        :realm=>"http://www.example.com/"
       }
+      @oauth_option=default_options.merge(options)
       yield self if block_given?
       self 
     end
@@ -34,11 +35,16 @@ module Douban
       ! @access_token.nil?
     end
     
-    def get_authorize_url
+    def get_authorize_url(oauth_callback=nil)
+      oauth_callback ||= @oauth_option[:realm]
+
       @consumer=OAuth::Consumer.new(@api_key,@secret_key,@oauth_option)
       @request_token=@consumer.get_request_token
-      @authorzie_url=@request_token.authorize_url<<"&oauth_callback="<<MY_SITE
+      @authorize_url="#{@request_token.authorize_url}&oauth_callback=#{CGI.escape(oauth_callback)}"
+      yield @request_token if block_given?
+      @authorize_url
     end
+
     def auth
       begin
         @access_token=@request_token.get_access_token
@@ -50,7 +56,7 @@ module Douban
           :site=>API_HOST,
           :scheme=>:header,
           :signature_method=>"HMAC-SHA1",
-          :realm=>MY_SITE
+          :realm=>@oauth_option[:realm]
         }
         ),
           @access_token.token,
@@ -948,7 +954,7 @@ module Douban
                           :site=>API_HOST,
                           :scheme=>:header,
                           :signature_method=>"HMAC-SHA1",
-                          :realm=>MY_SITE)
+                          :realm=>@oauth_option[:realm])
     end
   end
 end

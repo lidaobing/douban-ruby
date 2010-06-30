@@ -56,30 +56,11 @@ require 'douban/helper/helper'
 
 module Douban
   VERSION      = "0.0.1"
-  API_CONF     = if File.exist?("douban.conf")
-                   "douban.conf"
-                 elsif ENV["DOUBAN_CONF"] && File.exist?(ENV["DOUBAN_CONF"])
-                   ENV["DOUBAN_CONF"]
-                 else 
-                   File.dirname(__FILE__)+"/douban.yaml"
-                 end
-  #API_CONF     =File.dirname(__FILE__)+"/douban.yaml"
-  #CONF = YAML.load(File.open(API_CONF)) 
-  CONF = YAML.load(File.open(API_CONF)) or {} rescue CONF = {}
-  MY_SITE=CONF['mysite']
   API_HOST= "http://api.douban.com"
   OAUTH_HOST="http://www.douban.com"
   REQUEST_TOKEN_PATH ="/service/auth/request_token"
   ACCESS_TOKEN_PATH="/service/auth/access_token"
   AUTHORIZE_PATH="/service/auth/authorize"
-  def self.authorize
-    @client = Authorize.new
-    yield @client if block_given?
-    @client
-  end
-  def self.authorization
-    @client ||= self.authorize
-  end
 end
 fail "This is a library, not a command line app" if $0 == __FILE__
 
