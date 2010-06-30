@@ -57,16 +57,25 @@ module Douban
         @authorize.authorized?.should == true
       end
 
-      it "should support set access token" do
+      it "get_people should works" do
         #@authorize.authorized?.should == true
         people = @authorize.get_people
         people.nil?.should == false
         people.uid.should == "41502874"
       end
-      
-      it "should publish miniblog with html characters and return Miniblog" do
-        miniblog = @authorize.create_miniblog("<b>单元测试#{rand}")
-        miniblog.kind_of?(Douban::Miniblog).should == true
+
+      context "miniblog" do
+        it "should publish miniblog with html characters and return Miniblog" do
+          miniblog = @authorize.create_miniblog("<b>单元测试#{rand}")
+          miniblog.kind_of?(Douban::Miniblog).should == true
+        end
+
+        it "delete miniblog should works" do
+          miniblog = @authorize.create_miniblog("<b>单元测试#{rand}")
+          miniblog.kind_of?(Douban::Miniblog).should == true
+          id = %r{http://api.douban.com/miniblog/(\d+)}.match(miniblog.id)[1]
+          @authorize.delete_miniblog(id).should == true
+        end
       end
     end
   end
