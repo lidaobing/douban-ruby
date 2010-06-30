@@ -1,6 +1,6 @@
 = Douban Ruby Client
 
-http://github.com/lidaobing/doubanclient-ruby
+http://github.com/lidaobing/douban-ruby
 
 == Description
 
@@ -18,7 +18,7 @@ Douban API reference: http://www.douban.com/service/apidoc/reference/
 
 == Usage:
 
-http://github.com/lidaobing/doubanclient-ruby/blob/master/examples/example.rb
+http://github.com/lidaobing/douban-ruby/blob/master/examples/example.rb
 
 == LICENSE:
 
