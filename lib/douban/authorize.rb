@@ -934,6 +934,20 @@ module Douban
         false
       end
     end
+    
+    def request_token=(token)
+      @request_token = OAuth::RequestToken.new(
+        new_request_consumer,
+        token.token,
+        token.secret)
+    end
+    
+    private
+    def new_request_consumer
+      OAuth::Consumer.new(@api_key, @secret_key, @oauth_option)
+    end
+
+    
 
   end
 end
