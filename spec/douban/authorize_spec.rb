@@ -64,8 +64,9 @@ module Douban
         people.uid.should == "41502874"
       end
       
-      it "should publish miniblog with html characters"
-      
+      it "should publish miniblog with html characters" do
+        @authorize.create_miniblog("<b>单元测试#{rand}").should == true
+      end
     end
   end
 end

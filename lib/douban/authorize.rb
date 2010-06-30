@@ -475,7 +475,7 @@ module Douban
       end
     end
     def create_miniblog(content="")
-      entry=%Q{<?xml version='1.0' encoding='UTF-8'?><entry xmlns:ns0="http://www.w3.org/2005/Atom" xmlns:db="http://www.douban.com/xmlns/"><content>#{content.to_s}</content></entry>}
+      entry=%Q{<?xml version='1.0' encoding='UTF-8'?><entry xmlns:ns0="http://www.w3.org/2005/Atom" xmlns:db="http://www.douban.com/xmlns/"><content>#{CGI.escapeHTML(content.to_s)}</content></entry>}
       resp=post("/miniblog/saying",entry,{"Content-Type"=>"application/atom+xml"})
       if resp.code=="201"
         true
