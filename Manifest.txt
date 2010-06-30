@@ -1,6 +1,6 @@
 History.txt
 Manifest.txt
-README.txt
+README.rdoc
 Rakefile
 lib/douban.rb
 lib/douban.yaml
@@ -17,6 +17,8 @@ lib/douban/review.rb
 lib/douban/subject.rb
 lib/douban/tag.rb
 setup.rb
+spec/douban/author_spec.rb
 spec/douban/authorize_spec.rb
 spec/douban/miniblog_spec.rb
+spec/douban/people_spec.rb
 spec/spec_helper.rb

@@ -1,0 +1,21 @@
+= douban ruby client
+
+* http://code.google.com/p/doubanclient-ruby/
+
+== DESCRIPTION:
+
+douban ruby client. including OAuth support. Douban API reference: http://www.douban.com/service/apidoc/reference/
+
+== REQUIREMENTS:
+
+* oauth
+
+== INSTALL:
+
+* sudo gem install douban
+
+== Usage:
+
+== LICENSE:
+
+licensed under Artistic License or GPL license.
