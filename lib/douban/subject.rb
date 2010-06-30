@@ -1,5 +1,5 @@
-require'rexml/document'
-require'tags'
+require 'rexml/document'
+require 'douban/tag'
 module Douban
   class Subject
     class<<self

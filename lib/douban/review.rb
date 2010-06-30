@@ -1,5 +1,6 @@
 require'rexml/document'
-require'subjects.rb'
+require'douban/subject'
+
 module Douban
  class Review
    class <<self

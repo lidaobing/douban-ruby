@@ -49,13 +49,11 @@
 #==Install and Wiki
 #  http://code.google.com/p/doubanclient-ruby/
 
-base = File.expand_path(File.dirname(__FILE__))
-$:.unshift base + "/douban"
-$:.unshift base + "/douban/classes"
-$:.unshift base + "/douban/helper"
-%w(mails recommendations tags authorize people subjects reviews collections miniblogs notes events helper).each do |m|
-  require m
+%w(mail tag authorize people subject review collection miniblog note event).each do |m|
+  require "douban/#{m}"
 end
+require 'douban/helper/helper'
+
 module Douban
   VERSION      = "0.0.1"
   API_CONF     = if File.exist?("douban.conf")

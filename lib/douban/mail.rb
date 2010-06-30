@@ -1,5 +1,5 @@
-require'rexml/document'
-require"subjects.rb"
+require 'rexml/document'
+require "douban/subject"
 module Douban
  class Mail
    class <<self
