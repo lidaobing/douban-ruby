@@ -2,7 +2,7 @@ require File.join(File.dirname(__FILE__), '/../spec_helper')
 
 module Douban
   describe Authorize do
-    context "oauth login" do
+    context "when oauth login" do
       it "should return login url and request token" do
         authorize = Douban.authorize
         authorize.authorized?.should be_false
