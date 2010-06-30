@@ -15,8 +15,8 @@ module Douban
     
     context "oauth verify" do
       before(:each) do
-        @token = "a" * 32
-        @secret = "b" * 16
+        @request_token = "a" * 32
+        @request_secret = "b" * 16
         
         @access_token = "c"*32
         @access_secret = "d"*16
@@ -24,7 +24,7 @@ module Douban
       
       it "should support set request token" do
         authorize = Douban.authorize
-        authorize.request_token = OAuth::Token.new(@token, @secret)
+        authorize.request_token = OAuth::Token.new(@request_token, @request_secret)
         authorize.request_token.kind_of?(OAuth::RequestToken).should == true
       end
       
@@ -45,6 +45,22 @@ module Douban
     end
     
     context "logged in with oauth" do
+      before(:each) do
+        @access_token = '0306646daca492b609132d4905edb822'
+        @access_secret = '22070cec426cb925'
+        @authorize = Douban.authorize
+      end
+        
+      
+      it "should support set access token" do
+        @authorize.access_token = OAuth::Token.new(@access_token, @access_secret)
+        #@authorize.authorized?.should == true
+        people = @authorize.get_people
+        people.nil?.should == false
+        people.uid.should == "41502874"
+      end
+      
+      
       it "should publish miniblog with html characters"
     end
   end

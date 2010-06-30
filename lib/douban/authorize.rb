@@ -945,12 +945,27 @@ module Douban
       @request_token = token
     end
     
+    def access_token=(token)
+      unless token.kind_of? OAuth::AccessToken
+        token = OAuth::AccessToken.new(
+          new_access_consumer,
+          token.token,
+          token.secret)
+      end
+      @access_token = token
+    end
+
     private
     def new_request_consumer
       OAuth::Consumer.new(@api_key, @secret_key, @oauth_option)
     end
-
     
-
+    def new_access_consumer
+      OAuth::Consumer.new(@api_key, @secret_key,
+                          :site=>API_HOST,
+                          :scheme=>:header,
+                          :signature_method=>"HMAC-SHA1",
+                          :realm=>MY_SITE)
+    end
   end
 end

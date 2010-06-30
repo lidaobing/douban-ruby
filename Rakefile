@@ -22,4 +22,4 @@ end
 
 task :release => :verify
 
-ENV["SPEC_OPTS"] = "-f nested"
+ENV["SPEC_OPTS"] ||= "-f nested"
