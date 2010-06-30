@@ -58,7 +58,6 @@ module Douban
       end
 
       it "get_people should works" do
-        #@authorize.authorized?.should == true
         people = @authorize.get_people
         people.nil?.should == false
         people.uid.should == "41502874"
