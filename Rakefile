@@ -21,3 +21,5 @@ task :verify => :package do
 end
 
 task :release => :verify
+
+ENV["SPEC_OPTS"] = "-f nested"
