@@ -1,3 +1,12 @@
+=== 0.0.2 / 2010-07-01
+* Douban.authorize no longer works, you need use Douban::Authorize.new
+* Douban::Authorize
+  * you can restore request token with request_token=
+  * you can restore access token with access_token=
+  * create_miniblog will quote +content+ parameter
+  * create_miniblog will return a Douban::Miniblog if success, otherwise return nil
+* add some test with rspec
+
 === 0.0.1 / 2010-06-30
 
 * import from http://code.google.com/p/doubanclient-ruby/
