@@ -1,3 +1,7 @@
+=== 0.0.3 / XXXX-XX-XX
+* Douban::Authorize
+  * get_recommendation added.
+
 === 0.0.2 / 2010-07-01
 * Douban.authorize no longer works, you need use Douban::Authorize.new
 * Douban::Authorize

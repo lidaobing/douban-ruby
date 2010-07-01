@@ -14,6 +14,12 @@ module Douban
     attr_reader :request_token
     attr_reader :access_token
 
+    @@debug = false
+
+    class << self
+      attr_accessor :debug
+    end
+
     def initialize(api_key, secret_key, options={})
       @api_key=api_key
       @secret_key=secret_key
@@ -404,6 +410,7 @@ module Douban
       }
       resp=post("/collection",entry,{"Content-Type"=>"application/atom+xml"})
       if resp.code=="201"
+        print resp.body
         true
       else
         false
@@ -943,6 +950,15 @@ module Douban
       end
       @access_token = token
     end
+    
+    def get_recommendation(id)
+      resp=get("/recommendation/#{url_encode(id.to_s)}")
+      if resp.code=="200"
+        Recommendation.new(resp.body)
+      else
+        debug(resp)
+      end
+    end
 
     private
     def new_request_consumer
@@ -955,6 +971,14 @@ module Douban
                           :scheme=>:header,
                           :signature_method=>"HMAC-SHA1",
                           :realm=>@oauth_option[:realm])
+    end
+
+    def debug(resp)
+      if @@debug
+        p resp.code
+        p resp.body
+      end
+      nil
     end
   end
 end

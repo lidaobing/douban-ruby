@@ -78,6 +78,16 @@ module Douban
           @authorize.delete_miniblog(id).should == true
         end
       end
+      
+      context "recommendation" do
+        context "get_recommendation" do
+          it "should work" do
+            recommendation = @authorize.get_recommendation(28732532)
+            recommendation.class.should == Douban::Recommendation
+            recommendation.title.should == "推荐小组话题：理证：试论阿赖耶识存在之必然性"
+          end
+        end
+      end
     end
   end
 end
