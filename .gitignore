@@ -1,6 +1,8 @@
 .config
 *.swp
-pkg
+/pkg
 .project
 *~
 doc
+*#
+/pkg

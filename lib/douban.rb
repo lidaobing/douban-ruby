@@ -37,7 +37,7 @@
 #  Permission to access a user's data is restricted -- you can't just access
 #  any user's data.  In order to access a user's data, they need to have
 #  visit the authorize_url and press the 'agree' button .
-#  when user has press the 'agree' button £¬we use client.auth to authorize.
+#  when user has press the 'agree' button ï¼Œwe use client.auth to authorize.
 #	 client=client.auth
 #	 puts client.authoried? #return true or false
 #  Get users' info via his uid 
@@ -45,7 +45,7 @@
 #   people = client.get_people('hooopo')
 #   people.class === People
 #   people.title === hooopo
-#   people.location === "³¤É³"
+#   people.location === "é•¿æ²™"
 #==Install and Wiki
 #  http://code.google.com/p/doubanclient-ruby/
 
@@ -55,7 +55,7 @@ end
 require 'douban/helper/helper'
 
 module Douban
-  VERSION      = "0.0.1"
+  VERSION      = "0.0.2.dev"
   API_HOST= "http://api.douban.com"
   OAUTH_HOST="http://www.douban.com"
   REQUEST_TOKEN_PATH ="/service/auth/request_token"
