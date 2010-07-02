@@ -1020,6 +1020,40 @@ module Douban
       end
     end
 
+    def create_recommendation_comment(recommendation, content)
+      recommendation_id = recommendation.kind_of?(Douban::Recommendation) \
+        ? recommendation.recommendation_id : recommendation
+      entry = %Q{<?xml version='1.0' encoding='UTF-8'?>
+    <entry>
+        <content>#{h content}</content>
+    </entry>}
+      resp = post("/recommendation/#{u recommendation_id}/comments", entry, {"Content-Type"=>"application/atom+xml"})
+      if resp.code == '201'
+        RecommendationComment.new(resp.body)
+      else
+        debug(resp)
+      end
+    end
+
+    # delete_recommendation_comment(comment:RecommendationComment)
+    # delete_recommendation_comment(recommendation:Recommendation, comment_id:Integer)
+    # delete_recommendation_comment(recommendation_id:Integer, comment_id:Integer)
+    def delete_recommendation_comment(recommendation, comment_id=nil)
+      if comment_id.nil?
+        recommendation_id = recommendation.recommendation_id
+        comment_id = recommendation.comment_id
+      else
+        recommendation_id = recommendation.kind_of?(Douban::Recommendation) \
+          ? recommendation.recommendation_id : recommendation
+      end
+      resp = delete("/recommendation/#{u recommendation_id}/comment/#{u comment_id}")
+      if resp.code == '200'
+        true
+      else
+        debug(resp, false)
+      end
+    end
+
     private
     def new_request_consumer
       OAuth::Consumer.new(@api_key, @secret_key, @oauth_option)

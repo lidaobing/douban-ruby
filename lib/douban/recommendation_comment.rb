@@ -17,11 +17,19 @@ module Douban
 
     def initialize(entry="")
       doc = entry.kind_of?(REXML::Element) ? entry : REXML::Document.new(entry)
-      @id = REXML::XPath.first(doc, ".//id/text()")
+      @id = REXML::XPath.first(doc, ".//id/text()").to_s
       @author = REXML::XPath.first(doc, ".//author")
       @author = Author.new(@author.to_s) if @author
-      @published = REXML::XPath.first(doc, ".//published/text()")
-      @content = REXML::XPath.first(doc, ".//content/text()")
+      @published = REXML::XPath.first(doc, ".//published/text()").to_s
+      @content = REXML::XPath.first(doc, ".//content/text()").to_s
+    end
+
+    def recommendation_id
+      /recommendation\/(\d+)\/comment/.match(@id)[1].to_i rescue nil
+    end
+
+    def comment_id
+      /\/(\d+)$/.match(@id)[1].to_i rescue nil
     end
   end
 end

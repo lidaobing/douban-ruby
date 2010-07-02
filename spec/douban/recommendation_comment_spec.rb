@@ -23,6 +23,9 @@ module Douban
       comment.author.class.should == Douban::Author
       comment.published.should == "2008-11-07T10:19:54+08:00"
       comment.content.should == "对，这是刚捡回来的时候，呵呵，现在已经成大屁妹了"    
+
+      comment.recommendation_id.should == 3673470
+      comment.comment_id.should == 178441
     end
 
     it "should correct deserialize from REXML::Element" do

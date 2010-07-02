@@ -120,7 +120,24 @@ module Douban
           end
           it "should can delete through recommendation_id" do
             @authorize.delete_recommendation(
-              @authorize.create_recommendation("http://api.douban.com/movie/subject/1424406", "标题", "神作").recommendation_id).should == true
+                @authorize.create_recommendation("http://api.douban.com/movie/subject/1424406", "标题", "神作").recommendation_id).should == true
+          end
+        end
+
+        context "create_recommendation_comment & delete_recommendation_comment" do
+          it "should return a RecommendationComment and can be delete" do
+            comment = @authorize.create_recommendation_comment(28732532, "好文")
+            comment.class.should == Douban::RecommendationComment
+            comment.content.should == "好文"
+            @authorize.delete_recommendation_comment(comment).should == true
+          end
+          it "should can be delete through recommendation and comment_id" do
+            comment = @authorize.create_recommendation_comment(28732532, "好文")
+            @authorize.delete_recommendation_comment(@authorize.get_recommendation(28732532), comment.comment_id).should == true
+          end
+          it "should can be delete through recommendation_id and comment_id" do
+            comment = @authorize.create_recommendation_comment(28732532, "好文")
+            @authorize.delete_recommendation_comment(28732532, comment.comment_id).should == true
           end
         end
       end
