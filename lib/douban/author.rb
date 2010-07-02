@@ -16,8 +16,8 @@ module Douban
     attr_names.each do |attr|
       attr_accessor attr
     end
-    def initialize(entry="")
-      doc=REXML::Document.new(entry)
+    def initialize(doc)
+      doc=REXML::Document.new(doc) unless doc.kind_of?(REXML::Element)
       REXML::XPath.each(doc,"//link") do|link|
         @link||={}
         @link[link.attributes['rel']]=link.attributes['href']

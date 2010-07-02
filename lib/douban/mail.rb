@@ -1,5 +1,7 @@
 require 'rexml/document'
 require "douban/subject"
+require 'douban/author'
+
 module Douban
  class Mail
    class <<self
@@ -21,7 +23,7 @@ module Douban
       attr_accessor attr
     end
     def initialize(doc)
-      doc=REXML::Document.new(doc) unless doc.kind_of?(REXML::Element)
+      doc=REXML::XPath.first(REXML::Document.new(doc), "//entry") unless doc.kind_of?(REXML::Element)
       title=REXML::XPath.first(doc,"./title")
       @title=title.text if title
       published=REXML::XPath.first(doc,"./published")
@@ -45,9 +47,9 @@ module Douban
       content=REXML::XPath.first(doc,"./content")
       @content=content.text if content
       author=REXML::XPath.first(doc,"./author")
-      @author=Author.new(author.to_s) if author
+      @author=Author.new(author) if author
       receiver=REXML::XPath.first(doc,"./db:entity[@name='receiver']")
-      @receiver=Author.new(receiver.to_s) if receiver
+      @receiver=Author.new(receiver) if receiver
     end
  end
 end

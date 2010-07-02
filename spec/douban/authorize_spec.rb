@@ -180,6 +180,13 @@ module Douban
             end
           end
         end
+
+        context "get_mail" do
+          it "should work" do
+            mail = @authorize.get_mail(82937520)
+            mail.class.should == Mail
+          end
+        end
       end
     end
   end
