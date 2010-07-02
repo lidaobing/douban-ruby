@@ -1,5 +1,9 @@
+require 'douban/equal'
+
 module Douban
   class Author
+    include Douban::Equal
+
     class<<self
       def attr_names
         [

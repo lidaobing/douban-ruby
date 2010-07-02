@@ -2,8 +2,8 @@ require File.join(File.dirname(__FILE__), "/../spec_helper")
 
 module Douban
   describe Recommendation do
-    it "should correct deserialize" do
-      s = %Q{<?xml version="1.0" encoding="UTF-8"?>
+    before do
+      @s = %Q{<?xml version="1.0" encoding="UTF-8"?>
 <entry xmlns="http://www.w3.org/2005/Atom" xmlns:db="http://www.douban.com/xmlns/" xmlns:gd="http://schemas.google.com/g/2005" xmlns:openSearch="http://a9.com/-/spec/opensearchrss/1.0/" xmlns:opensearch="http://a9.com/-/spec/opensearchrss/1.0/">
         <id>http://api.douban.com/recommendation/28732532</id>
         <title>推荐小组话题：理证：试论阿赖耶识存在之必然性</title>
@@ -21,7 +21,10 @@ module Douban
         <db:attribute name="comments_count">0</db:attribute>
 </entry>
 }
-      recommendation = Recommendation.new(s)
+    end
+
+    it "should correct deserialize from string" do
+      recommendation = Recommendation.new(@s)
       recommendation.id.should == "http://api.douban.com/recommendation/28732532"
       recommendation.title.should == "推荐小组话题：理证：试论阿赖耶识存在之必然性"
       recommendation.author.class.should == Douban::Author
@@ -32,6 +35,10 @@ module Douban
       recommendation.category.should == "topic"
       recommendation.comment.should == nil
       recommendation.comments_count.should == 0
+    end
+
+    it "should correct deserialize from REXML::Element" do
+      Recommendation.new(REXML::Document.new(@s)).should == Recommendation.new(@s)
     end
   end
 end

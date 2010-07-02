@@ -960,6 +960,20 @@ module Douban
       end
     end
 
+    def get_user_recommendations(user_id="@me",option={:start_index=>1,:max_results=>10})
+      resp=get("/people/#{url_encode(user_id.to_s)}/recommendations?start-index=#{option[:start_index]}&max-results=#{option[:max_results]}")
+      if resp.code == "200"
+        recommendations = []
+        doc=REXML::Document.new(resp.body)
+        REXML::XPath.each(doc,"//entry") do |entry|
+          recommendations << Recommendation.new(entry)
+        end
+        recommendations
+      else
+        debug(resp)
+      end
+    end
+
     private
     def new_request_consumer
       OAuth::Consumer.new(@api_key, @secret_key, @oauth_option)

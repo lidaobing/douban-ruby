@@ -87,6 +87,14 @@ module Douban
             recommendation.title.should == "推荐小组话题：理证：试论阿赖耶识存在之必然性"
           end
         end
+        context "get_user_recommendations" do
+          it "should work" do
+            recommendations = @authorize.get_user_recommendations("aka")
+            recommendations.size.should == 10
+            recommendations[0].class.should == Douban::Recommendation
+            recommendations[0].id.should_not == recommendations[-1].id
+          end
+        end
       end
     end
   end
