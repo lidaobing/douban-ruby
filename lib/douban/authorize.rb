@@ -988,6 +988,25 @@ module Douban
       end
     end
 
+    def create_recommendation(subject, title, comment)
+      subject = subject.kind_of?(Douban::Subject) ? subject.id : subject
+      entry = %Q{<?xml version="1.0" encoding="UTF-8"?>
+<entry xmlns="http://www.w3.org/2005/Atom"
+        xmlns:gd="http://schemas.google.com/g/2005"
+        xmlns:opensearch="http://a9.com/-/spec/opensearchrss/1.0/"
+        xmlns:db="http://www.douban.com/xmlns/">
+        <title>#{h title}</title>
+        <db:attribute name="comment">#{h comment}</db:attribute>
+        <link href="#{h subject}" rel="related" />
+</entry>}
+      resp = post("/recommendations", entry, {"Content-Type"=>"application/atom+xml"})
+      if resp.code == '201'
+        Recommendation.new(resp.body)
+      else
+        debug(resp)
+      end 
+    end
+
     private
     def new_request_consumer
       OAuth::Consumer.new(@api_key, @secret_key, @oauth_option)
@@ -1007,6 +1026,10 @@ module Douban
         p resp.body
       end
       nil
+    end
+
+    def h(o)
+      CGI.escapeHTML(o.to_s)
     end
   end
 end
