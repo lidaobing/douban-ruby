@@ -49,7 +49,7 @@
 #==Install and Wiki
 #  http://code.google.com/p/doubanclient-ruby/
 
-%w(mail tag author authorize people subject review collection miniblog note event recommendation).each do |m|
+%w(mail tag author authorize people subject review collection miniblog note event recommendation recommendation_comment).each do |m|
   require "douban/#{m}"
 end
 require 'douban/helper/helper'
