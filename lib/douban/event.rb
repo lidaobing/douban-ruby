@@ -1,6 +1,9 @@
-require'rexml/document'
+require 'rexml/document'
+require 'douban/equal'
+
 module Douban
   class Event
+    include Douban::Equal
     class<<self
       def attr_names
         [
@@ -21,10 +24,9 @@ module Douban
     attr_names.each do |attr|
       attr_accessor attr
     end
-   def initialize(atom='')
-      doc=REXML::Document.new(atom)
-      id=REXML::XPath.first(doc,"//entry/id")
-      @id=id.text if id
+   def initialize(doc='')
+      doc=REXML::Document.new(doc) unless doc.kind_of?(REXML::Element)
+      @id=REXML::XPath.first(doc,"//entry/id/text()").to_s
       title=REXML::XPath.first(doc,"//entry/title")
       @title=title.text if title
       @category={}
@@ -62,6 +64,10 @@ module Douban
      end
      where=REXML::XPath.first(doc,"//entry/gd:where")
      @where=where.attributes['valueString'] if where
+   end
+
+   def event_id
+     /\/(\d+)$/.match(@id)[1].to_i rescue nil
    end
  end
  end

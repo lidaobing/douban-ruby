@@ -705,9 +705,10 @@ module Douban
       }
       resp=post("/events",entry,{"Content-Type"=>"application/atom+xml"})
       if resp.code=="201"
-        true
+        puts resp.body
+        Event.new(resp.body)
       else
-        false
+        debug(resp)
       end
             end
 =begin
@@ -926,7 +927,7 @@ module Douban
       if resp.code=="200"
         true
       else
-        false
+        debug(resp, false)
       end
     end
     

@@ -151,6 +151,15 @@ module Douban
           end
         end
       end
+
+      context "event" do
+        context "create_event" do
+          it "should return Event" do
+            event = @authorize.create_event("a", "b", "大山子798艺术区 IT馆")
+            event.class.should == Douban::Event
+          end
+        end
+      end
     end
   end
 end
