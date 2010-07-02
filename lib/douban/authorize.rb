@@ -974,6 +974,20 @@ module Douban
       end
     end
 
+    def get_recommendation_comments(recommendation_id)
+      resp = get("/recommendation/#{url_encode(recommendation_id)}/comments")
+      if resp.code == "200"
+        comments = []
+        doc=REXML::Document.new(resp.body)
+        REXML::XPath.each(doc, "//entry") do |entry|
+          comments << RecommendationComment.new(entry)
+        end
+        comments
+      else
+        debug(resp)
+      end
+    end
+
     private
     def new_request_consumer
       OAuth::Consumer.new(@api_key, @secret_key, @oauth_option)

@@ -8,7 +8,7 @@ module Douban
       @authorize = Authorize.new(@api_key, @secret_key)
     end
 
-    context "help" do
+    context "helper" do
       context "url_encode" do
         it "should support integer" do
           @authorize.url_encode(1).should == "1"
@@ -105,8 +105,8 @@ module Douban
         end
         context "get_recommendation_comments" do
           it "should work" do
-            recommendations = @authorize.get_recommendation_comments(28732532)
-            recommendations.size.should == 10
+            recommendations = @authorize.get_recommendation_comments(4312524)
+            recommendations.size.should >= 2
             recommendations[0].class.should == Douban::RecommendationComment
             recommendations[0].id.should_not == recommendations[-1].id
           end
