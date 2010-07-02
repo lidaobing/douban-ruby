@@ -1,5 +1,7 @@
 require File.join(File.dirname(__FILE__), '/../spec_helper')
 
+require 'douban/mail'
+
 module Douban
   describe Mail do
     before do

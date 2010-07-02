@@ -1,5 +1,7 @@
 require File.join(File.dirname(__FILE__), '/../spec_helper')
 
+require 'douban/event'
+
 module Douban
   describe Event do
     before do

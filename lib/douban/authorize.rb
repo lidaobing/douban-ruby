@@ -1,9 +1,11 @@
 require 'rubygems'
 gem 'oauth'
-require'oauth'
-require'oauth/consumer'
-require'rexml/document'
-require'net/http'
+require 'oauth'
+require 'oauth/consumer'
+require 'rexml/document'
+require 'net/http'
+require 'douban'
+
 module Douban
   class Authorize
     include Douban

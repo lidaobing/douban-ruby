@@ -1,5 +1,7 @@
 require File.join(File.dirname(__FILE__), '/../spec_helper')
 
+require 'douban/people'
+
 module Douban
   describe People do
     it 'should correct deserialize' do

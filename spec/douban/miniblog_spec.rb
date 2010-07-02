@@ -1,5 +1,7 @@
 require File.join(File.dirname(__FILE__), '/../spec_helper')
 
+require 'douban/miniblog'
+
 module Douban
   describe Miniblog do
     it "should correct deserialize" do
