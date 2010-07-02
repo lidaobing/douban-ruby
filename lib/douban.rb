@@ -55,7 +55,7 @@ end
 require 'douban/helper/helper'
 
 module Douban
-  VERSION      = "0.0.3.dev"
+  VERSION      = "0.0.3"
   API_HOST= "http://api.douban.com"
   OAUTH_HOST="http://www.douban.com"
   REQUEST_TOKEN_PATH ="/service/auth/request_token"

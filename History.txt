@@ -1,6 +1,13 @@
-=== 0.0.3 / XXXX-XX-XX
+=== 0.0.3 / 2010-07-02
 * Douban::Authorize
-  * get_recommendation added.
+  * recommendation apis added
+    * get_recommendation
+    * get_user_recommendations
+    * get_recommendation_comments
+    * create_recommendation
+    * delete_recommendation
+    * create_recommendation_comment
+    * delete_recommendation_comment
 
 === 0.0.2 / 2010-07-01
 * Douban.authorize no longer works, you need use Douban::Authorize.new
