@@ -705,7 +705,6 @@ module Douban
       }
       resp=post("/events",entry,{"Content-Type"=>"application/atom+xml"})
       if resp.code=="201"
-        puts resp.body
         Event.new(resp.body)
       else
         debug(resp)
