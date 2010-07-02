@@ -771,7 +771,7 @@ module Douban
         atom=resp.body
         doc=REXML::Document.new(atom)
         REXML::XPath.each(doc,"//entry") do |entry|
-          mails << Mail.new(entry.to_s)
+          mails << Mail.new(entry)
         end
         mails
       else
@@ -831,7 +831,7 @@ module Douban
         hash[:url]=str.scan(/captcha_url=(.*?)$/).flatten.to_s
         hash
       else
-        nil
+        debug(resp)
       end
     end
     def read_mail(mail_id="")

@@ -160,6 +160,25 @@ module Douban
           end
         end
       end
+
+      context "mail" do
+        context "get_mail_inbox" do
+          it "should works" do
+            @mails = @authorize.get_mail_inbox
+            @mails.size.should >= 2
+            @mails[0].id.should_not == @mails[-1].id
+          end
+        end
+
+        context "create_mail" do
+          it "should return captcha_token in the first time" do
+            mail = @authorize.create_mail("lidaobing", "hello", "world")
+            if mail.class != Hash
+              mail.class.should == true
+            end
+          end
+        end
+      end
     end
   end
 end
