@@ -16,8 +16,8 @@ module Douban
 
     @@debug = false
 
-    class << self
-      attr_accessor :debug
+    def self.debug=(val)
+      @@debug = val
     end
 
     def initialize(api_key, secret_key, options={})
@@ -410,10 +410,9 @@ module Douban
       }
       resp=post("/collection",entry,{"Content-Type"=>"application/atom+xml"})
       if resp.code=="201"
-        print resp.body
-        true
+        Collection.new(resp.body)
       else
-        false
+        debug(resp)
       end
     end
     def modify_collection(collection_id="",subject_id="",content="",rating=5,tag=[],status="",option={:privacy=>"public"})
