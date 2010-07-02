@@ -26,6 +26,7 @@ module Douban
     it "should correct deserialize from string" do
       recommendation = Recommendation.new(@s)
       recommendation.id.should == "http://api.douban.com/recommendation/28732532"
+      recommendation.recommendation_id.should == 28732532
       recommendation.title.should == "推荐小组话题：理证：试论阿赖耶识存在之必然性"
       recommendation.author.class.should == Douban::Author
       recommendation.published.should == "2010-07-01T19:41:33+08:00"

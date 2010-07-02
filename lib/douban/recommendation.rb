@@ -39,5 +39,9 @@ module Douban
       @comment = REXML::XPath.first(doc, ".//db:attribute[@name='comment']/text()").to_s
       @comments_count = REXML::XPath.first(doc, ".//db:attribute[@name='comment_count']/text()").to_i rescue 0
     end
+
+    def recommendation_id
+      %r{/(\d+)$}.match(@id)[1].to_i rescue nil
+    end
   end
 end

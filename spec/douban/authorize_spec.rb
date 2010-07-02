@@ -118,6 +118,10 @@ module Douban
             recommendation.comment.should == "神作"
             @authorize.delete_recommendation(recommendation).should == true
           end
+          it "should can delete through recommendation_id" do
+            @authorize.delete_recommendation(
+              @authorize.create_recommendation("http://api.douban.com/movie/subject/1424406", "标题", "神作").recommendation_id).should == true
+          end
         end
       end
     end
