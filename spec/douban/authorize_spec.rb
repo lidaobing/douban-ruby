@@ -8,6 +8,14 @@ module Douban
       @authorize = Authorize.new(@api_key, @secret_key)
     end
 
+    context "help" do
+      context "url_encode" do
+        it "should support integer" do
+          @authorize.url_encode(1).should == "1"
+        end
+      end
+    end
+
     context "when oauth login" do
       it "should return login url and request token" do
         @authorize.authorized?.should be_false
@@ -92,6 +100,14 @@ module Douban
             recommendations = @authorize.get_user_recommendations("aka")
             recommendations.size.should == 10
             recommendations[0].class.should == Douban::Recommendation
+            recommendations[0].id.should_not == recommendations[-1].id
+          end
+        end
+        context "get_recommendation_comments" do
+          it "should work" do
+            recommendations = @authorize.get_recommendation_comments(28732532)
+            recommendations.size.should == 10
+            recommendations[0].class.should == Douban::RecommendationComment
             recommendations[0].id.should_not == recommendations[-1].id
           end
         end
