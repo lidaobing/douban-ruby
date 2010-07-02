@@ -1007,6 +1007,19 @@ module Douban
       end 
     end
 
+    def delete_recommendation(recommendation_id)
+      if recommendation_id.kind_of?(Douban::Recommendation)
+        recommendation_id = %r{/(\d+)$}.match(recommendation_id.id)[1]
+      end
+
+      resp = delete("/recommendation/#{u recommendation_id}")
+      if resp.code == '200'
+        true
+      else
+        debug(resp, false)
+      end
+    end
+
     private
     def new_request_consumer
       OAuth::Consumer.new(@api_key, @secret_key, @oauth_option)
@@ -1020,16 +1033,20 @@ module Douban
                           :realm=>@oauth_option[:realm])
     end
 
-    def debug(resp)
+    def debug(resp, retval=nil)
       if @@debug
         p resp.code
         p resp.body
       end
-      nil
+      retval
     end
 
     def h(o)
       CGI.escapeHTML(o.to_s)
+    end
+
+    def u(o)
+      CGI.escape(o.to_s)
     end
   end
 end

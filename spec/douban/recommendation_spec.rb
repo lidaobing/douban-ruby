@@ -33,7 +33,7 @@ module Douban
       recommendation.content_type.class.should == String
       recommendation.content_type.should == "html"
       recommendation.category.should == "topic"
-      recommendation.comment.should == nil
+      recommendation.comment.should == ""
       recommendation.comments_count.should == 0
     end
 

@@ -111,11 +111,12 @@ module Douban
             recommendations[0].id.should_not == recommendations[-1].id
           end
         end
-        context "create_recommendation" do
-          it "should return a Recommendation" do
+        context "create_recommendation & delete_recommendation" do
+          it "should return a Recommendation and can be delete" do
             recommendation = @authorize.create_recommendation("http://api.douban.com/movie/subject/1424406", "标题", "神作")
             recommendation.class.should == Douban::Recommendation
             recommendation.comment.should == "神作"
+            @authorize.delete_recommendation(recommendation).should == true
           end
         end
       end
