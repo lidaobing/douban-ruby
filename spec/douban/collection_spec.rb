@@ -50,6 +50,7 @@ module Douban
     it "should correct deserialize string" do
       collection = Collection.new(@s)
       collection.id.should == "http://api.douban.com/collection/266618947"
+      collection.collection_id.should == 266618947
       collection.title.should == "SJo1pHHJGmCx 看过 Cowboy Bebop"
       collection.author.class.should == Author
       collection.updated.should == "2010-07-02T21:48:29+08:00"

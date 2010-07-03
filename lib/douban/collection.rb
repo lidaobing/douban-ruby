@@ -1,5 +1,7 @@
 require 'rexml/document'
 require 'douban/subject'
+require 'douban/author'
+
 module Douban
   class Collection
 
@@ -44,7 +46,7 @@ module Douban
       @id=id.text if id
       REXML::XPath.each(doc,"//entry/db:tag") do |tag|
         @tag||=[]
-        @tag<<tag.attributes['name']
+        @tag<< tag.attributes['name']
       end
       rating=REXML::XPath.first(doc,"//entry/db:rating")
       if rating
@@ -54,5 +56,10 @@ module Douban
         @rating['max']=rating.attributes['max']
       end
     end
+
+    def collection_id
+      /\/(\d+)$/.match(@id)[1].to_i rescue nil
+    end
   end
 end
+
