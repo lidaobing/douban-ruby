@@ -1,7 +1,7 @@
 require'rexml/document'
 module Douban
  class Miniblog
-   class <<self
+   class << self
      def attr_names
        [
         :id,

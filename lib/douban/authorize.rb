@@ -603,7 +603,7 @@ module Douban
         atom=resp.body
         doc=REXML::Document.new(atom)
         REXML::XPath.each(doc,"//feed/entry") do |entry|
-          people<<People.new(entry.to_s)
+          people<< People.new(entry.to_s)
         end
         people
       else
@@ -617,7 +617,7 @@ module Douban
         atom=resp.body
         doc=REXML::Document.new(atom)
         REXML::XPath.each(doc,"//feed/entry") do |entry|
-          people<<People.new(entry.to_s)
+          people<< People.new(entry.to_s)
         end
         people
       else
@@ -631,7 +631,7 @@ module Douban
         atom=resp.body
         doc=REXML::Document.new(atom)
         REXML::XPath.each(doc,"//feed/entry") do |entry|
-          events<<Event.new(entry.to_s)
+          events<< Event.new(entry.to_s)
         end
         events
       else
@@ -645,7 +645,7 @@ module Douban
         atom=resp.body
         doc=REXML::Document.new(atom)
         REXML::XPath.each(doc,"//feed/entry") do |entry|
-          events<<Event.new(entry.to_s)
+          events<< Event.new(entry.to_s)
         end
         events
       else
@@ -659,7 +659,7 @@ module Douban
         atom=resp.body
         doc=REXML::Document.new(atom)
         REXML::XPath.each(doc,"//feed/entry") do |entry|
-          events<<Event.new(entry.to_s)
+          events<< Event.new(entry.to_s)
         end
         events
       else
@@ -673,7 +673,7 @@ module Douban
         atom=resp.body
         doc=REXML::Document.new(atom)
         REXML::XPath.each(doc,"//feed/entry") do |entry|
-          events<<Event.new(entry.to_s)
+          events<< Event.new(entry.to_s)
         end
         events
       else
@@ -687,7 +687,7 @@ module Douban
         atom=resp.body
         doc=REXML::Document.new(atom)
         REXML::XPath.each(doc,"//feed/entry") do |entry|
-          events<<Event.new(entry.to_s)
+          events<< Event.new(entry.to_s)
         end
         events
       else
@@ -701,7 +701,7 @@ module Douban
         atom=resp.body
         doc=REXML::Document.new(atom)
         REXML::XPath.each(doc,"//feed/entry") do |entry|
-          events<<Event.new(entry.to_s)
+          events<< Event.new(entry.to_s)
         end
         events
       else
@@ -779,7 +779,8 @@ module Douban
       else
         false
       end
-            end
+    end
+
     def get_mail_inbox(option={:start_index=>1,:max_results=>10})
       resp=get("/doumail/inbox?start-index=#{option[:start_index]}&max-results=#{option[:max_results]}")
       if resp.code=="200"

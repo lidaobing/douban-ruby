@@ -4,7 +4,7 @@ require 'douban/author'
 
 module Douban
  class Mail
-   class <<self
+   class << self
      def attr_names
        [
         :id,

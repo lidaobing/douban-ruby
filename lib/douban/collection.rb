@@ -5,7 +5,7 @@ module Douban
 
     include Douban::Equal
 
-    class <<self
+    class << self
       def attr_names
         [
           :tag,
