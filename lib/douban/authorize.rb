@@ -454,7 +454,9 @@ module Douban
               </entry>
       }
       resp=put("/collection/#{u collection_id}",entry,{"Content-Type"=>"application/atom+xml"})
-      if resp.code=="200"
+      # resp.code should be 202, but currently it's 200
+      # http://www.douban.com/group/topic/12451628/
+      if resp.code=="200" or resp.code == "202"
         Collection.new(resp.body)
       else
         debug(resp)
