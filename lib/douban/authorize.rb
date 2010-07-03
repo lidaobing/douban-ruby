@@ -709,7 +709,7 @@ module Douban
       end
     end
     def search_events(q="",option={:location=>"all",:start_index=>1,:max_results=>10})
-      resp=get("/events?q=#{url_encode(gbk_to_utf8(q).to_s)}&location=#{option[:location]}&start-index=#{option[:start_index]}&max-results=#{option[:max_results]}")
+      resp=get("/events?q=#{url_encode(q.to_s)}&location=#{option[:location]}&start-index=#{option[:start_index]}&max-results=#{option[:max_results]}")
       if resp.code=="200"
         events=[]
         atom=resp.body
@@ -742,7 +742,20 @@ module Douban
       end
     end
 
-    def modify_event(event_id=nil,title=nil,content=nil,where=nil,option={:kind=>"exhibit",:invite_only=>"no",:can_invite=>"yes",:when=>{"endTime"=>(Time.now+60*60*24*5).strftime("%Y-%m-%dT%H:%M:%S+08:00"),"startTime"=>Time.now.strftime("%Y-%m-%dT%H:%M:%S+08:00")}})
+    def modify_event(event,title=nil,content=nil,where=nil,option=nil)
+
+      event_id = case event
+        when Event then event.event_id
+        else event
+      end
+
+      option = {} if option.nil?
+      option = {:kind=>"exhibit",
+        :invite_only=>"no",
+        :can_invite=>"yes",
+        :when=>{"endTime"=>(Time.now+60*60*24*5).strftime("%Y-%m-%dT%H:%M:%S+08:00"),
+          "startTime"=>Time.now.strftime("%Y-%m-%dT%H:%M:%S+08:00")}}.merge(option)
+
       entry=%Q{<?xml version="1.0" encoding="UTF-8"?>
             <entry xmlns="http://www.w3.org/2005/Atom" xmlns:db="http://www.douban.com/xmlns/" xmlns:gd="http://schemas.google.com/g/2005" xmlns:opensearch="http://a9.com/-/spec/opensearchrss/1.0/">
             <title>#{title}</title>
@@ -754,11 +767,11 @@ module Douban
             <gd:where valueString="#{where}" />
             </entry>
       }
-      resp=post("/event/#{url_encode(event_id)}",gbk_to_utf8(entry),{"Content-Type"=>"application/atom+xml"})
+      resp=put("/event/#{url_encode(event_id)}",entry,{"Content-Type"=>"application/atom+xml"})
       if resp.code=="200"
-        true
+        Event.new(resp.body)
       else
-        false
+        debug(resp)
       end
     end
 

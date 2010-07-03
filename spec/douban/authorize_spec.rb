@@ -179,10 +179,21 @@ module Douban
       context "event" do
         context "create_event" do
           it "should return Event" do
-            event = @authorize.create_event("a", "b", "大山子798艺术区 IT馆")
+            event = @authorize.create_event("douban-ruby 单元测试", "event 好像不能自动删除", "大山子798艺术区 IT馆")
             event.class.should == Douban::Event
           end
         end
+
+=begin
+        context "modify_event" do
+          it "should return Event" do
+            event = @authorize.create_event("douban-ruby 单元测试", "event 好像不能自动删除", "大山子798艺术区 IT馆")
+            event = @authorize.modify_event(event, "douban-ruby 单元测试", "event 好像不能自动删除", "大山子798艺术区 IT馆")
+            event.class.should == Douban::Event
+            event.title.should == "douban-ruby 单元测试2"
+          end
+        end
+=end
       end
 
       context "mail" do

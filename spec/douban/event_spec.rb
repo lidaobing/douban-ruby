@@ -34,6 +34,7 @@ module Douban
 
     it "should correct deserialize from string" do
       event = Event.new(@s)
+      event.event_id.should == 12171445
       event.id.should == "http://api.douban.com/event/12171445"
       event.title.should == "a"
       event.category.should == {"term"=>"http://www.douban.com/2007#event.party", "scheme"=>"http://www.douban.com/2007#kind"}
@@ -52,5 +53,4 @@ module Douban
     end
   end
 end
-
 
