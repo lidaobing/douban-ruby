@@ -26,28 +26,30 @@ module Douban
       attr_accessor attr
     end
     def initialize(doc)
-      doc=REXML::Document.new(doc) unless doc.kind_of?(REXML::Element)
-      title=REXML::XPath.first(doc,"//entry/title")
+      doc = REXML::Document.new(doc).root unless doc.kind_of?(REXML::Element)
+      doc = doc.root if doc.kind_of?(REXML::Document)
+      
+      title=REXML::XPath.first(doc,"./title")
       @title=title.text if title
-      published=REXML::XPath.first(doc,"//entry/published")
+      published=REXML::XPath.first(doc,"./published")
       @published=published.text if published
-      updated=REXML::XPath.first(doc,"//entry/updated")
+      updated=REXML::XPath.first(doc,"./updated")
       @updated=updated.text if updated
-      REXML::XPath.each(doc,"//entry/link") do |link|
+      REXML::XPath.each(doc,"./link") do |link|
         @link||={}
         @link[link.attributes['rel']]=link.attributes['href']
       end
-      id=REXML::XPath.first(doc,"//entry/id")
+      id=REXML::XPath.first(doc,"./id")
       @id=id.text if id
-      REXML::XPath.each(doc,"//entry/db:attribute") do |attr|
+      REXML::XPath.each(doc,"./db:attribute") do |attr|
         @attribute||={}
         @attribute[attr.attributes['name']]=attr.text
       end
-      content=REXML::XPath.first(doc,"//entry/content")
+      content=REXML::XPath.first(doc,"./content")
       @content=content.text if content
-      summary=REXML::XPath.first(doc,"//entry/summary")
+      summary=REXML::XPath.first(doc,"./summary")
       @summary=summary.text if summary
-      author=REXML::XPath.first(doc,"//entry/author")
+      author=REXML::XPath.first(doc,"./author")
       @author=Author.new(author.to_s) if author
     end
     

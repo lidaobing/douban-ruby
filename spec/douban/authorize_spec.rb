@@ -208,6 +208,14 @@ module Douban
             @authorize.delete_note(note).should == true
           end
         end
+        
+        context "get_user_notes" do
+          it "should return notes with different id" do
+            notes = @authorize.get_user_notes
+            notes.size.should >= 2
+            notes[0].id.should_not == notes[-1].id
+          end
+        end
       end
     end
   end

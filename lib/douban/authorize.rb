@@ -514,6 +514,7 @@ module Douban
         nil
       end
     end
+    
     def get_user_notes(user_id="@me",option={:start_index=>1,:max_results=>10})
       resp=get("/people/#{url_encode(user_id.to_s)}/notes?start-index=#{option[:start_index]}&max-results=#{option[:max_results]}")
       if resp.code=="200"
@@ -523,15 +524,16 @@ module Douban
         author=Author.new(author.to_s) if author
         notes=[]
         REXML::XPath.each(doc,"//feed/entry") do |entry|
-          note=Note.new(entry.to_s)
+          note=Note.new(entry)
           note.author=author
-          notes<<note
+          notes << note
         end
         notes
       else
         nil
       end
     end
+    
     def create_note(title="",content="",option={:privacy=>"public",:can_reply=>"yes"})
       entry=%Q{<?xml version="1.0" encoding="UTF-8"?>
                   <entry xmlns="http://www.w3.org/2005/Atom" xmlns:db="http://www.douban.com/xmlns/">
