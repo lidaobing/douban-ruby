@@ -579,7 +579,13 @@ module Douban
         false
       end
     end
-    def modify_note(note_id="",title="",content="",option={:privacy=>"public",:can_reply=>"yes"})
+
+    def modify_note(note,title="",content="",option={:privacy=>"public",:can_reply=>"yes"})
+      note_id = case note
+        when Note then note.note_id
+        else note
+      end
+
       entry=%Q{<?xml version="1.0" encoding="UTF-8"?>
                   <entry xmlns="http://www.w3.org/2005/Atom" xmlns:db="http://www.douban.com/xmlns/">
                   <title>#{title}</title>
@@ -589,10 +595,10 @@ module Douban
                   </entry>
       }
       resp=put("/note/#{url_encode(note_id.to_s)}",entry,{"Content-Type"=>"application/atom+xml"})
-      if resp.code=="200"
-        true
+      if resp.code=="202"
+        Note.new(resp.body)
       else
-        false
+        debug(resp)
       end
     end
     def get_event(event_id="")

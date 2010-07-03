@@ -220,6 +220,16 @@ module Douban
           end
         end
 
+        context "modify_note" do
+          it "should return Note" do
+            note = @authorize.create_note("a", "b")
+            note = @authorize.modify_note(note, "c", "d")
+            note.class.should == Note
+            note.title.should == "c"
+            @authorize.delete_note(note).should == true
+          end
+        end
+
         context "get_user_notes" do
           it "should return notes with different id" do
             notes = @authorize.get_user_notes
