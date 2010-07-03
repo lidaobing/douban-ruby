@@ -1,3 +1,11 @@
+=== 0.0.4 / 2010-07-03
+* Douban::Authorize
+  * all create_* functions (except create_mail) will return an Object if 
+    success, otherwise nil, in old version, it will return true or false.
+    create_mail does not work like other functions, it's should be named 
+    as send_mail.
+  * some refactors on the model classes.
+
 === 0.0.3 / 2010-07-02
 * Douban::Authorize
   * recommendation apis added

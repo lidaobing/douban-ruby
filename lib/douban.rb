@@ -31,7 +31,7 @@
 #	Gem install oauth -y
 #==Usage
 #   require "douban"
-#   client=Douban.authorize
+#   client=Douban.authorize(apikey, secret)
 #   authorize_url=client.get_authorize_url
 #  NOTE:
 #  Permission to access a user's data is restricted -- you can't just access
@@ -55,7 +55,7 @@ end
 require 'douban/helper/helper'
 
 module Douban
-  VERSION      = "0.0.3"
+  VERSION      = "0.0.4"
   API_HOST= "http://api.douban.com"
   OAUTH_HOST="http://www.douban.com"
   REQUEST_TOKEN_PATH ="/service/auth/request_token"
