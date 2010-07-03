@@ -333,7 +333,6 @@ module Douban
       }
       resp=post("/reviews",entry,{"Content-Type" => "application/atom+xml"})
       if resp.code=="201"
-        puts resp.body
         Review.new(resp.body)
       else
         debug(resp)
