@@ -282,7 +282,7 @@ module Douban
         reviews=[]
         doc=REXML::Document.new(atom)
         REXML::XPath.each(doc,"//entry") do |entry|
-          reviews<<Review.new(entry.to_s)
+          reviews<< Review.new(entry.to_s)
         end
         reviews
       else
@@ -296,14 +296,20 @@ module Douban
         reviews=[]
         doc=REXML::Document.new(atom)
         REXML::XPath.each(doc,"//entry") do |entry|
-          reviews<<Review.new(entry.to_s)
+          reviews<< Review.new(entry.to_s)
         end
         reviews
       else
         nil
       end
     end
-    def delete_review(review_id="")
+    
+    def delete_review(review)
+      review_id = case review
+        when Review then review.review_id
+        else review
+      end
+      
       resp=delete("/review/#{url_encode(review_id.to_s)}")
       if resp.code=="200"
         true
@@ -311,24 +317,29 @@ module Douban
         false
       end
     end
+    
     def create_review(subject_link="",title="",content="",rating=5)
+      subject_link = subject_link.id if subject_link.kind_of?(Subject)
+      
       entry=%Q{<?xml version='1.0' encoding='UTF-8'?>
               <entry xmlns:ns0="http://www.w3.org/2005/Atom">
               <db:subject xmlns:db="http://www.douban.com/xmlns/">
-              <id>#{subject_link}</id>
+              <id>#{h subject_link}</id>
               </db:subject>
-              <content>#{content}</content>
-              <gd:rating xmlns:gd="http://schemas.google.com/g/2005" value="#{rating}" ></gd:rating>
-              <title>#{title}</title>
+              <content>#{h content}</content>
+              <gd:rating xmlns:gd="http://schemas.google.com/g/2005" value="#{h rating}" ></gd:rating>
+              <title>#{h title}</title>
               </entry>
       }
       resp=post("/reviews",entry,{"Content-Type" => "application/atom+xml"})
       if resp.code=="201"
-        true
+        puts resp.body
+        Review.new(resp.body)
       else
-        false
+        debug(resp)
       end
     end
+    
     def modify_review(review_id="",subject_link="",title="",content="",rating=5)
       entry=%Q{<?xml version='1.0' encoding='UTF-8'?>
                   <entry xmlns:ns0="http://www.w3.org/2005/Atom">
@@ -382,7 +393,7 @@ module Douban
         collection=Collection.new(entry.to_s)
         collection.author=author
         collection.title=title
-        collections<<collection
+        collections<< collection
       end
       collections
     else
@@ -466,7 +477,7 @@ module Douban
         REXML::XPath.each(doc,"//feed/entry") do |entry|
           miniblog=Miniblog.new(entry.to_s)
           miniblog.author=author
-          miniblogs<<miniblog
+          miniblogs<< miniblog
         end
         miniblogs
       else

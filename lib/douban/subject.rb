@@ -4,7 +4,7 @@ require 'douban/equal'
 module Douban
   class Subject
     include Douban::Equal
-    class<<self
+    class << self
       def attr_names
         [
           :id,

@@ -217,6 +217,18 @@ module Douban
           end
         end
       end
+      
+      context "review" do
+        context "create review" do
+          it "should return Review" do
+            subject = @authorize.get_book(1088840)
+            review = @authorize.create_review(subject, "douban-ruby 单元测试", 
+              "douban-ruby 单元测试"*10)
+            review.class.should == Review
+            @authorize.delete_review(review)
+          end
+        end
+      end
     end
   end
 end
