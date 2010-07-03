@@ -337,7 +337,7 @@ module Douban
 
       entry=%Q{<?xml version='1.0' encoding='UTF-8'?>
                   <entry xmlns:ns0="http://www.w3.org/2005/Atom">
-                  <id>http://api.douban.com/review/#{review_id}</id>
+                  <id>http://api.douban.com/review/#{h review_id}</id>
                   <db:subject xmlns:db="http://www.douban.com/xmlns/">
                   <id>#{h subject_link}</id>
                   </db:subject>
@@ -400,19 +400,19 @@ module Douban
         db_tag='<db:tag name="" />'
       else
         tag.each do |t|
-          db_tag+='<db:tag name="'+t.to_s+'" />'
+          db_tag+=%Q{<db:tag name="#{h t}" />}
         end
       end
       entry=%Q{<?xml version='1.0' encoding='UTF-8'?>
               <entry xmlns:ns0="http://www.w3.org/2005/Atom" xmlns:db="http://www.douban.com/xmlns/">
-              <db:status>#{status}</db:status>
+              <db:status>#{h status}</db:status>
         #{db_tag}
-              <gd:rating xmlns:gd="http://schemas.google.com/g/2005" value="#{rating}" />
-              <content>#{content}</content>
+              <gd:rating xmlns:gd="http://schemas.google.com/g/2005" value="#{h rating}" />
+              <content>#{h content}</content>
               <db:subject>
-              <id>#{subject_id}</id>
+              <id>#{h subject_id}</id>
               </db:subject>
-              <db:attribute name="privacy">#{option[:privacy]}</db:attribute>
+              <db:attribute name="privacy">#{h option[:privacy]}</db:attribute>
               </entry>
       }
       resp=post("/collection",entry,{"Content-Type"=>"application/atom+xml"})
@@ -436,7 +436,7 @@ module Douban
         db_tag='<db:tag name="" />'
       else
         tag.each do |t|
-          db_tag+='<db:tag name="'+t.to_s+'" />'
+          db_tag+=%Q{<db:tag name="#{h t}" />}
         end
       end
       entry=%Q{<?xml version='1.0' encoding='UTF-8'?>
@@ -509,7 +509,10 @@ module Douban
       end
     end
     def create_miniblog(content="")
-      entry=%Q{<?xml version='1.0' encoding='UTF-8'?><entry xmlns:ns0="http://www.w3.org/2005/Atom" xmlns:db="http://www.douban.com/xmlns/"><content>#{CGI.escapeHTML(content.to_s)}</content></entry>}
+      entry=%Q{<?xml version='1.0' encoding='UTF-8'?>
+        <entry xmlns:ns0="http://www.w3.org/2005/Atom" xmlns:db="http://www.douban.com/xmlns/">
+        <content>#{h content}</content>
+        </entry>}
       resp=post("/miniblog/saying",entry,{"Content-Type"=>"application/atom+xml"})
       if resp.code=="201"
         Miniblog.new(resp.body)
@@ -557,10 +560,10 @@ module Douban
     def create_note(title="",content="",option={:privacy=>"public",:can_reply=>"yes"})
       entry=%Q{<?xml version="1.0" encoding="UTF-8"?>
                   <entry xmlns="http://www.w3.org/2005/Atom" xmlns:db="http://www.douban.com/xmlns/">
-                  <title>#{title}</title>
-                  <content>#{content}</content>
-                  <db:attribute name="privacy">#{option[:privacy]}</db:attribute>
-                  <db:attribute name="can_reply">#{option[:can_reply]}</db:attribute>
+                  <title>#{h title}</title>
+                  <content>#{h content}</content>
+                  <db:attribute name="privacy">#{h option[:privacy]}</db:attribute>
+                  <db:attribute name="can_reply">#{h option[:can_reply]}</db:attribute>
                   </entry>
       }
       resp=post("/notes",entry,{"Content-Type"=>"application/atom+xml"})
@@ -590,10 +593,10 @@ module Douban
 
       entry=%Q{<?xml version="1.0" encoding="UTF-8"?>
                   <entry xmlns="http://www.w3.org/2005/Atom" xmlns:db="http://www.douban.com/xmlns/">
-                  <title>#{title}</title>
-                  <content>#{content}</content>
-                  <db:attribute name="privacy">#{option[:privacy]}</db:attribute>
-                  <db:attribute name="can_reply">#{option[:can_reply]}</db:attribute>
+                  <title>#{h title}</title>
+                  <content>#{h content}</content>
+                  <db:attribute name="privacy">#{h option[:privacy]}</db:attribute>
+                  <db:attribute name="can_reply">#{h option[:can_reply]}</db:attribute>
                   </entry>
       }
       resp=put("/note/#{url_encode(note_id.to_s)}",entry,{"Content-Type"=>"application/atom+xml"})
@@ -727,13 +730,13 @@ module Douban
     def create_event(title="",content="",where="",option={:kind=>"party",:invite_only=>"no",:can_invite=>"yes",:when=>{"endTime"=>(Time.now+60*60*24*5).strftime("%Y-%m-%dT%H:%M:%S+08:00"),"startTime"=>Time.now.strftime("%Y-%m-%dT%H:%M:%S+08:00")}})
       entry=%Q{<?xml version="1.0" encoding="UTF-8"?>
             <entry xmlns="http://www.w3.org/2005/Atom" xmlns:db="http://www.douban.com/xmlns/" xmlns:gd="http://schemas.google.com/g/2005" xmlns:opensearch="http://a9.com/-/spec/opensearchrss/1.0/">
-            <title>#{title}</title>
+            <title>#{h title}</title>
             <category scheme="http://www.douban.com/2007#kind" term="http://www.douban.com/2007#event.#{option[:kind]}"/>
-            <content>#{content}</content>
-            <db:attribute name="invite_only">#{option[:invite_only]}</db:attribute>
-            <db:attribute name="can_invite">#{option[:can_invite]}</db:attribute>
-            <gd:when endTime="#{option[:when]["endTime"]}" startTime="#{option[:when]["startTime"]}"/>
-            <gd:where valueString="#{where}" />
+            <content>#{h content}</content>
+            <db:attribute name="invite_only">#{h option[:invite_only]}</db:attribute>
+            <db:attribute name="can_invite">#{h option[:can_invite]}</db:attribute>
+            <gd:when endTime="#{h option[:when]["endTime"]}" startTime="#{h option[:when]["startTime"]}"/>
+            <gd:where valueString="#{h where}" />
             </entry>
       }
       resp=post("/events",entry,{"Content-Type"=>"application/atom+xml"})
@@ -760,13 +763,13 @@ module Douban
 
       entry=%Q{<?xml version="1.0" encoding="UTF-8"?>
             <entry xmlns="http://www.w3.org/2005/Atom" xmlns:db="http://www.douban.com/xmlns/" xmlns:gd="http://schemas.google.com/g/2005" xmlns:opensearch="http://a9.com/-/spec/opensearchrss/1.0/">
-            <title>#{title}</title>
+            <title>#{h title}</title>
             <category scheme="http://www.douban.com/2007#kind" term="http://www.douban.com/2007#event.#{option[:kind]}"/>
-            <content>#{content}</content>
-            <db:attribute name="invite_only">#{option[:invite_only]}</db:attribute>
-            <db:attribute name="can_invite">#{option[:can_invite]}</db:attribute>
-            <gd:when endTime="#{option[:when]["endTime"]}" startTime="#{option[:when]["startTime"]}"/>
-            <gd:where valueString="#{where}" />
+            <content>#{h content}</content>
+            <db:attribute name="invite_only">#{h option[:invite_only]}</db:attribute>
+            <db:attribute name="can_invite">#{h option[:can_invite]}</db:attribute>
+            <gd:when endTime="#{h option[:when]["endTime"]}" startTime="#{h option[:when]["startTime"]}"/>
+            <gd:where valueString="#{h where}" />
             </entry>
       }
       resp=put("/event/#{url_encode(event_id)}",entry,{"Content-Type"=>"application/atom+xml"})
@@ -828,11 +831,31 @@ module Douban
         nil
       end
     end
-    def create_mail(id="",title="",content="",captcha_token="",captcha_string="")
+    
+    # <b>DEPRECATED:</b> Please use <tt>send_mail</tt> instead.
+    def create_mail(*args)
+      warn "[DEPRECATION] `create_mail` is deprecated.  Please use `send_mail` instead."
+      send_mail(*args)
+    end
+
+    def send_mail(id="",title="",content="",captcha_token="",captcha_string="")
       if !(captcha_token.empty?&&captcha_string.empty?)
-        entry=%Q(<?xml version="1.0" encoding="UTF-8"?><entry xmlns="http://www.w3.org/2005/Atom" xmlns:db="http://www.douban.com/xmlns/" xmlns:gd="http://schemas.google.com/g/2005" xmlns:opensearch="http://a9.com/-/spec/opensearchrss/1.0/"><db:entity name="receiver"><uri>http://api.douban.com/people/#{id}</uri></db:entity><content>#{content}</content><title>#{title}</title><db:attribute name="captcha_token">#{captcha_token}</db:attribute><db:attribute name="captcha_string">#{captcha_string}</db:attribute></entry>)
+        entry=%Q(<?xml version="1.0" encoding="UTF-8"?>
+                 <entry xmlns="http://www.w3.org/2005/Atom" xmlns:db="http://www.douban.com/xmlns/" xmlns:gd="http://schemas.google.com/g/2005" xmlns:opensearch="http://a9.com/-/spec/opensearchrss/1.0/">
+                 <db:entity name="receiver"><uri>http://api.douban.com/people/#{h id}</uri></db:entity>
+                 <content>#{h content}</content>
+                 <title>#{h title}</title>
+                 <db:attribute name="captcha_token">#{h captcha_token}</db:attribute>
+                 <db:attribute name="captcha_string">#{h captcha_string}</db:attribute>
+                 </entry>)
       else
-        entry=%Q(<?xml version="1.0" encoding="UTF-8"?><entry xmlns="http://www.w3.org/2005/Atom" xmlns:db="http://www.douban.com/xmlns/" xmlns:gd="http://schemas.google.com/g/2005" xmlns:opensearch="http://a9.com/-/spec/opensearchrss/1.0/"><db:entity name="receiver"><uri>http://api.douban.com/people/#{id}</uri></db:entity><content>#{content}</content><title>#{title}</title></entry>)
+        entry=%Q(<?xml version="1.0" encoding="UTF-8"?>
+        <entry xmlns="http://www.w3.org/2005/Atom" xmlns:db="http://www.douban.com/xmlns/" xmlns:gd="http://schemas.google.com/g/2005" xmlns:opensearch="http://a9.com/-/spec/opensearchrss/1.0/">
+                 <db:entity name="receiver">
+                 <uri>http://api.douban.com/people/#{h id}</uri></db:entity>
+                 <content>#{h content}</content>
+                 <title>#{h title}</title>
+        </entry>)
       end
       resp=post("/doumails",entry,{"Content-Type"=>"application/atom+xml"})
       if resp.code=="201"

@@ -205,9 +205,9 @@ module Douban
           end
         end
 
-        context "create_mail" do
-          it "should return captcha_token in the first time" do
-            mail = @authorize.create_mail("lidaobing", "hello", "world")
+        context "send_mail" do
+          it "should success or return captcha_token" do
+            mail = @authorize.send_mail("lidaobing", "hello", "world")
             if mail.class != Hash
               mail.class.should == true
             end
