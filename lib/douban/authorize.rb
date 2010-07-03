@@ -422,7 +422,15 @@ module Douban
         debug(resp)
       end
     end
-    def modify_collection(collection_id="",subject_id="",content="",rating=5,tag=[],status="",option={:privacy=>"public"})
+
+    def modify_collection(collection, subject_id="",content="",rating=5,status="",tag=[],option={:privacy=>"public"})
+      collection_id = case collection
+        when Collection then collection.collection_id
+        else collection
+      end
+
+      subject_id = collection.subject.id if subject_id.nil? and collection.kind_of?(Collection)
+
       db_tag=""
       if tag.size==0
         db_tag='<db:tag name="" />'
@@ -433,26 +441,31 @@ module Douban
       end
       entry=%Q{<?xml version='1.0' encoding='UTF-8'?>
               <entry xmlns:ns0="http://www.w3.org/2005/Atom" xmlns:db="http://www.douban.com/xmlns/">
-              <id>http://api.douban.com/collection/#{collection_id}</id>
-              <db:status>#{status}</db:status>
+              <id>http://api.douban.com/collection/#{h collection_id}</id>
+              <db:status>#{h status}</db:status>
 
         #{db_tag}
-              <gd:rating xmlns:gd="http://schemas.google.com/g/2005" value="#{rating}" />
-              <content>#{content}</content>
+              <gd:rating xmlns:gd="http://schemas.google.com/g/2005" value="#{h rating}" />
+              <content>#{h content}</content>
               <db:subject>
-              <id>#{subject_id}</id>
+              <id>#{h subject_id}</id>
               </db:subject>
-              <db:attribute name="privacy">#{option[:privacy]}</db:attribute>
+              <db:attribute name="privacy">#{h option[:privacy]}</db:attribute>
               </entry>
       }
-      resp=put("/collection/#{url_encode(collection_id.to_s)}",entry,{"Content-Type"=>"application/atom+xml"})
+      resp=put("/collection/#{u collection_id}",entry,{"Content-Type"=>"application/atom+xml"})
       if resp.code=="200"
-        true
+        Collection.new(resp.body)
       else
-        false
+        debug(resp)
       end
     end
-    def delete_collection(collection_id="")
+    def delete_collection(collection)
+      collection_id = case collection
+      when Collection then collection.collection_id
+      else collection
+      end
+
       resp=delete("/collection/#{url_encode(collection_id.to_s)}")
       if resp.code=="200"
         true

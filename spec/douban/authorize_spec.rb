@@ -160,7 +160,18 @@ module Douban
       context "collection" do
         context "create_collection" do
           it "should return Collection" do
-            @authorize.create_collection("http://api.douban.com/movie/subject/1424406", "a", 5, "watched", ["tag"]).class.should == Douban::Collection
+            collection = @authorize.create_collection("http://api.douban.com/movie/subject/1424406", "a", 5, "watched", ["tag"])
+            collection.class.should == Douban::Collection
+            @authorize.delete_collection(collection).should == true
+          end
+        end
+        context "modify_collection" do
+          it "should return Collection" do
+            collection = @authorize.create_collection("http://api.douban.com/movie/subject/1424406", "a", 5, "watched", ["tag"])
+            collection = @authorize.modify_collection(collection, nil, "b", 5, "watched", ["tag"])
+            collection.class.should == Douban::Collection
+            collection.summary.should == "b"
+            @authorize.delete_collection(collection).should == true
           end
         end
       end
