@@ -254,7 +254,7 @@ module Douban
         reviews=[]
         doc=REXML::Document.new(atom)
         REXML::XPath.each(doc,"//entry") do |entry|
-          reviews<<Review.new(entry.to_s)
+          reviews<< Review.new(entry)
         end
         reviews
       else
@@ -268,7 +268,7 @@ module Douban
         reviews=[]
         doc=REXML::Document.new(atom)
         REXML::XPath.each(doc,"//entry") do |entry|
-          reviews<<Review.new(entry.to_s)
+          reviews<< Review.new(entry)
         end
         reviews
       else
@@ -282,7 +282,7 @@ module Douban
         reviews=[]
         doc=REXML::Document.new(atom)
         REXML::XPath.each(doc,"//entry") do |entry|
-          reviews<< Review.new(entry.to_s)
+          reviews<< Review.new(entry)
         end
         reviews
       else
@@ -296,7 +296,7 @@ module Douban
         reviews=[]
         doc=REXML::Document.new(atom)
         REXML::XPath.each(doc,"//entry") do |entry|
-          reviews<< Review.new(entry.to_s)
+          reviews<< Review.new(entry)
         end
         reviews
       else

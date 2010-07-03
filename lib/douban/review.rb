@@ -32,25 +32,25 @@ module Douban
         when REXML::Element then atom
         else REXML::Document.new(atom).root
       end
-      subject=REXML::XPath.first(doc,"//entry/db:subject")
+      subject=REXML::XPath.first(doc,"./db:subject")
       @subject=Subject.new(subject) if subject
-      author=REXML::XPath.first(doc,"//entry/author")
+      author=REXML::XPath.first(doc,"./author")
       @author=Author.new(author.to_s) if author
-      title=REXML::XPath.first(doc,"//entry/title")
+      title=REXML::XPath.first(doc,"./title")
       @title=title.text if title
-      updated=REXML::XPath.first(doc,"//entry/updated")
+      updated=REXML::XPath.first(doc,"./updated")
       @updated=updated.text if updated
-      @published=REXML::XPath.first(doc,"//entry/published/text()").to_s
-      summary=REXML::XPath.first(doc,"//entry/summary")
+      @published=REXML::XPath.first(doc,"./published/text()").to_s
+      summary=REXML::XPath.first(doc,"./summary")
       @summary=summary.text if summary
-      @content = REXML::XPath.first(doc, "//entry/content/text()").to_s
-      REXML::XPath.each(doc,"//entry/link") do |link|
+      @content = REXML::XPath.first(doc, "./content/text()").to_s
+      REXML::XPath.each(doc,"./link") do |link|
         @link||={}
         @link[link.attributes['rel']]=link.attributes['href']
       end
-      id=REXML::XPath.first(doc,"//entry/id")
+      id=REXML::XPath.first(doc,"./id")
       @id=id.text if id
-      rating=REXML::XPath.first(doc,"//entry/gd:rating")
+      rating=REXML::XPath.first(doc,"./gd:rating")
      if rating
        @rating={}
        @rating['min']=rating.attributes['min']

@@ -228,6 +228,14 @@ module Douban
             @authorize.delete_review(review)
           end
         end
+        
+        context "get_book_reviews" do
+          it "should return [Review] with different id" do
+            reviews = @authorize.get_book_reviews(1258490)
+            reviews.size.should >= 2
+            reviews[0].id.should_not == reviews[-1].id
+          end
+        end
       end
     end
   end
