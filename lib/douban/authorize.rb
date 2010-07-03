@@ -36,13 +36,13 @@ module Douban
       }
       @oauth_option=default_options.merge(options)
       yield self if block_given?
-      self 
+      self
     end
 
     def authorized?
       ! @access_token.nil?
     end
-    
+
     def get_authorize_url(oauth_callback=nil)
       oauth_callback ||= @oauth_option[:realm]
 
@@ -101,6 +101,7 @@ module Douban
         nil
       end
     end
+
     def get_friends(uid="@me",option={:start_index=>1,:max_results=>10})
       resp=get("/people/#{url_encode(uid.to_s)}/friends?start-index=#{option[:start_index]}&max-results=#{option[:max_results]}")
       if resp.code=="200"
@@ -115,20 +116,6 @@ module Douban
         nil
       end
     end
-    #      def get_contacts(uid="@me",option={:start_index=>1,:max_results=>10})
-    #        resp=get("/people/#{url_encode(uid.to_s)}/contacts?start-index=#{option[:start_index]}&max-results=#{option[:max_results]}")
-    #        if resp.code=="200"
-    #          contacts=[]
-    #          atom=resp.body
-    #          doc=REXML::Document.new(atom)
-    #          REXML::XPath.each(doc,"//entry") do |entry|
-    #            contacts << People.new(entry.to_s)
-    #          end
-    #          contacts
-    #        else
-    #          nil
-    #        end
-    #      end
 
     def get_contacts(uid="@me",option={:start_index=>1,:max_results=>10})
       resp=get("/people/#{url_encode(uid.to_s)}/contacts?start-index=#{option[:start_index]}&max-results=#{option[:max_results]}")
@@ -268,6 +255,7 @@ module Douban
         reviews=[]
         doc=REXML::Document.new(atom)
         REXML::XPath.each(doc,"//entry") do |entry|
+
           reviews<< Review.new(entry)
         end
         reviews
@@ -303,13 +291,13 @@ module Douban
         nil
       end
     end
-    
+
     def delete_review(review)
       review_id = case review
         when Review then review.review_id
         else review
       end
-      
+
       resp=delete("/review/#{url_encode(review_id.to_s)}")
       if resp.code=="200"
         true
@@ -317,10 +305,10 @@ module Douban
         false
       end
     end
-    
+
     def create_review(subject_link="",title="",content="",rating=5)
       subject_link = subject_link.id if subject_link.kind_of?(Subject)
-      
+
       entry=%Q{<?xml version='1.0' encoding='UTF-8'?>
               <entry xmlns:ns0="http://www.w3.org/2005/Atom">
               <db:subject xmlns:db="http://www.douban.com/xmlns/">
@@ -338,24 +326,31 @@ module Douban
         debug(resp)
       end
     end
-    
-    def modify_review(review_id="",subject_link="",title="",content="",rating=5)
+
+    def modify_review(review, subject_link=nil,title="",content="",rating=5)
+      review_id = case review
+      when Review then review.review_id
+      else review
+      end
+
+      subject_link = review.subject.id if subject_link.nil? and review.kind_of?(Review)
+
       entry=%Q{<?xml version='1.0' encoding='UTF-8'?>
                   <entry xmlns:ns0="http://www.w3.org/2005/Atom">
                   <id>http://api.douban.com/review/#{review_id}</id>
                   <db:subject xmlns:db="http://www.douban.com/xmlns/">
-                  <id>#{subject_link}</id>
+                  <id>#{h subject_link}</id>
                   </db:subject>
-                  <content>#{content}</content>
-                  <gd:rating xmlns:gd="http://schemas.google.com/g/2005" value="#{rating}" ></gd:rating>
-                  <title>#{title}</title>
+                  <content>#{h content}</content>
+                  <gd:rating xmlns:gd="http://schemas.google.com/g/2005" value="#{h rating}" ></gd:rating>
+                  <title>#{h title}</title>
                   </entry>
       }
       resp=put("/review/#{url_encode(review_id)}",entry,{"Content-Type" => "application/atom+xml"})
-      if resp.code=="200"
-        true
+      if resp.code=="202"
+        Review.new(resp.body)
       else
-        false
+        debug(resp)
       end
     end
     def get_collection(collection_id="")
@@ -491,7 +486,7 @@ module Douban
         miniblogs=[]
         REXML::XPath.each(doc,"//feed/entry") do |entry|
           miniblog=Miniblog.new(entry.to_s)
-          miniblogs<<miniblog
+          miniblogs<< miniblog
         end
         miniblogs
       else
@@ -524,7 +519,7 @@ module Douban
         nil
       end
     end
-    
+
     def get_user_notes(user_id="@me",option={:start_index=>1,:max_results=>10})
       resp=get("/people/#{url_encode(user_id.to_s)}/notes?start-index=#{option[:start_index]}&max-results=#{option[:max_results]}")
       if resp.code=="200"
@@ -543,7 +538,7 @@ module Douban
         nil
       end
     end
-    
+
     def create_note(title="",content="",option={:privacy=>"public",:can_reply=>"yes"})
       entry=%Q{<?xml version="1.0" encoding="UTF-8"?>
                   <entry xmlns="http://www.w3.org/2005/Atom" xmlns:db="http://www.douban.com/xmlns/">
@@ -560,10 +555,10 @@ module Douban
         debug(resp)
       end
     end
-    
+
     def delete_note(note_id="")
       note_id = note_id.note_id if note_id.kind_of?(Note)
-      
+
       resp=delete("/note/#{url_encode(note_id.to_s)}")
       if resp.code=="200"
         true
@@ -726,41 +721,8 @@ module Douban
       else
         debug(resp)
       end
-            end
-=begin
-          def participate_event(event_id=nil)
-            resp=post("/event/#{url_encode(event_id.to_s)}/participants","")
-            if resp.code=="201"
-              true
-            else
-              false
-            end
-          end
-          def wish_event(event_id=nil)
-            resp=post("/event/#{url_encode(event_id)}/wishers")
-            if resp.code=="201"
-              true
-            else
-              false
-            end
-          end
-          def delete_participant(event_id=nil)
-            resp=delete("/event/#{url_encode(event_id)}/participants")
-            if resp.code=="200"
-              true
-            else
-              false
-            end
-          end
-          def delete_wisher(event_id=nil)
-            resp=delete("/event/#{url_encode(event_id)}/wishers")
-            if resp.code=="200"
-              true
-            else
-              false
-            end
-          end
-=end
+    end
+
     def modify_event(event_id=nil,title=nil,content=nil,where=nil,option={:kind=>"exhibit",:invite_only=>"no",:can_invite=>"yes",:when=>{"endTime"=>(Time.now+60*60*24*5).strftime("%Y-%m-%dT%H:%M:%S+08:00"),"startTime"=>Time.now.strftime("%Y-%m-%dT%H:%M:%S+08:00")}})
       entry=%Q{<?xml version="1.0" encoding="UTF-8"?>
             <entry xmlns="http://www.w3.org/2005/Atom" xmlns:db="http://www.douban.com/xmlns/" xmlns:gd="http://schemas.google.com/g/2005" xmlns:opensearch="http://a9.com/-/spec/opensearchrss/1.0/">
@@ -935,7 +897,7 @@ module Douban
         tags
       else
         nil
-      end 
+      end
     end
 
     def delete_event(event_id="")
@@ -947,7 +909,7 @@ module Douban
         debug(resp, false)
       end
     end
-    
+
     def request_token=(token)
       unless token.kind_of? OAuth::RequestToken
         token = OAuth::RequestToken.new(
@@ -957,7 +919,7 @@ module Douban
       end
       @request_token = token
     end
-    
+
     def access_token=(token)
       unless token.kind_of? OAuth::AccessToken
         token = OAuth::AccessToken.new(
@@ -967,7 +929,7 @@ module Douban
       end
       @access_token = token
     end
-    
+
     def get_recommendation(id)
       resp=get("/recommendation/#{url_encode(id.to_s)}")
       if resp.code=="200"
@@ -1023,7 +985,7 @@ module Douban
         Recommendation.new(resp.body)
       else
         debug(resp)
-      end 
+      end
     end
 
     def delete_recommendation(recommendation_id)
@@ -1077,7 +1039,7 @@ module Douban
     def new_request_consumer
       OAuth::Consumer.new(@api_key, @secret_key, @oauth_option)
     end
-    
+
     def new_access_consumer
       OAuth::Consumer.new(@api_key, @secret_key,
                           :site=>API_HOST,
@@ -1103,3 +1065,4 @@ module Douban
     end
   end
 end
+

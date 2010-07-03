@@ -28,28 +28,28 @@ module Douban
         @authorize.request_token.secret.should =~ /[0-9a-f]{16}/
       end
     end
-    
+
     context "oauth verify" do
       before(:each) do
         @request_token = "a" * 32
         @request_secret = "b" * 16
-        
+
         @access_token = "c"*32
         @access_secret = "d"*16
       end
-      
+
       it "should support set request token" do
         @authorize.request_token = OAuth::Token.new(@request_token, @request_secret)
         @authorize.request_token.kind_of?(OAuth::RequestToken).should == true
       end
-      
+
       it "auth should works" do
         request_token_mock = mock("request_token")
         request_token_mock.stub!(:kind_of?).with(OAuth::RequestToken).and_return(true)
         request_token_mock.stub!(:get_access_token).and_return(
           OAuth::Token.new(@access_token, @access_secret)
         )
-        
+
         @authorize.request_token = request_token_mock
         @authorize.auth
         @authorize.access_token.class.should == OAuth::AccessToken
@@ -57,7 +57,7 @@ module Douban
         @authorize.access_token.secret.should == @access_secret
       end
     end
-    
+
   context "logged in with oauth" do
     before(:each) do
       Authorize.debug = true
@@ -65,8 +65,8 @@ module Douban
       @access_secret = '22070cec426cb925'
       @authorize.access_token = OAuth::Token.new(@access_token, @access_secret)
     end
-      
-    
+
+
     it "should authorized?" do
       @authorize.authorized?.should == true
     end
@@ -90,21 +90,21 @@ module Douban
         @authorize.delete_miniblog(id).should == true
       end
     end
-    
+
     context "recommendation" do
       before do
         @recommendation_id = 4312524
         @recommendation_title = "推荐活动QClub：敏捷在互联网时代产品研发中的实践（12.27 深圳）"
       end
-        
-      
+
+
       context "get_recommendation" do
         it "should return Recommendation if found" do
           recommendation = @authorize.get_recommendation(@recommendation_id)
           recommendation.class.should == Douban::Recommendation
           recommendation.title.should == @recommendation_title
         end
-        
+
         it "should return nil if not found" do
           @authorize.get_recommendation(28732532).should == nil
         end
@@ -147,7 +147,7 @@ module Douban
         end
         it "should can be delete through recommendation and comment_id" do
           comment = @authorize.create_recommendation_comment(@recommendation_id, "好文")
-          @authorize.delete_recommendation_comment(@authorize.get_recommendation(@recommendation_id), 
+          @authorize.delete_recommendation_comment(@authorize.get_recommendation(@recommendation_id),
             comment.comment_id).should == true
         end
           it "should can be delete through recommendation_id and comment_id" do
@@ -208,7 +208,7 @@ module Douban
             @authorize.delete_note(note).should == true
           end
         end
-        
+
         context "get_user_notes" do
           it "should return notes with different id" do
             notes = @authorize.get_user_notes
@@ -217,18 +217,31 @@ module Douban
           end
         end
       end
-      
+
       context "review" do
+
         context "create review" do
           it "should return Review" do
-            subject = @authorize.get_book(1088840)
-            review = @authorize.create_review(subject, "douban-ruby 单元测试", 
+            @subject = @authorize.get_book(1088840)
+            review = @authorize.create_review(@subject, "douban-ruby 单元测试",
               "douban-ruby 单元测试"*10)
             review.class.should == Review
-            @authorize.delete_review(review)
+            @authorize.delete_review(review).should == true
           end
         end
-        
+
+        context "modify review" do
+          it "should return Review" do
+            @subject = @authorize.get_book(1088840)
+            review = @authorize.create_review(@subject, "douban-ruby 单元测试",
+              "douban-ruby 单元测试"*10)
+            review = @authorize.modify_review(review, nil, "douban-ruby 单元测试", "douban-ruby 单元测试"*11)
+            review.class.should == Review
+            review.content.should == "douban-ruby 单元测试"*11
+            @authorize.delete_review(review).should == true
+          end
+        end
+
         context "get_book_reviews" do
           it "should return [Review] with different id" do
             reviews = @authorize.get_book_reviews(1258490)
@@ -240,3 +253,4 @@ module Douban
     end
   end
 end
+
