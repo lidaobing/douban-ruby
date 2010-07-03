@@ -1,10 +1,11 @@
 require 'rexml/document'
 require 'douban/equal'
+require 'douban/author'
 
 module Douban
   class Event
     include Douban::Equal
-    class<<self
+    class << self
       def attr_names
         [
           :id,

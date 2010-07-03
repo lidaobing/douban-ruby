@@ -543,12 +543,15 @@ module Douban
       }
       resp=post("/notes",entry,{"Content-Type"=>"application/atom+xml"})
       if resp.code=="201"
-        true
+        Note.new(resp.body)
       else
-        false
+        debug(resp)
       end
     end
+    
     def delete_note(note_id="")
+      note_id = note_id.note_id if note_id.kind_of?(Note)
+      
       resp=delete("/note/#{url_encode(note_id.to_s)}")
       if resp.code=="200"
         true
@@ -956,6 +959,8 @@ module Douban
       resp=get("/recommendation/#{url_encode(id.to_s)}")
       if resp.code=="200"
         Recommendation.new(resp.body)
+      elsif resp.code == "404"
+        nil
       else
         debug(resp)
       end

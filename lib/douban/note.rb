@@ -1,7 +1,13 @@
 require'rexml/document'
+
+require 'douban/author'
+require 'douban/equal'
+
 module Douban
  class Note
-   class <<self
+   include Douban::Equal
+   
+   class << self
      def attr_names
        [
         :id,
@@ -19,8 +25,8 @@ module Douban
     attr_names.each do |attr|
       attr_accessor attr
     end
-    def initialize(atom)
-      doc=REXML::Document.new(atom)
+    def initialize(doc)
+      doc=REXML::Document.new(doc) unless doc.kind_of?(REXML::Element)
       title=REXML::XPath.first(doc,"//entry/title")
       @title=title.text if title
       published=REXML::XPath.first(doc,"//entry/published")
@@ -43,6 +49,10 @@ module Douban
       @summary=summary.text if summary
       author=REXML::XPath.first(doc,"//entry/author")
       @author=Author.new(author.to_s) if author
+    end
+    
+    def note_id
+      /\/(\d+)$/.match(@id)[1].to_i rescue nil
     end
  end
 end

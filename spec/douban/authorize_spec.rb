@@ -92,17 +92,27 @@ module Douban
     end
     
     context "recommendation" do
+      before do
+        @recommendation_id = 4312524
+        @recommendation_title = "推荐活动QClub：敏捷在互联网时代产品研发中的实践（12.27 深圳）"
+      end
+        
+      
       context "get_recommendation" do
-        it "should work" do
-          recommendation = @authorize.get_recommendation(28732532)
+        it "should return Recommendation if found" do
+          recommendation = @authorize.get_recommendation(@recommendation_id)
           recommendation.class.should == Douban::Recommendation
-          recommendation.title.should == "推荐小组话题：理证：试论阿赖耶识存在之必然性"
+          recommendation.title.should == @recommendation_title
+        end
+        
+        it "should return nil if not found" do
+          @authorize.get_recommendation(28732532).should == nil
         end
       end
       context "get_user_recommendations" do
         it "should work" do
           recommendations = @authorize.get_user_recommendations("aka")
-          recommendations.size.should == 10
+          recommendations.size.should >= 2
           recommendations[0].class.should == Douban::Recommendation
           recommendations[0].id.should_not == recommendations[-1].id
         end
@@ -130,18 +140,19 @@ module Douban
 
       context "create_recommendation_comment & delete_recommendation_comment" do
         it "should return a RecommendationComment and can be delete" do
-          comment = @authorize.create_recommendation_comment(28732532, "好文")
+          comment = @authorize.create_recommendation_comment(@recommendation_id, "好文")
           comment.class.should == Douban::RecommendationComment
           comment.content.should == "好文"
           @authorize.delete_recommendation_comment(comment).should == true
         end
         it "should can be delete through recommendation and comment_id" do
-          comment = @authorize.create_recommendation_comment(28732532, "好文")
-          @authorize.delete_recommendation_comment(@authorize.get_recommendation(28732532), comment.comment_id).should == true
+          comment = @authorize.create_recommendation_comment(@recommendation_id, "好文")
+          @authorize.delete_recommendation_comment(@authorize.get_recommendation(@recommendation_id), 
+            comment.comment_id).should == true
         end
           it "should can be delete through recommendation_id and comment_id" do
-            comment = @authorize.create_recommendation_comment(28732532, "好文")
-            @authorize.delete_recommendation_comment(28732532, comment.comment_id).should == true
+            comment = @authorize.create_recommendation_comment(@recommendation_id, "好文")
+            @authorize.delete_recommendation_comment(@recommendation_id, comment.comment_id).should == true
           end
         end
       end
@@ -185,6 +196,16 @@ module Douban
           it "should work" do
             mail = @authorize.get_mail(82937520)
             mail.class.should == Mail
+          end
+        end
+      end
+
+      context "note" do
+        context "create_note" do
+          it "should return Note" do
+            note = @authorize.create_note("a", "b")
+            note.class.should == Note
+            @authorize.delete_note(note).should == true
           end
         end
       end

@@ -1,10 +1,11 @@
+require 'rexml/document'
 require 'douban/equal'
 
 module Douban
   class Author
     include Douban::Equal
 
-    class<<self
+    class << self
       def attr_names
         [
           :uri,
@@ -16,7 +17,7 @@ module Douban
     attr_names.each do |attr|
       attr_accessor attr
     end
-    def initialize(doc)
+    def initialize(doc='')
       doc=REXML::Document.new(doc) unless doc.kind_of?(REXML::Element)
       REXML::XPath.each(doc,"//link") do|link|
         @link||={}

@@ -1,5 +1,7 @@
 require File.join(File.dirname(__FILE__), '/../spec_helper')
 
+require 'douban/author'
+
 module Douban
   describe Author do
     before do
