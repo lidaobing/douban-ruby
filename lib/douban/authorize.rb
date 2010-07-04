@@ -204,7 +204,7 @@ module Douban
         doc=REXML::Document.new(atom)
         movies=[]
         REXML::XPath.each(doc,"//entry") do |entry|
-          Movies << Movie.new(entry.to_s)
+          movies << Movie.new(entry)
         end
         movies
       else
