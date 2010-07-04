@@ -3,6 +3,8 @@ require 'hoe'
 $:.unshift(File.dirname(__FILE__) + "/lib")
 require 'douban'
 
+ENV["SPEC_OPTS"] ||= "-f nested --color -b"
+
 Hoe.spec 'douban' do
   developer "Hoooopo", "hoooopo@gmail.com"
   developer "LI Daobing", "lidaobing@gmail.com"
@@ -22,4 +24,11 @@ end
 
 task :release => :verify
 
-ENV["SPEC_OPTS"] ||= "-f nested --color -b"
+namespace :spec do
+  desc "Run specs with RCov"
+  Spec::Rake::SpecTask.new('rcov') do |t|
+    t.spec_files = FileList['spec/**/*_spec.rb' ]
+    t.rcov = true
+    t.rcov_opts = ['--exclude' , 'gems,spec' ]
+  end
+end
