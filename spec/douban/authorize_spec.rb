@@ -95,6 +95,14 @@ module Douban
           friends[0].id.should_not == friends[-1].id
         end
       end
+
+      context "search_people" do
+        it "should works" do
+          friends = @authorize.search_people('li')
+          friends.size.should >= 2
+          friends[0].id.should_not == friends[-1].id
+        end
+      end
     end
 
     context "miniblog" do
