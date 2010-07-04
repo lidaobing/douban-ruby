@@ -261,6 +261,16 @@ module Douban
           end
         end
 
+        context "get_user_events" do
+          it "should return [Event] with different id" do
+            people_id = 'supernb'
+            events = @authorize.get_user_events(people_id)
+            events.size.should >= 2
+            events[0].class.should == Event
+            events[0].id.should_not == events[-1].id
+          end
+        end
+
 =begin
         context "modify_event" do
           it "should return Event" do

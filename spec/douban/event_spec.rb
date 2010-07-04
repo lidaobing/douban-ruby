@@ -48,8 +48,12 @@ module Douban
       Event.new(@s).should == Event.new(@s)
     end
 
-    it "should correct deserialize from REXML::Element" do
+    it "should correct deserialize from REXML::Document" do
       Event.new(REXML::Document.new(@s)).should == Event.new(@s)
+    end
+
+    it "should correct deserialize from REXML::Element" do
+      Event.new(REXML::Document.new(@s).root).should == Event.new(@s)
     end
   end
 end

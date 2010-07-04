@@ -25,13 +25,18 @@ module Douban
     attr_names.each do |attr|
       attr_accessor attr
     end
-   def initialize(doc='')
-      doc=REXML::Document.new(doc) unless doc.kind_of?(REXML::Element)
-      @id=REXML::XPath.first(doc,"//entry/id/text()").to_s
-      title=REXML::XPath.first(doc,"//entry/title")
+    def initialize(atom='')
+      doc = case atom
+    when REXML::Document then atom.root
+    when REXML::Element then atom
+    else REXML::Document.new(atom).root
+    end
+
+      @id=REXML::XPath.first(doc,"./id/text()").to_s
+      title=REXML::XPath.first(doc,"./title")
       @title=title.text if title
       @category={}
-      category=REXML::XPath.first(doc,"//entry/category")
+      category=REXML::XPath.first(doc,"./category")
       @category['term']=category.attributes['term'] if category
       @category['scheme']=category.attributes['scheme'] if category
       @author||=Author.new
@@ -43,27 +48,27 @@ module Douban
         @author.link||={}
         @author.link[link.attributes['rel']]=link.attributes['href']
       end
-      summary=REXML::XPath.first(doc,"//entry/summary")
+      summary=REXML::XPath.first(doc,"./summary")
       @summary=summary.text if summary
-      content=REXML::XPath.first(doc,"//entry/content")
+      content=REXML::XPath.first(doc,"./content")
       @content=content.text if content
-      REXML::XPath.each(doc,"//entry/link") do |link|
+      REXML::XPath.each(doc,"./link") do |link|
         @link||={}
         @link[link.attributes['rel']]=link.attributes['href']
       end
-      REXML::XPath.each(doc,"//entry/db:attribute") do |attribute|
+      REXML::XPath.each(doc,"./db:attribute") do |attribute|
         @attribute||={}
         @attribute[attribute.attributes['name']]=attribute.text
       end
-      location=REXML::XPath.first(doc,"//entry/db:location")
+      location=REXML::XPath.first(doc,"./db:location")
       @location=location.text if location
       @when={}
-      time=REXML::XPath.first(doc,"//entry/gd:when")
+      time=REXML::XPath.first(doc,"./gd:when")
       if time
        @when['startTime']=time.attributes['startTime']
        @when['endTime']=time.attributes['endTime']
      end
-     where=REXML::XPath.first(doc,"//entry/gd:where")
+     where=REXML::XPath.first(doc,"./gd:where")
      @where=where.attributes['valueString'] if where
    end
 
@@ -73,4 +78,3 @@ module Douban
  end
  end
 
-    
