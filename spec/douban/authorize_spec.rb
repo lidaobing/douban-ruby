@@ -336,6 +336,14 @@ module Douban
             movies[0].id.should_not == movies[-1].id
           end
         end
+        context "search_music" do
+          it "should return [Music] with different id" do
+            musics = @authorize.search_music("america")
+            musics.size.should >= 2
+            musics[0].class.should == Music
+            musics[0].id.should_not == musics[-1].id
+          end
+        end
       end
 
 

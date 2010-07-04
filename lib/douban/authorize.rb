@@ -218,7 +218,7 @@ module Douban
         doc=REXML::Document.new(atom)
         music=[]
         REXML::XPath.each(doc,"//entry") do |entry|
-          music << Music.new(entry.to_s)
+          music << Music.new(entry)
         end
         music
       else
