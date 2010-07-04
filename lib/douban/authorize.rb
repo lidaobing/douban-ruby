@@ -245,7 +245,7 @@ module Douban
         end
         reviews
       else
-        nil
+        debug(resp)
       end
     end
     def get_movie_reviews(subject_id="",option={:start_index=>1,:max_results=>10,:orderby=>'score'})

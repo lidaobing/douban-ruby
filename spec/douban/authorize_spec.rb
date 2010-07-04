@@ -281,6 +281,14 @@ module Douban
             reviews[0].id.should_not == reviews[-1].id
           end
         end
+
+        context "get_user_reviews" do
+          it "should return [Review] with different id" do
+            reviews = @authorize.get_user_reviews('40896712')
+            reviews.size.should >= 2
+            reviews[0].id.should_not == reviews[-1].id
+          end
+        end
       end
     end
   end
