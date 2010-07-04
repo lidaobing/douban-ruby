@@ -939,11 +939,12 @@ module Douban
         resp=get("/movie/subject/#{subject_id}/tags")
       end
       if resp.code=="200"
+        puts resp.body
         tags=[]
         atom=resp.body
         doc=REXML::Document.new(atom)
         REXML::XPath.each(doc,"//entry") do |entry|
-          tags << Tag.new(entry.to_s)
+          tags << Tag.new(entry)
         end
         tags
       else

@@ -1,28 +1,35 @@
-require'rexml/document'
+require 'rexml/document'
+
+require 'douban/equal'
+
 module Douban
-class Tag
-    include Douban
+  class Tag
+    include Douban::Equal
     class << self
       def attr_names
-        [ 
+        [
           :id,
           :count,
-          :title 
+          :title
         ]
       end
     end
     attr_names.each do |attr|
       attr_accessor attr
     end
-  
+
     def initialize(atom="")
-      doc=REXML::Document.new(atom)
-      id=REXML::XPath.first(doc,"//entry/id")
+      doc = case atom
+        when REXML::Document then atom.root
+        when REXML::Element then atom
+        else REXML::Document.new(atom).root
+      end
+      id=REXML::XPath.first(doc,"./id")
       @id=id.text if id
-      title=REXML::XPath.first(doc,"//entry/title")
+      title=REXML::XPath.first(doc,"./title")
       @title=title.text if title
-      count=REXML::XPath.first(doc,"//entry/db:count")
-      @count=count.text if count
+      @count=REXML::XPath.first(doc,"./db:count/text()").to_s.to_i rescue nil
     end
+  end
 end
-end
+

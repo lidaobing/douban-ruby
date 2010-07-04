@@ -471,6 +471,16 @@ module Douban
             musics[0].id.should_not == musics[-1].id
           end
         end
+
+        context "get_book_tags" do
+          it "should return [Tag] with different id" do
+            book_id = 4741216
+            tags = @authorize.get_book_tags(book_id)
+            tags.size.should >= 2
+            tags[0].class.should == Tag
+            tags[0].id.should_not == tags[-1].id
+          end
+        end
       end
 
 
