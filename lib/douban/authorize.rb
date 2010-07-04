@@ -189,7 +189,7 @@ module Douban
         doc=REXML::Document.new(atom)
         books=[]
         REXML::XPath.each(doc,"//entry") do |entry|
-          books << Book.new(entry.to_s)
+          books << Book.new(entry)
         end
         books
       else

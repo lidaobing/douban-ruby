@@ -318,7 +318,20 @@ module Douban
           end
         end
       end
-    end
-  end
-end
+
+      context "subject" do
+        context "search_book" do
+          it "should return [Book] with different id" do
+            books = @authorize.search_book("ruby")
+            books.size.should >= 2
+            books[0].class.should == Book
+            books[0].id.should_not == books[-1].id
+          end
+        end
+      end
+
+
+    end # context "logged in with oauth"
+  end #describe
+end #Module
 
