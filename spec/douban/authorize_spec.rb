@@ -127,6 +127,15 @@ module Douban
           miniblogs[0].id.should_not == miniblogs[-1].id
         end
       end
+
+      context "get_user_contact_miniblog" do
+        it "should return [Miniblog] with different id" do
+          miniblogs = @authorize.get_user_contact_miniblog
+          miniblogs.size.should >= 2
+          miniblogs[0].class.should == Miniblog
+          miniblogs[0].id.should_not == miniblogs[-1].id
+        end
+      end
     end
 
     context "recommendation" do

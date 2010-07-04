@@ -500,7 +500,7 @@ module Douban
         doc=REXML::Document.new(atom)
         miniblogs=[]
         REXML::XPath.each(doc,"//feed/entry") do |entry|
-          miniblog=Miniblog.new(entry.to_s)
+          miniblog=Miniblog.new(entry)
           miniblogs<< miniblog
         end
         miniblogs
