@@ -251,6 +251,16 @@ module Douban
           end
         end
 
+        context "get_wisher_people" do
+          it "should return [People] with different id" do
+            event_id = 11723349
+            people = @authorize.get_wisher_people(event_id)
+            people.size.should >= 2
+            people[0].class.should == People
+            people[0].id.should_not == people[-1].id
+          end
+        end
+
 =begin
         context "modify_event" do
           it "should return Event" do
