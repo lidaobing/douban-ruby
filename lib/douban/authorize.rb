@@ -678,7 +678,7 @@ module Douban
         atom=resp.body
         doc=REXML::Document.new(atom)
         REXML::XPath.each(doc,"//feed/entry") do |entry|
-          events<< Event.new(entry.to_s)
+          events<< Event.new(entry)
         end
         events
       else
