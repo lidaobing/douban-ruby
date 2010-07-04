@@ -311,6 +311,16 @@ module Douban
           end
         end
 
+        context "search_events" do
+          it "should return [Event] with different id" do
+            q = '电影'
+            events = @authorize.search_events(q)
+            events.size.should >= 2
+            events[0].class.should == Event
+            events[0].id.should_not == events[-1].id
+          end
+        end
+
 =begin
         context "modify_event" do
           it "should return Event" do
