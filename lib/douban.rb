@@ -3,13 +3,13 @@
 # Copyright (c) 2008 Hooopo
 # Written and maintained by Hooopo<hoooopo@gmail.com>
 #
-# 
+#
 # This program is free software. You can re-distribute and/or
 # modify this program under the same terms of ruby itself ---
 # Ruby Distribution License or GNU General Public License.
 #
-# See Douban::Authorize for an overview and examples. 
-# 
+# See Douban::Authorize for an overview and examples.
+#
 #== Douban API Client Based Ruby
 # This is the Douban Ruby library, which communicates to the Douban
 # API REST servers and converts Atom into proper Ruby objects.
@@ -40,7 +40,7 @@
 #  when user has press the 'agree' button ，we use client.auth to authorize.
 #	 client=client.auth
 #	 puts client.authoried? #return true or false
-#  Get users' info via his uid 
+#  Get users' info via his uid
 #  #-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
 #   people = client.get_people('hooopo')
 #   people.class === People
@@ -49,18 +49,9 @@
 #==Install and Wiki
 #  http://code.google.com/p/doubanclient-ruby/
 
-%w(mail tag author authorize people subject review collection miniblog note event recommendation recommendation_comment).each do |m|
-  require "douban/#{m}"
-end
-require 'douban/helper/helper'
+require 'douban/authorize'
 
 module Douban
   VERSION      = "0.0.4"
-  API_HOST= "http://api.douban.com"
-  OAUTH_HOST="http://www.douban.com"
-  REQUEST_TOKEN_PATH ="/service/auth/request_token"
-  ACCESS_TOKEN_PATH="/service/auth/access_token"
-  AUTHORIZE_PATH="/service/auth/authorize"
 end
-fail "This is a library, not a command line app" if $0 == __FILE__
 

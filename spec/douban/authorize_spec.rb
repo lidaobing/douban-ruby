@@ -1,3 +1,4 @@
+require File.join(File.dirname(__FILE__), '/../spec_helper')
 
 require 'douban/authorize'
 
@@ -13,7 +14,7 @@ module Douban
     context "helper" do
       context "url_encode" do
         it "should support integer" do
-          @authorize.url_encode(1).should == "1"
+          @authorize.send(:url_encode, 1).should == "1"
         end
       end
     end
@@ -344,9 +345,9 @@ module Douban
 
         context "send_mail" do
           it "should success or return captcha_token" do
-            mail = @authorize.send_mail("lidaobing", "hello", "world")
-            if mail.class != Hash
-              mail.class.should == true
+            res = @authorize.send_mail("lidaobing", "hello", "world")
+            if res.class != Hash
+              res.should == true
             end
           end
         end

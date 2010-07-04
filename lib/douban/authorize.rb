@@ -4,11 +4,22 @@ require 'oauth'
 require 'oauth/consumer'
 require 'rexml/document'
 require 'net/http'
-require 'douban'
+
+require 'douban/author'
+require 'douban/collection'
+require 'douban/event'
+require 'douban/mail'
+require 'douban/miniblog'
+require 'douban/note'
+require 'douban/people'
+require 'douban/recommendation'
+require 'douban/recommendation_comment'
+require 'douban/review'
+require 'douban/subject'
+require 'douban/tag'
 
 module Douban
   class Authorize
-    include Douban
     attr_reader :api_key
     attr_reader :api_secret
     attr_reader :authorize_url
@@ -17,6 +28,24 @@ module Douban
     attr_reader :access_token
 
     @@debug = false
+    
+    @@default_oauth_request_options = {
+      :signature_method=>"HMAC-SHA1",
+      :site=>"http://www.douban.com",
+      :request_token_path=>"/service/auth/request_token",
+      :access_token_path=>"/service/auth/access_token",
+      :authorize_path=>"/service/auth/authorize",
+      :scheme=>:header,
+      :realm=>"http://www.example.com/"
+    }
+    
+    @@default_oauth_access_options = {
+      :site=>"http://api.douban.com",
+      :scheme=>:header,
+      :signature_method=>"HMAC-SHA1",
+      :realm=>"http://www.example.com/"
+    }
+
 
     def self.debug=(val)
       @@debug = val
@@ -25,16 +54,8 @@ module Douban
     def initialize(api_key, secret_key, options={})
       @api_key=api_key
       @secret_key=secret_key
-      default_options = {
-        :signature_method=>"HMAC-SHA1",
-        :site=>OAUTH_HOST,
-        :request_token_path=>REQUEST_TOKEN_PATH,
-        :access_token_path=>ACCESS_TOKEN_PATH,
-        :authorize_path=>AUTHORIZE_PATH ,
-        :scheme=>:header,
-        :realm=>"http://www.example.com/"
-      }
-      @oauth_option=default_options.merge(options)
+      @oauth_request_option = @@default_oauth_request_options.merge(options)
+      @oauth_access_option = @@default_oauth_access_options.merge(options)
       yield self if block_given?
       self
     end
@@ -44,9 +65,9 @@ module Douban
     end
 
     def get_authorize_url(oauth_callback=nil)
-      oauth_callback ||= @oauth_option[:realm]
+      oauth_callback ||= @oauth_request_option[:realm]
 
-      @consumer=OAuth::Consumer.new(@api_key,@secret_key,@oauth_option)
+      @consumer=new_request_consumer
       @request_token=@consumer.get_request_token
       @authorize_url="#{@request_token.authorize_url}&oauth_callback=#{CGI.escape(oauth_callback)}"
       yield @request_token if block_given?
@@ -56,17 +77,7 @@ module Douban
     def auth
       begin
         @access_token=@request_token.get_access_token
-        @access_token=OAuth::AccessToken.new(
-          OAuth::Consumer.new(
-            @api_key,
-            @secret_key,
-            {
-          :site=>API_HOST,
-          :scheme=>:header,
-          :signature_method=>"HMAC-SHA1",
-          :realm=>@oauth_option[:realm]
-        }
-        ),
+        @access_token=OAuth::AccessToken.new(new_access_consumer,
           @access_token.token,
           @access_token.secret
         )
@@ -78,7 +89,7 @@ module Douban
       end
     end
     def get_people(uid="@me")
-      resp=get("/people/#{url_encode(uid.to_s)}")
+      resp=get("/people/#{u uid}")
       if resp.code=="200"
         atom=resp.body
         People.new(atom)
@@ -88,7 +99,7 @@ module Douban
     end
 
     def get_friends(uid="@me",option={:start_index=>1,:max_results=>10})
-      resp=get("/people/#{url_encode(uid.to_s)}/friends?start-index=#{option[:start_index]}&max-results=#{option[:max_results]}")
+      resp=get("/people/#{u uid.to_s}/friends?start-index=#{u option[:start_index]}&max-results=#{u option[:max_results]}")
       if resp.code=="200"
         friends=[]
         atom=resp.body
@@ -103,7 +114,7 @@ module Douban
     end
 
     def get_contacts(uid="@me",option={:start_index=>1,:max_results=>10})
-      resp=get("/people/#{url_encode(uid.to_s)}/contacts?start-index=#{option[:start_index]}&max-results=#{option[:max_results]}")
+      resp=get("/people/#{u uid.to_s}/contacts?start-index=#{option[:start_index]}&max-results=#{option[:max_results]}")
       if resp.code=="200"
         contacts=[]
         atom=resp.body
@@ -119,7 +130,7 @@ module Douban
 
 
     def search_people(q="",option={:start_index=>1,:max_results=>10})
-      resp=get("/people?q=#{url_encode(q.to_s)}&start-index=#{option[:start_index]}&max-results=#{option[:max_results]}")
+      resp=get("/people?q=#{u(q.to_s)}&start-index=#{option[:start_index]}&max-results=#{option[:max_results]}")
       if resp.code=="200"
         results=[]
         atom=resp.body
@@ -134,9 +145,9 @@ module Douban
     end
     def get_book(id="")
       if id.to_s.size >=10
-        resp=get("/book/subject/isbn/#{url_encode(id.to_s)}")
+        resp=get("/book/subject/isbn/#{u(id.to_s)}")
       else
-        resp=get("/book/subject/#{url_encode(id.to_s)}")
+        resp=get("/book/subject/#{u(id.to_s)}")
       end
       if resp.code=="200"
         atom=resp.body
@@ -147,9 +158,9 @@ module Douban
     end
     def get_movie(id="")
       if id.to_s=~/^tt\d+/
-        resp=get("/movie/subject/imdb/#{url_encode(id.to_s)}")
+        resp=get("/movie/subject/imdb/#{u(id.to_s)}")
       else
-        resp=get("/movie/subject/#{url_encode(id.to_s)}")
+        resp=get("/movie/subject/#{u(id.to_s)}")
       end
       if resp.code=="200"
         atom=resp.body
@@ -159,7 +170,7 @@ module Douban
       end
     end
     def get_music(id=nil)
-      resp=get("/music/subject/#{url_encode(id.to_s)}")
+      resp=get("/music/subject/#{u(id.to_s)}")
       if resp.code=="200"
         atom=resp.body
         Music.new(atom)
@@ -168,7 +179,7 @@ module Douban
       end
     end
     def search_book(tag="",option={:start_index=>1,:max_results=>10})
-      resp=get("/book/subjects?tag=#{url_encode(tag.to_s)}&start-index=#{option[:start_index]}&max-results=#{option[:max_results]}")
+      resp=get("/book/subjects?tag=#{u(tag.to_s)}&start-index=#{option[:start_index]}&max-results=#{option[:max_results]}")
       if resp.code=="200"
         atom=resp.body
         doc=REXML::Document.new(atom)
@@ -183,7 +194,7 @@ module Douban
 
     end
     def search_movie(tag="",option={:start_index=>1,:max_results=>10})
-      resp=get("/movie/subjects?tag=#{url_encode(tag.to_s)}&start-index=#{option[:start_index]}&max-results=#{option[:max_results]}")
+      resp=get("/movie/subjects?tag=#{u(tag.to_s)}&start-index=#{option[:start_index]}&max-results=#{option[:max_results]}")
       if resp.code=="200"
         atom=resp.body
         doc=REXML::Document.new(atom)
@@ -197,7 +208,7 @@ module Douban
       end
     end
     def search_music(tag="",option={:start_index=>1,:max_results=>10})
-      resp=get("/music/subjects?tag=#{url_encode(tag)}&start-index=#{option['start-index']}&max-results=#{option['max-results']}")
+      resp=get("/music/subjects?tag=#{u(tag)}&start-index=#{option['start-index']}&max-results=#{option['max-results']}")
       if resp.code=="200"
         atom=resp.body
         doc=REXML::Document.new(atom)
@@ -211,7 +222,7 @@ module Douban
       end
     end
     def get_review(id="")
-      resp=get("/review/#{url_encode(id.to_s)}")
+      resp=get("/review/#{u(id.to_s)}")
       if resp.code=="200"
         atom=resp.body
         Review.new(atom)
@@ -220,7 +231,7 @@ module Douban
       end
     end
     def get_user_reviews(user_id="@me",option={:start_index=>1,:max_results=>10,:orderby=>'score'})
-      resp=get("/people/#{url_encode(user_id.to_s)}/reviews?start-index=#{option[:start_index]}&max-results=#{option[:max_results]}&orderby=#{option[:orderby]}")
+      resp=get("/people/#{u(user_id.to_s)}/reviews?start-index=#{option[:start_index]}&max-results=#{option[:max_results]}&orderby=#{option[:orderby]}")
       if resp.code=="200"
         atom=resp.body
         reviews=[]
@@ -234,7 +245,7 @@ module Douban
       end
     end
     def get_movie_reviews(subject_id="",option={:start_index=>1,:max_results=>10,:orderby=>'score'})
-      resp=get("/movie/subject/#{url_encode(subject_id.to_s)}/reviews?start-index=#{option[:start_index]}&max-results=#{option[:max_results]}&orderby=#{option[:orderby]}")
+      resp=get("/movie/subject/#{u(subject_id.to_s)}/reviews?start-index=#{option[:start_index]}&max-results=#{option[:max_results]}&orderby=#{option[:orderby]}")
       if resp.code=="200"
         atom=resp.body
         reviews=[]
@@ -249,7 +260,7 @@ module Douban
       end
     end
     def get_music_reviews(subject_id="",option={:start_index=>1,:max_results=>10,:orderby=>'score'})
-      resp=get("/music/subject/#{url_encode(subject_id.to_s)}/reviews?start-index=#{option[:start_index]}&max-results=#{option[:max_results]}&orderby=#{option[:orderby]}")
+      resp=get("/music/subject/#{u(subject_id.to_s)}/reviews?start-index=#{option[:start_index]}&max-results=#{option[:max_results]}&orderby=#{option[:orderby]}")
       if resp.code=="200"
         atom=resp.body
         reviews=[]
@@ -263,7 +274,7 @@ module Douban
       end
     end
     def get_book_reviews(subject_id="",option={:start_index=>1,:max_results=>10,:orderby=>'score'})
-      resp=get("/book/subject/#{url_encode(subject_id.to_s)}/reviews?start-index=#{option[:start_index]}&max-results=#{option[:max_results]}&orderby=#{option[:orderby]}")
+      resp=get("/book/subject/#{u(subject_id.to_s)}/reviews?start-index=#{option[:start_index]}&max-results=#{option[:max_results]}&orderby=#{option[:orderby]}")
       if resp.code=="200"
         atom=resp.body
         reviews=[]
@@ -283,7 +294,7 @@ module Douban
         else review
       end
 
-      resp=delete("/review/#{url_encode(review_id.to_s)}")
+      resp=delete("/review/#{u(review_id.to_s)}")
       if resp.code=="200"
         true
       else
@@ -331,7 +342,7 @@ module Douban
                   <title>#{h title}</title>
                   </entry>
       }
-      resp=put("/review/#{url_encode(review_id)}",entry,{"Content-Type" => "application/atom+xml"})
+      resp=put("/review/#{u(review_id)}",entry,{"Content-Type" => "application/atom+xml"})
       if resp.code=="202"
         Review.new(resp.body)
       else
@@ -339,7 +350,7 @@ module Douban
       end
     end
     def get_collection(collection_id="")
-      resp=get("/collection/#{url_encode(collection_id.to_s)}")
+      resp=get("/collection/#{u(collection_id.to_s)}")
       if resp.code=="200"
         atom=resp.body
         Collection.new(atom)
@@ -359,7 +370,7 @@ module Douban
       :updated_min=>''
     }
     )
-    resp=get("/people/#{url_encode(user_id.to_s)}/collection?cat=#{option[:cat]}&tag=#{option[:tag]}&status=#{option[:status]}&start-index=#{option[:start_index]}&max-results=#{option[:max_results]}&updated-max=#{option[:updated_max]}&updated-min=#{option[:updated_min]}")
+    resp=get("/people/#{u(user_id.to_s)}/collection?cat=#{option[:cat]}&tag=#{option[:tag]}&status=#{option[:status]}&start-index=#{option[:start_index]}&max-results=#{option[:max_results]}&updated-max=#{option[:updated_max]}&updated-min=#{option[:updated_min]}")
     if resp.code=="200"
       atom=resp.body
       doc=REXML::Document.new(atom)
@@ -453,7 +464,7 @@ module Douban
       else collection
       end
 
-      resp=delete("/collection/#{url_encode(collection_id.to_s)}")
+      resp=delete("/collection/#{u(collection_id.to_s)}")
       if resp.code=="200"
         true
       else
@@ -461,7 +472,7 @@ module Douban
       end
     end
     def get_user_miniblog(user_id="@me",option={:start_index=>1,:max_results=>10})
-      resp=get("/people/#{url_encode(user_id.to_s)}/miniblog?start-index=#{option[:start_index]}&max-results=#{option[:max_results]}")
+      resp=get("/people/#{u(user_id.to_s)}/miniblog?start-index=#{option[:start_index]}&max-results=#{option[:max_results]}")
       if resp.code=="200"
         atom=resp.body
         doc=REXML::Document.new(atom)
@@ -479,7 +490,7 @@ module Douban
       end
     end
     def get_user_contact_miniblog(user_id="@me",option={:start_index=>1,:max_results=>10})
-      resp=get("/people/#{url_encode(user_id.to_s)}/miniblog/contacts?start-index=#{option[:start_index]}&max-results=#{option[:max_results]}")
+      resp=get("/people/#{u(user_id.to_s)}/miniblog/contacts?start-index=#{option[:start_index]}&max-results=#{option[:max_results]}")
       if resp.code=="200"
         atom=resp.body
         doc=REXML::Document.new(atom)
@@ -506,7 +517,7 @@ module Douban
       end
     end
     def delete_miniblog(miniblog_id="")
-      resp=delete("/miniblog/#{url_encode(miniblog_id.to_s)}")
+      resp=delete("/miniblog/#{u(miniblog_id.to_s)}")
       if resp.code=="200"
         true
       else
@@ -514,7 +525,7 @@ module Douban
       end
     end
     def get_note(note_id="")
-      resp=get("/note/#{url_encode(note_id.to_s)}")
+      resp=get("/note/#{u(note_id.to_s)}")
       if resp.code=="200"
         atom=resp.body
         Note.new(atom)
@@ -524,7 +535,7 @@ module Douban
     end
 
     def get_user_notes(user_id="@me",option={:start_index=>1,:max_results=>10})
-      resp=get("/people/#{url_encode(user_id.to_s)}/notes?start-index=#{option[:start_index]}&max-results=#{option[:max_results]}")
+      resp=get("/people/#{u(user_id.to_s)}/notes?start-index=#{option[:start_index]}&max-results=#{option[:max_results]}")
       if resp.code=="200"
         atom=resp.body
         doc=REXML::Document.new(atom)
@@ -562,7 +573,7 @@ module Douban
     def delete_note(note_id="")
       note_id = note_id.note_id if note_id.kind_of?(Note)
 
-      resp=delete("/note/#{url_encode(note_id.to_s)}")
+      resp=delete("/note/#{u(note_id.to_s)}")
       if resp.code=="200"
         true
       else
@@ -584,7 +595,7 @@ module Douban
                   <db:attribute name="can_reply">#{h option[:can_reply]}</db:attribute>
                   </entry>
       }
-      resp=put("/note/#{url_encode(note_id.to_s)}",entry,{"Content-Type"=>"application/atom+xml"})
+      resp=put("/note/#{u(note_id.to_s)}",entry,{"Content-Type"=>"application/atom+xml"})
       if resp.code=="202"
         Note.new(resp.body)
       else
@@ -592,7 +603,7 @@ module Douban
       end
     end
     def get_event(event_id="")
-      resp=get("/event/#{url_encode(event_id.to_s)}")
+      resp=get("/event/#{u(event_id.to_s)}")
       if resp.code=="200"
         atom=resp.body
         Event.new(atom)
@@ -608,7 +619,7 @@ module Douban
     end
 
     def get_event_participant_people(event_id=nil,option={:start_index=>1,:max_results=>10})
-      resp=get("/event/#{url_encode(event_id.to_s)}/participants?start-index=#{option[:start_index]}&max-results=#{option[:max_results]}")
+      resp=get("/event/#{u(event_id.to_s)}/participants?start-index=#{option[:start_index]}&max-results=#{option[:max_results]}")
       if resp.code=="200"
         people=[]
         atom=resp.body
@@ -629,7 +640,7 @@ module Douban
     end
 
     def get_event_wisher_people(event_id=nil,option={:start_index=>1,:max_results=>10})
-      resp=get("/event/#{url_encode(event_id.to_s)}/wishers?start-index=#{option[:start_index]}&max-results=#{option[:max_results]}")
+      resp=get("/event/#{u(event_id.to_s)}/wishers?start-index=#{option[:start_index]}&max-results=#{option[:max_results]}")
       if resp.code=="200"
         people=[]
         atom=resp.body
@@ -643,7 +654,7 @@ module Douban
       end
     end
     def get_user_events(user_id="@me",option={:start_index=>1,:max_results=>10})
-      resp=get("/people/#{url_encode(user_id.to_s)}/events?start-index=#{option[:start_index]}&max-results=#{option[:max_results]}")
+      resp=get("/people/#{u(user_id.to_s)}/events?start-index=#{option[:start_index]}&max-results=#{option[:max_results]}")
       if resp.code=="200"
         events=[]
         atom=resp.body
@@ -657,7 +668,7 @@ module Douban
       end
     end
     def get_user_initiate_events(user_id="@me",option={:start_index=>1,:max_results=>10})
-      resp=get("/people/#{url_encode(user_id.to_s)}/events/initiate?start-index=#{option[:start_index]}&max-results=#{option[:max_results]}")
+      resp=get("/people/#{u(user_id.to_s)}/events/initiate?start-index=#{option[:start_index]}&max-results=#{option[:max_results]}")
       if resp.code=="200"
         events=[]
         atom=resp.body
@@ -671,7 +682,7 @@ module Douban
       end
     end
     def get_user_participate_events(user_id="@me",option={:start_index=>1,:max_results=>10})
-      resp=get("/people/#{url_encode(user_id.to_s)}/events/participate?start-index=#{option[:start_index]}&max-results=#{option[:max_results]}")
+      resp=get("/people/#{u(user_id.to_s)}/events/participate?start-index=#{option[:start_index]}&max-results=#{option[:max_results]}")
       if resp.code=="200"
         events=[]
         atom=resp.body
@@ -685,7 +696,7 @@ module Douban
       end
     end
     def get_user_wish_events(user_id="@me",option={:start_index=>1,:max_results=>10})
-      resp=get("/people/#{url_encode(user_id.to_s)}/events/wish?start-index=#{option[:start_index]}&max-results=#{option[:max_results]}")
+      resp=get("/people/#{u(user_id.to_s)}/events/wish?start-index=#{option[:start_index]}&max-results=#{option[:max_results]}")
       if resp.code=="200"
         events=[]
         atom=resp.body
@@ -700,7 +711,7 @@ module Douban
     end
 
     def get_city_events(location_id=nil,option={:type=>"all",:start_index=>1,:max_results=>10})
-      resp=get("/event/location/#{url_encode(location_id.to_s)}?type=#{option[:type]}&start-index=#{option[:start_index]}&max-results=#{option[:max_results]}")
+      resp=get("/event/location/#{u(location_id.to_s)}?type=#{option[:type]}&start-index=#{option[:start_index]}&max-results=#{option[:max_results]}")
       if resp.code=="200"
         events=[]
         atom=resp.body
@@ -714,7 +725,7 @@ module Douban
       end
     end
     def search_events(q="",option={:location=>"all",:start_index=>1,:max_results=>10})
-      resp=get("/events?q=#{url_encode(q.to_s)}&location=#{option[:location]}&start-index=#{option[:start_index]}&max-results=#{option[:max_results]}")
+      resp=get("/events?q=#{u(q.to_s)}&location=#{option[:location]}&start-index=#{option[:start_index]}&max-results=#{option[:max_results]}")
       if resp.code=="200"
         events=[]
         atom=resp.body
@@ -772,7 +783,7 @@ module Douban
             <gd:where valueString="#{h where}" />
             </entry>
       }
-      resp=put("/event/#{url_encode(event_id)}",entry,{"Content-Type"=>"application/atom+xml"})
+      resp=put("/event/#{u(event_id)}",entry,{"Content-Type"=>"application/atom+xml"})
       if resp.code=="200"
         Event.new(resp.body)
       else
@@ -823,7 +834,7 @@ module Douban
       end
     end
     def get_mail(mail_id="",keep_unread="false")
-      resp=get("/doumail/#{url_encode(mail_id.to_s)}?keep-unread=#{keep_unread}")
+      resp=get("/doumail/#{u(mail_id.to_s)}?keep-unread=#{keep_unread}")
       if resp.code=="200"
         atom=resp.body
         Mail.new(atom)
@@ -862,7 +873,7 @@ module Douban
         true
       elsif resp.code=="403"
         hash={}
-        str=decode(resp.body)
+        str=CGI.unescapeHTML(resp.body)
         hash[:token]=str.scan(/^captcha_token=(.*?)&/).flatten.to_s
         hash[:url]=str.scan(/captcha_url=(.*?)$/).flatten.to_s
         hash
@@ -924,7 +935,6 @@ module Douban
         resp=get("/movie/subject/#{subject_id}/tags")
       end
       if resp.code=="200"
-        puts resp.body
         tags=[]
         atom=resp.body
         doc=REXML::Document.new(atom)
@@ -960,7 +970,7 @@ module Douban
 
     def delete_event(event_id="")
       entry=%Q{<?xml version='1.0' encoding='UTF-8'?><entry xmlns:ns0="http://www.w3.org/2005/Atom" xmlns:db="http://www.douban.com/xmlns/"><content>sorry!!!</content></entry>}
-      resp=post("/event/#{url_encode(event_id)}/delete",entry,{"Content-Type"=>"application/atom+xml"})
+      resp=post("/event/#{u(event_id)}/delete",entry,{"Content-Type"=>"application/atom+xml"})
       if resp.code=="200"
         true
       else
@@ -989,7 +999,7 @@ module Douban
     end
 
     def get_recommendation(id)
-      resp=get("/recommendation/#{url_encode(id.to_s)}")
+      resp=get("/recommendation/#{u(id.to_s)}")
       if resp.code=="200"
         Recommendation.new(resp.body)
       elsif resp.code == "404"
@@ -1000,7 +1010,7 @@ module Douban
     end
 
     def get_user_recommendations(user_id="@me",option={:start_index=>1,:max_results=>10})
-      resp=get("/people/#{url_encode(user_id.to_s)}/recommendations?start-index=#{option[:start_index]}&max-results=#{option[:max_results]}")
+      resp=get("/people/#{u(user_id.to_s)}/recommendations?start-index=#{option[:start_index]}&max-results=#{option[:max_results]}")
       if resp.code == "200"
         recommendations = []
         doc=REXML::Document.new(resp.body)
@@ -1014,7 +1024,7 @@ module Douban
     end
 
     def get_recommendation_comments(recommendation_id)
-      resp = get("/recommendation/#{url_encode(recommendation_id)}/comments")
+      resp = get("/recommendation/#{u(recommendation_id)}/comments")
       if resp.code == "200"
         comments = []
         doc=REXML::Document.new(resp.body)
@@ -1095,15 +1105,11 @@ module Douban
 
     protected
     def new_request_consumer
-      OAuth::Consumer.new(@api_key, @secret_key, @oauth_option)
+      OAuth::Consumer.new(@api_key, @secret_key, @oauth_request_option)
     end
 
     def new_access_consumer
-      OAuth::Consumer.new(@api_key, @secret_key,
-                          :site=>API_HOST,
-                          :scheme=>:header,
-                          :signature_method=>"HMAC-SHA1",
-                          :realm=>@oauth_option[:realm])
+      OAuth::Consumer.new(@api_key, @secret_key, @oauth_access_option)
     end
 
     def debug(resp, retval=nil)
@@ -1114,13 +1120,16 @@ module Douban
       retval
     end
 
-    def h(o)
+    def html_encode(o)
       CGI.escapeHTML(o.to_s)
     end
+    alias_method :h, :html_encode
 
-    def u(o)
+    def url_encode(o)
       CGI.escape(o.to_s)
     end
+    alias_method :u, :url_encode
+    
     def get(path,headers={})
       @access_token.get(path,headers)
     end
