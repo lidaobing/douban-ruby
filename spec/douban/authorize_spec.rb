@@ -357,6 +357,24 @@ module Douban
             mail.class.should == Mail
           end
         end
+
+        context "get_unread_mail" do
+          it "should return [Mail] with different id" do
+            mails = @authorize.get_unread_mail
+            mails.size.should >= 2
+            mails[0].class.should == Mail
+            mails[0].id.should_not == mails[-1].id
+          end
+        end
+
+        context "get_mail_outbox" do
+          it "should return [Mail] with different id" do
+            mails = @authorize.get_mail_outbox
+            mails.size.should >= 2
+            mails[0].class.should == Mail
+            mails[0].id.should_not == mails[-1].id
+          end
+        end
       end
 
       context "note" do

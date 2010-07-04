@@ -816,7 +816,7 @@ module Douban
         atom=resp.body
         doc=REXML::Document.new(atom)
         REXML::XPath.each(doc,"//entry") do |entry|
-          mails << Mail.new(entry.to_s)
+          mails << Mail.new(entry)
         end
         mails
       else
@@ -830,7 +830,7 @@ module Douban
         atom=resp.body
         doc=REXML::Document.new(atom)
         REXML::XPath.each(doc,"//entry") do |entry|
-          mails << Mail.new(entry.to_s)
+          mails << Mail.new(entry)
         end
         mails
       else
