@@ -484,7 +484,7 @@ module Douban
         author=Author.new(author.to_s) if author
         miniblogs=[]
         REXML::XPath.each(doc,"//feed/entry") do |entry|
-          miniblog=Miniblog.new(entry.to_s)
+          miniblog=Miniblog.new(entry)
           miniblog.author=author
           miniblogs<< miniblog
         end

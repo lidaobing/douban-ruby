@@ -4,8 +4,8 @@ require 'douban/miniblog'
 
 module Douban
   describe Miniblog do
-    it "should correct deserialize" do
-      s = <<eos
+    before do
+      @s = <<eos
 <?xml version="1.0" encoding="UTF-8"?>
 <entry xmlns="http://www.w3.org/2005/Atom" xmlns:db="http://www.douban.com/xmlns/" xmlns:gd="http://schemas.google.com/g/2005" xmlns:openSearch="http://a9.com/-/spec/opensearchrss/1.0/" xmlns:opensearch="http://a9.com/-/spec/opensearchrss/1.0/">
   <id>http://api.douban.com/miniblog/374100199</id>
@@ -20,9 +20,12 @@ module Douban
   <published>2010-06-30T19:27:41+08:00</published>
   <content type="html">&amp;lt;b&amp;gt;单元测试0.921892231299059</content>
   <db:attribute name="comments_count">0</db:attribute>
-</entry>      
+</entry>
 eos
-      miniblog = Douban::Miniblog.new(s)
+    end
+
+    it "should correct deserialize from string" do
+      miniblog = Douban::Miniblog.new(@s)
       miniblog.id.should == "http://api.douban.com/miniblog/374100199"
       miniblog.title.should == '<b>单元测试0.921892231299059'
       miniblog.category.should == {"term"=>"http://www.douban.com/2007#miniblog.saying", "scheme"=>"http://www.douban.com/2007#kind"}
@@ -32,5 +35,14 @@ eos
       miniblog.attribute.should == {"comments_count" => "0"}
       miniblog.author.nil?.should == false
     end
+
+    it "should support ==" do
+      Miniblog.new(@s).should == Miniblog.new(@s)
+    end
+
+    it "should correct deserialize from REXML::Document" do
+      Miniblog.new(REXML::Document.new(@s)).should == Miniblog.new(@s)
+    end
   end
 end
+

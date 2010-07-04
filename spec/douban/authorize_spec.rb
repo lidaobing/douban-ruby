@@ -105,16 +105,27 @@ module Douban
     end
 
     context "miniblog" do
-      it "should publish miniblog with html characters and return Miniblog" do
-        miniblog = @authorize.create_miniblog("<b>单元测试#{rand}")
-        miniblog.kind_of?(Douban::Miniblog).should == true
+      context "create_miniblog" do
+        it "should publish miniblog with html characters and return Miniblog" do
+          miniblog = @authorize.create_miniblog("<b>单元测试#{rand}")
+          miniblog.kind_of?(Douban::Miniblog).should == true
+        end
+
+        it "delete miniblog should works" do
+          miniblog = @authorize.create_miniblog("<b>单元测试#{rand}")
+          miniblog.kind_of?(Douban::Miniblog).should == true
+          id = %r{http://api.douban.com/miniblog/(\d+)}.match(miniblog.id)[1]
+          @authorize.delete_miniblog(id).should == true
+        end
       end
 
-      it "delete miniblog should works" do
-        miniblog = @authorize.create_miniblog("<b>单元测试#{rand}")
-        miniblog.kind_of?(Douban::Miniblog).should == true
-        id = %r{http://api.douban.com/miniblog/(\d+)}.match(miniblog.id)[1]
-        @authorize.delete_miniblog(id).should == true
+      context "get_user_miniblog" do
+        it "should return [Miniblog] with different id" do
+          miniblogs = @authorize.get_user_miniblog
+          miniblogs.size.should >= 2
+          miniblogs[0].class.should == Miniblog
+          miniblogs[0].id.should_not == miniblogs[-1].id
+        end
       end
     end
 
