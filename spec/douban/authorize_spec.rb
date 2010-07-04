@@ -301,6 +301,16 @@ module Douban
           end
         end
 
+        context "get_city_events" do
+          it "should return [Event] with different id" do
+            city_id = 'beijing'
+            events = @authorize.get_city_events(city_id)
+            events.size.should >= 2
+            events[0].class.should == Event
+            events[0].id.should_not == events[-1].id
+          end
+        end
+
 =begin
         context "modify_event" do
           it "should return Event" do

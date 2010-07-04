@@ -713,6 +713,7 @@ module Douban
         nil
       end
     end
+
     def get_city_events(location_id=nil,option={:type=>"all",:start_index=>1,:max_results=>10})
       resp=get("/event/location/#{url_encode(location_id.to_s)}?type=#{option[:type]}&start-index=#{option[:start_index]}&max-results=#{option[:max_results]}")
       if resp.code=="200"
@@ -720,7 +721,7 @@ module Douban
         atom=resp.body
         doc=REXML::Document.new(atom)
         REXML::XPath.each(doc,"//feed/entry") do |entry|
-          events<< Event.new(entry.to_s)
+          events<< Event.new(entry)
         end
         events
       else
@@ -734,7 +735,7 @@ module Douban
         atom=resp.body
         doc=REXML::Document.new(atom)
         REXML::XPath.each(doc,"//feed/entry") do |entry|
-          events<< Event.new(entry.to_s)
+          events<< Event.new(entry)
         end
         events
       else
