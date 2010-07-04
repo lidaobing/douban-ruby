@@ -622,7 +622,7 @@ module Douban
         atom=resp.body
         doc=REXML::Document.new(atom)
         REXML::XPath.each(doc,"//feed/entry") do |entry|
-          people<< People.new(entry.to_s)
+          people<< People.new(entry)
         end
         people
       else
