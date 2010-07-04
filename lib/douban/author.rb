@@ -19,14 +19,15 @@ module Douban
     end
     def initialize(doc='')
       doc=REXML::Document.new(doc) unless doc.kind_of?(REXML::Element)
-      REXML::XPath.each(doc,"//link") do|link|
+      REXML::XPath.each(doc,"./link") do|link|
         @link||={}
         @link[link.attributes['rel']]=link.attributes['href']
       end
-      name=REXML::XPath.first(doc,"//name")
+      name=REXML::XPath.first(doc,"./name")
       @name=name.text if name
-      uri=REXML::XPath.first(doc,"//uri")
+      uri=REXML::XPath.first(doc,"./uri")
       @uri=uri.text if uri
     end
   end
 end
+
