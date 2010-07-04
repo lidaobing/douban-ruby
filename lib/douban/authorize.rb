@@ -615,7 +615,14 @@ module Douban
         nil
       end
     end
-    def get_participant_people(event_id=nil,option={:start_index=>1,:max_results=>10})
+
+    # <b>DEPRECATED:</b> Please use <tt>get_event_participant_people</tt> instead.
+    def get_participant_people(*args)
+      warn "[DEPRECATION] `get_participant_people` is deprecated.  Please use `get_event_participant_people` instead."
+      get_event_participant_people(*args)
+    end
+
+    def get_event_participant_people(event_id=nil,option={:start_index=>1,:max_results=>10})
       resp=get("/event/#{url_encode(event_id.to_s)}/participants?start-index=#{option[:start_index]}&max-results=#{option[:max_results]}")
       if resp.code=="200"
         people=[]
@@ -629,7 +636,14 @@ module Douban
         nil
       end
     end
-    def get_wisher_people(event_id=nil,option={:start_index=>1,:max_results=>10})
+
+    # <b>DEPRECATED:</b> Please use <tt>get_event_wisher_people</tt> instead.
+    def get_wisher_people(*args)
+      warn "[DEPRECATION] `get_wisher_people` is deprecated. Please use `get_event_wisher_people` instead."
+      get_event_wisher_people(*args)
+    end
+
+    def get_event_wisher_people(event_id=nil,option={:start_index=>1,:max_results=>10})
       resp=get("/event/#{url_encode(event_id.to_s)}/wishers?start-index=#{option[:start_index]}&max-results=#{option[:max_results]}")
       if resp.code=="200"
         people=[]
