@@ -951,25 +951,25 @@ module Douban
         nil
       end
     end
-    def get_user_tags(user_id="",flag=:book,option={:max_results=>10})
+    def get_user_tags(user_id="@me",flag=:book,option={:max_results=>10})
       case flag
       when :book
-        resp=get("/people/#{user_id}/tags?cat=book&max-results=#{option[:max_results]}")
+        resp=get("/people/#{u user_id}/tags?cat=book&max-results=#{option[:max_results]}")
       when :music
-        resp=get("/people/#{user_id}/tags?cat=music&max-results=#{option[:max_results]}")
+        resp=get("/people/#{u user_id}/tags?cat=music&max-results=#{option[:max_results]}")
       when :movie
-        resp=get("/people/#{user_id}/tags?cat=movie&max-results=#{option[:max_results]}")
+        resp=get("/people/#{u user_id}/tags?cat=movie&max-results=#{option[:max_results]}")
       end
       if resp.code=="200"
         tags=[]
         atom=resp.body
         doc=REXML::Document.new(atom)
         REXML::XPath.each(doc,"//entry") do |entry|
-          tags << Tag.new(entry.to_s)
+          tags << Tag.new(entry)
         end
         tags
       else
-        nil
+        debug(resp)
       end
     end
 

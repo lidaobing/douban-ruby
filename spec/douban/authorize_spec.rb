@@ -481,6 +481,15 @@ module Douban
             tags[0].id.should_not == tags[-1].id
           end
         end
+
+        context "get_user_tags" do
+          it "should return [Tag] with different id" do
+            tags = @authorize.get_user_tags()
+            tags.size.should >= 2
+            tags[0].class.should == Tag
+            tags[0].id.should_not == tags[-1].id
+          end
+        end
       end
 
 
