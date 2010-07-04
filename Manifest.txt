@@ -30,4 +30,5 @@ spec/douban/people_spec.rb
 spec/douban/recommendation_comment_spec.rb
 spec/douban/recommendation_spec.rb
 spec/douban/review_spec.rb
+spec/douban/tag_spec.rb
 spec/spec_helper.rb
