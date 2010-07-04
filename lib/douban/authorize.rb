@@ -124,7 +124,7 @@ module Douban
         atom=resp.body
         doc=REXML::Document.new(atom)
         REXML::XPath.each(doc,"//entry") do |entry|
-          contacts << People.new(entry.to_s)
+          contacts << People.new(entry)
         end
         contacts
       else
