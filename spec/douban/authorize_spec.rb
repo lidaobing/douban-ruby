@@ -71,10 +71,22 @@ module Douban
       @authorize.authorized?.should == true
     end
 
-    it "get_people should works" do
-      people = @authorize.get_people
-      people.nil?.should == false
-      people.uid.should == "41502874"
+    context "people" do
+      context "get_people" do
+        it "should works" do
+          people = @authorize.get_people
+          people.nil?.should == false
+          people.uid.should == "41502874"
+        end
+      end
+
+      context "get_friends" do
+        it "should works" do
+          friends = @authorize.get_friends
+          friends.size.should >= 2
+          friends[0].id.should_not == friends[-1].id
+        end
+      end
     end
 
     context "miniblog" do

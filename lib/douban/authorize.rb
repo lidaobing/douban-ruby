@@ -109,7 +109,7 @@ module Douban
         atom=resp.body
         doc=REXML::Document.new(atom)
         REXML::XPath.each(doc,"//entry") do |entry|
-          friends << People.new(entry.to_s)
+          friends << People.new(entry)
         end
         friends
       else
@@ -831,7 +831,7 @@ module Douban
         nil
       end
     end
-    
+
     # <b>DEPRECATED:</b> Please use <tt>send_mail</tt> instead.
     def create_mail(*args)
       warn "[DEPRECATION] `create_mail` is deprecated.  Please use `send_mail` instead."
