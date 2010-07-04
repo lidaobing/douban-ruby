@@ -20,6 +20,10 @@ module Douban
       tag.count.should == 947
     end
 
+    it "should support Tag.new" do
+      Tag.new.class.should == Tag
+    end
+
   end
 end
 

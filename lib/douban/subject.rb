@@ -37,7 +37,7 @@ module Douban
         t=Tag.new
         t.title=tag.attributes['name']
         t.count=tag.attributes['count']
-        @tag<<t
+        @tag<< t
       end
       @author||=Author.new
       name=REXML::XPath.first(doc,".//author/name")
@@ -61,9 +61,9 @@ module Douban
       @rating={}
       rating=REXML::XPath.first(doc,".//gd:rating")
       if rating
-        @rating['min']=rating.attributes['min'] 
-        @rating['numRaters']=rating.attributes['numRaters'] 
-        @rating['average']=rating.attributes['average'] 
+        @rating['min']=rating.attributes['min']
+        @rating['numRaters']=rating.attributes['numRaters']
+        @rating['average']=rating.attributes['average']
         @rating['max']=rating.attributes['max']
       end
    end
@@ -85,4 +85,3 @@ module Douban
   end
  end
 
-    

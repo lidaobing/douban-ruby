@@ -447,6 +447,14 @@ module Douban
       end
 
       context "subject" do
+
+        context "get_book" do
+          it "should return Book" do
+            book = @authorize.get_book(1088840)
+            book.class.should == Book
+          end
+        end
+
         context "search_book" do
           it "should return [Book] with different id" do
             books = @authorize.search_book("ruby")
