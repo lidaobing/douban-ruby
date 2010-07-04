@@ -384,7 +384,7 @@ module Douban
       title=title.text if title
       collections=[]
       REXML::XPath.each(doc,"//entry") do |entry|
-        collection=Collection.new(entry.to_s)
+        collection=Collection.new(entry)
         collection.author=author
         collection.title=title
         collections<< collection

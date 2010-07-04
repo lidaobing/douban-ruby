@@ -66,8 +66,11 @@ module Douban
       Collection.new(@s).should == Collection.new(@s)
     end
 
-    it "should correct deserialize REXML::Element" do
+    it "should correct deserialize REXML::Document" do
       Collection.new(REXML::Document.new(@s)).should == Collection.new(@s)
+    end
+    it "should correct deserialize REXML::Element" do
+      Collection.new(REXML::Document.new(@s).root).should == Collection.new(@s)
     end
   end
 end

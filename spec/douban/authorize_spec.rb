@@ -1,4 +1,3 @@
-require File.join(File.dirname(__FILE__), '/../spec_helper')
 
 require 'douban/authorize'
 
@@ -193,6 +192,7 @@ module Douban
             @authorize.delete_collection(collection).should == true
           end
         end
+
         context "modify_collection" do
           it "should return Collection" do
             collection = @authorize.create_collection("http://api.douban.com/movie/subject/1424406", "a", 5, "watched", ["tag"])
@@ -200,6 +200,15 @@ module Douban
             collection.class.should == Douban::Collection
             collection.summary.should == "b"
             @authorize.delete_collection(collection).should == true
+          end
+        end
+
+        context "get_user_collection" do
+          it "should return [Collection] with different id" do
+            collections = @authorize.get_user_collection
+            collections.size.should >= 2
+            collections[0].class.should == Collection
+            collections[0].id.should_not == collections[-1].id
           end
         end
       end
