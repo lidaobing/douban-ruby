@@ -1,3 +1,12 @@
+=== 0.0.5 / 2010-07-04
+* Douban::Authorize
+  * all modify_* functions will return an Object if success, otherwise nil. In
+    old version, it will return true or false.
+  * all create_* and delete_* will correctly escape the param for xml.
+  * all the functions return list will work correctly
+* all the .rb files can be loaded. (you don't have to load from douban.rb)
+* some bug fix.
+
 === 0.0.4 / 2010-07-03
 * Douban::Authorize
   * all create_* functions (except create_mail) will return an Object if 
