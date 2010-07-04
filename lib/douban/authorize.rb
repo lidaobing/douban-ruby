@@ -77,21 +77,6 @@ module Douban
         return self
       end
     end
-    def get(path,headers={})
-      @access_token.get(path,headers)
-    end
-    def post(path,data="",headers={})
-      @access_token.post(path,data,headers)
-    end
-    def put(path,body="",headers={})
-      @access_token.put(path,body,headers)
-    end
-    def delete(path,headers={})
-      @access_token.delete(path,headers)
-    end
-    def head(path,headers={})
-      @access_token.head(path,headers)
-    end
     def get_people(uid="@me")
       resp=get("/people/#{url_encode(uid.to_s)}")
       if resp.code=="200"
@@ -1108,7 +1093,7 @@ module Douban
       end
     end
 
-    private
+    protected
     def new_request_consumer
       OAuth::Consumer.new(@api_key, @secret_key, @oauth_option)
     end
@@ -1135,6 +1120,21 @@ module Douban
 
     def u(o)
       CGI.escape(o.to_s)
+    end
+    def get(path,headers={})
+      @access_token.get(path,headers)
+    end
+    def post(path,data="",headers={})
+      @access_token.post(path,data,headers)
+    end
+    def put(path,body="",headers={})
+      @access_token.put(path,body,headers)
+    end
+    def delete(path,headers={})
+      @access_token.delete(path,headers)
+    end
+    def head(path,headers={})
+      @access_token.head(path,headers)
     end
   end
 end
