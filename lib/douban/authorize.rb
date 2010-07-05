@@ -1102,6 +1102,20 @@ module Douban
         debug(resp, false)
       end
     end
+    
+    # 验证Access Token是否可用
+    # http://goo.gl/8v8d
+    def verify_token
+      resp = get("/access_token/#{@access_token.token}")
+      if resp.code == "200"
+        true
+      elsif resp.code == "401"
+        false
+      else
+        debug(resp, false)
+      end
+    end
+      
 
     protected
     def new_request_consumer

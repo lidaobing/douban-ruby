@@ -500,8 +500,12 @@ module Douban
           end
         end
       end
-
-
+      
+      context "verify_token" do
+        it "should return true" do
+          @authorize.verify_token.should == true
+        end
+      end
     end # context "logged in with oauth"
   end #describe
 end #Module
