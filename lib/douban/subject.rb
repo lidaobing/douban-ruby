@@ -86,6 +86,18 @@ module Douban
     def initialize(atom)
       super(atom)
     end
+    
+    def isbn10
+      @attribute["isbn10"] rescue nil
+    end
+    
+    def isbn13
+      @attribute["isbn13"] rescue nil
+    end
+    
+    def isbn
+      isbn13 ? isbn13 : isbn10
+    end
   end
   
   class Music<Subject

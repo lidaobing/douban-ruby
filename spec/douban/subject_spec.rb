@@ -68,6 +68,15 @@ module Douban
     it "should correct deserialize from REXML::Element" do
       Subject.new(REXML::Document.new(@s).root).should == Subject.new(@s)
     end
+    
+    context "book" do
+      it "should support isbn" do
+        book = Book.new(@s)
+        book.isbn10.should == "7040048809"
+        book.isbn13.should == "9787040048803"
+        book.isbn.should == book.isbn13
+      end
+    end
   end
 end
   

@@ -2,6 +2,8 @@
 * Douban::Authorize
   * add verify_token and delete_token
   * support get_book(:isbn=>isbn)
+* Douban::Book
+  * add method: isbn, isbn10, isbn13
 
 === 0.0.5 / 2010-07-04
 * Douban::Authorize
