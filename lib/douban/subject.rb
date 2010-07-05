@@ -86,6 +86,10 @@ module Douban
     def initialize(atom)
       super(atom)
     end
+    
+    def imdb
+      /(tt\d+)\/$/.match(@attribute["imdb"])[1] rescue nil
+    end
   end
   
   class Book<Subject

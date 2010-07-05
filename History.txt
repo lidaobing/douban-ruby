@@ -5,6 +5,8 @@
   * support get_movie(:imdb => imdb)
 * Douban::Book
   * add method: isbn, isbn10, isbn13
+* Douban::Movie
+  * add method: imdb
 
 === 0.0.5 / 2010-07-04
 * Douban::Authorize
