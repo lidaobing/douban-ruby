@@ -214,8 +214,25 @@ module Douban
         nil
       end
     end
-    def search_book(tag="",option={:start_index=>1,:max_results=>10})
-      resp=get("/book/subjects?tag=#{u(tag.to_s)}&start-index=#{option[:start_index]}&max-results=#{option[:max_results]}")
+    
+    # :call-seq:
+    #   search_book(:q => "search word") => [Book] or nil
+    #   search_book(:tag => "tag name") => [Book] or nil
+    #   search_book("search word") => [Book] or nil
+    #
+    # 搜索书籍
+    #
+    # http://goo.gl/rYDf
+    #
+    # * option
+    #   * q: query string
+    #   * tag: 
+    #   * start_index: 
+    #   * max_results: 
+    def search_book(*args)
+      url = _subject_search_args_to_url(:book, *args)
+
+      resp=get(url)
       if resp.code=="200"
         atom=resp.body
         doc=REXML::Document.new(atom)
@@ -227,10 +244,12 @@ module Douban
       else
         nil
       end
-
     end
-    def search_movie(tag="",option={:start_index=>1,:max_results=>10})
-      resp=get("/movie/subjects?tag=#{u(tag.to_s)}&start-index=#{option[:start_index]}&max-results=#{option[:max_results]}")
+
+    def search_movie(*args)
+      url = _subject_search_args_to_url(:movie, *args)
+
+      resp=get(url)
       if resp.code=="200"
         atom=resp.body
         doc=REXML::Document.new(atom)
@@ -244,7 +263,9 @@ module Douban
       end
     end
     def search_music(tag="",option={:start_index=>1,:max_results=>10})
-      resp=get("/music/subjects?tag=#{u(tag)}&start-index=#{option['start-index']}&max-results=#{option['max-results']}")
+      url = _subject_search_args_to_url(:music, *args)
+
+      resp=get(url)
       if resp.code=="200"
         atom=resp.body
         doc=REXML::Document.new(atom)
@@ -1205,6 +1226,35 @@ module Douban
     end
     def head(path,headers={})
       @access_token.head(path,headers)
+    end
+
+    def _subject_search_args_to_url(type, *args)
+      arg = args.shift
+
+      option = case arg
+      when String
+        arg2 = args.shift
+        arg2 ||= {}
+        arg2.merge(:q => arg)
+      when Hash
+        arg
+      else
+        raise "unknown type for first arg: #{arg.class}"
+      end
+
+      raise "extra argument" unless args.empty?
+        
+      if option[:q].nil? and option[:tag].nil?
+        raise "you must specify :q or :tag"
+      end
+
+      url = "/#{type}/subjects?"
+      url << "q=#{u option[:q]}&" if option[:q]
+      url << "tag=#{u option[:tag]}&" if option[:tag]
+      url << "start_index=#{u option[:start_index]}&" if option[:start_index]
+      url << "max_results=#{u option[:max_results]}&" if option[:max_results]
+      url.slice!(-1)
+      url
     end
   end
 end

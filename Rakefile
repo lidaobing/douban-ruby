@@ -4,6 +4,7 @@ $:.unshift(File.dirname(__FILE__) + "/lib")
 require 'douban'
 
 ENV["SPEC_OPTS"] ||= "-f nested --color -b"
+ENV["RDOC_OPTS"] ||= "-c UTF-8"
 
 Hoe.spec 'douban-ruby' do
   developer "LI Daobing", "lidaobing@gmail.com"
@@ -32,4 +33,8 @@ namespace :spec do
     t.rcov = true
     t.rcov_opts = ['--exclude' , 'gems,spec' ]
   end
+end
+
+Rake::RDocTask.new do |rd|
+  rd.options << "--charset" << "UTF-8"
 end

@@ -490,8 +490,22 @@ module Douban
         end
 
         context "search_book" do
-          it "should return [Book] with different id" do
+          it "should support query" do
             books = @authorize.search_book("ruby")
+            books.size.should >= 2
+            books[0].class.should == Book
+            books[0].id.should_not == books[-1].id
+          end
+
+          it "should support :q => query" do
+            books = @authorize.search_book(:q => "ruby")
+            books.size.should >= 2
+            books[0].class.should == Book
+            books[0].id.should_not == books[-1].id
+          end
+
+          it "should support :tag => tag" do
+            books = @authorize.search_book(:tag => "ruby")
             books.size.should >= 2
             books[0].class.should == Book
             books[0].id.should_not == books[-1].id
