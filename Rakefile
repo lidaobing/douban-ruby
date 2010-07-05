@@ -6,8 +6,9 @@ require 'douban'
 ENV["SPEC_OPTS"] ||= "-f nested --color -b"
 
 Hoe.spec 'douban-ruby' do
-  developer "Hoooopo", "hoooopo@gmail.com"
   developer "LI Daobing", "lidaobing@gmail.com"
+  developer "Hoooopo", "hoooopo@gmail.com"
+  extra_deps << ['oauth']
 end
 
 Hoe.plugin :minitest
