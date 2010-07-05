@@ -143,12 +143,30 @@ module Douban
         nil
       end
     end
-    def get_book(id="")
-      if id.to_s.size >=10
-        resp=get("/book/subject/isbn/#{u(id.to_s)}")
+    
+    # 获取书籍信息
+    # http://goo.gl/HaG5
+    #
+    # get_book(:isbn => isbn) => Book
+    # get_book(:id => id) => Book
+    # get_book(id) => Book
+    # get_book(Book) => Book (refresh Book)
+    def get_book(id)
+      resp = case id
+      when Book
+        get("/book/subject/#{u id.subject_id}")
+      when Hash
+        if id[:isbn]
+          get("/book/subject/isbn/#{u id[:isbn]}")
+        elsif id[:id]
+          get("/book/subject/#{u id[:id]}")
+        else
+          raise "Hash only support :isbn or :id"
+        end
       else
-        resp=get("/book/subject/#{u(id.to_s)}")
+        get("/book/subject/#{u id}")
       end
+      
       if resp.code=="200"
         atom=resp.body
         Book.new(atom)
@@ -156,6 +174,7 @@ module Douban
         nil
       end
     end
+    
     def get_movie(id="")
       if id.to_s=~/^tt\d+/
         resp=get("/movie/subject/imdb/#{u(id.to_s)}")

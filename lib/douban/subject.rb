@@ -1,6 +1,8 @@
 require 'rexml/document'
 require 'douban/tag'
+require 'douban/author'
 require 'douban/equal'
+
 module Douban
   class Subject
     include Douban::Equal
@@ -66,22 +68,30 @@ module Douban
         @rating['average']=rating.attributes['average']
         @rating['max']=rating.attributes['max']
       end
-   end
- end
+    end #initialize
+   
+    def subject_id
+      /\/(\d+)$/.match(@id)[1].to_i rescue nil
+    end 
+   
+  end # class Subject
+  
   class Movie<Subject
     def initialize(atom)
       super(atom)
     end
   end
+  
   class Book<Subject
     def initialize(atom)
       super(atom)
     end
   end
+  
   class Music<Subject
     def initialize(atom)
       super(atom)
     end
   end
- end
+end
 

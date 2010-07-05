@@ -1,3 +1,8 @@
+=== 0.0.6 / 2010-XX-XX
+* Douban::Authorize
+  * add verify_token and delete_token
+  * support get_book(:isbn=>isbn)
+
 === 0.0.5 / 2010-07-04
 * Douban::Authorize
   * all modify_* functions will return an Object if success, otherwise nil. In

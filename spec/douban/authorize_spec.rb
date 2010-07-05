@@ -454,6 +454,19 @@ module Douban
             book = @authorize.get_book(1088840)
             book.class.should == Book
           end
+          
+          it "should support :id => id" do
+            @authorize.get_book(:id => 1088840).should == @authorize.get_book(1088840)
+          end
+          
+          it "should support :isbn => isbn" do
+            @authorize.get_book(:isbn => 9787040048803).should == @authorize.get_book(1088840)
+          end
+          
+          it "should support Book" do
+            book = @authorize.get_book(1088840)
+            @authorize.get_book(book).should == book
+          end
         end
 
         context "search_book" do
