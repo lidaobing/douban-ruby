@@ -175,12 +175,29 @@ module Douban
       end
     end
     
-    def get_movie(id="")
-      if id.to_s=~/^tt\d+/
-        resp=get("/movie/subject/imdb/#{u(id.to_s)}")
+    # 获取电影信息
+    # http://goo.gl/2fZ4
+    #
+    # get_movie(:imdb => imdb) => Movie
+    # get_movie(:id => id) => Movie
+    # get_movie(id) => Movie
+    # get_movie(Movie) => Movie (refresh Movie)
+    def get_movie(id)
+      resp = case id
+      when Movie
+        get("/movie/subject/#{u id.subject_id}")
+      when Hash
+        if id[:imdb]
+          get("/movie/subject/imdb/#{u id[:imdb]}")
+        elsif id[:id]
+          get("/movie/subject/#{u id[:id]}")
+        else
+          raise "Hash only support :imdb or :id"
+        end
       else
-        resp=get("/movie/subject/#{u(id.to_s)}")
+        get("/movie/subject/#{u id}")
       end
+
       if resp.code=="200"
         atom=resp.body
         Movie.new(atom)

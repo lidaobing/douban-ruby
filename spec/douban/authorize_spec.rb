@@ -468,6 +468,26 @@ module Douban
             @authorize.get_book(book).should == book
           end
         end
+        
+        context "get_movie" do
+          it "should return Movie" do
+            movie = @authorize.get_movie(1858711)
+            movie.class.should == Movie
+          end
+          
+          it "should support :id => id" do
+            @authorize.get_movie(:id => 1858711).should == @authorize.get_movie(1858711)
+          end
+          
+          it "should support :imdb => imdb" do
+            @authorize.get_movie(:imdb => 'tt0435761').should == @authorize.get_movie(1858711)
+          end
+          
+          it "should support Movie" do
+            movie = @authorize.get_movie(1858711)
+            @authorize.get_movie(movie).should == movie
+          end
+        end
 
         context "search_book" do
           it "should return [Book] with different id" do
