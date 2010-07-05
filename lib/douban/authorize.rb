@@ -1115,7 +1115,18 @@ module Douban
         debug(resp, false)
       end
     end
-      
+    
+    # 注销一个Access Token
+    # http://goo.gl/0JAB
+    def delete_token
+      resp = delete("/access_token/#{@access_token.token}")
+      if resp.code == "200"
+        true
+      else
+        debug(resp, false)
+      end
+    end
+    alias_method :logout, :delete_token
 
     protected
     def new_request_consumer
