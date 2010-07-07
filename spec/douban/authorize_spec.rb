@@ -137,6 +137,14 @@ module Douban
           miniblogs[0].id.should_not == miniblogs[-1].id
         end
       end
+
+      context "get_miniblog_comments" do
+        it "shoudl return [MiniblogComment] with different id" do
+          comments = @authorize.get_miniblog_comments(378744647)
+          comments.comments.size.should >= 2
+          comments.comments[0].id.should_not == comments.comments[-1].id
+        end
+      end
     end
 
     context "recommendation" do

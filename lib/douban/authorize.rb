@@ -10,6 +10,7 @@ require 'douban/collection'
 require 'douban/event'
 require 'douban/mail'
 require 'douban/miniblog'
+require 'douban/miniblog_comments'
 require 'douban/note'
 require 'douban/people'
 require 'douban/recommendation'
@@ -581,6 +582,26 @@ module Douban
         false
       end
     end
+
+    # :call-seq:
+    #   get_miniblog_comments(aMiniblog)     => MiniblogComments or nil
+    #   get_miniblog_comments(obj)           => MiniblogComments or nil
+    #
+    #   获取我说回复 (http://goo.gl/nTZK)
+    def get_miniblog_comments(miniblog)
+      miniblog_id = case miniblog
+                    when Miniblog then miniblog.miniblog_id
+                    else miniblog
+                    end
+
+      resp = get("/miniblog/#{miniblog_id}/comments")
+      if resp.code == "200"
+        MiniblogComments.new(resp.body)
+      else
+        debug(resp)
+      end
+    end
+
     def get_note(note_id="")
       resp=get("/note/#{u(note_id.to_s)}")
       if resp.code=="200"
