@@ -4,20 +4,20 @@ require 'douban/author'
 require 'douban/equal'
 
 module Douban
- class Miniblog
-   include Douban::Equal
-   class << self
-     def attr_names
-       [
-        :id,
-        :title,
-        :category,
-        :published,
-        :link,
-        :content,
-        :attribute,
-        :author
-       ]
+  class Miniblog
+    include Douban::Equal
+    class << self
+      def attr_names
+        [
+          :id,
+          :title,
+          :category,
+          :published,
+          :link,
+          :content,
+          :attribute,
+          :author
+        ]
       end
     end
     attr_names.each do |attr|
@@ -54,6 +54,10 @@ module Douban
       author=REXML::XPath.first(doc,"./author")
       @author=Author.new(author.to_s) if author
     end
- end
+
+    def miniblog_id
+      /\/(\d+)$/.match(@id)[1].to_i rescue nil
+    end
+  end
 end
 
