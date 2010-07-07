@@ -19,12 +19,20 @@ module Douban
         </entry>}
     end
 
-    it "should correct serialize from string" do
+    it "should correct deserialize from string" do
       comment = MiniblogComment.new(@s)
       comment.id.should == "http://api.douban.com/miniblog/378744647/comment/12638415"
       comment.author.class.should == Author
       comment.published.should == "2010-07-07T03:19:07+08:00"
       comment.content.should == "都爱远射哈哈"
+    end
+
+    it "should correct deserialize from REXML::Document" do
+      MiniblogComment.new(REXML::Document.new(@s)).should == MiniblogComment.new(@s)
+    end
+
+    it "should correct deserialize from REXML::Element" do
+      MiniblogComment.new(REXML::Document.new(@s).root).should == MiniblogComment.new(@s)
     end
   end
 end
