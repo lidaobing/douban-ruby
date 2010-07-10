@@ -617,7 +617,7 @@ module Douban
         <content>#{h content}</content>
     </entry>}
 
-      resp = post("/miniblog/#{u miniblog_id}/comments", entry, {"Content-Type"=>"application/atom+xml"})
+      resp = post("/miniblog/#{u miniblog_id}/comments", entry)
       if resp.code == "201"
         MiniblogComment.new(resp.body)
       else
@@ -1259,10 +1259,12 @@ module Douban
     def get(path,headers={})
       @access_token.get(path,headers)
     end
-    def post(path,data="",headers={})
+    def post(path,data="",headers=nil)
+      headers ||= {"Content-Type" => "application/atom+xml"}
       @access_token.post(path,data,headers)
     end
-    def put(path,body="",headers={})
+    def put(path,body="",headers=nil)
+      headers ||= {"Content-Type" => "application/atom+xml"}
       @access_token.put(path,body,headers)
     end
     def delete(path,headers={})

@@ -4,6 +4,7 @@
   * support get_book(:isbn => isbn)
   * support get_movie(:imdb => imdb)
   * add get_miniblog_comments
+  * add create_miniblog_comment
 * Douban::Book
   * add method: isbn, isbn10, isbn13
 * Douban::Movie
