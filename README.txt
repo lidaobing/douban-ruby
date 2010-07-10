@@ -14,7 +14,7 @@ Douban API reference: http://www.douban.com/service/apidoc/reference/
 
 == INSTALL:
 
-  sudo rake install_gem
+  gem install douban-ruby
 
 == Usage:
 
