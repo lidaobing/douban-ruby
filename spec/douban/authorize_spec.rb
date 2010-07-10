@@ -61,8 +61,9 @@ module Douban
   context "logged in with oauth" do
     before(:each) do
       Authorize.debug = true
-      @access_token = '0306646daca492b609132d4905edb822'
-      @access_secret = '22070cec426cb925'
+      @access_token = 'be84e4bc8d0581d03b8eae35a7108570'
+      @access_secret = '16eeaa7b1053323c'
+      @uid = '43100799'
       @authorize.access_token = OAuth::Token.new(@access_token, @access_secret)
     end
 
@@ -76,7 +77,7 @@ module Douban
         it "should works" do
           people = @authorize.get_people
           people.nil?.should == false
-          people.uid.should == "41502874"
+          people.uid.should == @uid
         end
       end
 
@@ -139,10 +140,17 @@ module Douban
       end
 
       context "get_miniblog_comments" do
-        it "shoudl return [MiniblogComment] with different id" do
+        it "should return [MiniblogComment] with different id" do
           comments = @authorize.get_miniblog_comments(378744647)
           comments.comments.size.should >= 2
           comments.comments[0].id.should_not == comments.comments[-1].id
+        end
+      end
+
+      context "create_miniblog_comment" do 
+        it "should works" do
+          comment = @authorize.create_miniblog_comment(374774226, "单元测试#{rand}")
+          comment.class.should == MiniblogComment
         end
       end
     end
@@ -243,12 +251,12 @@ module Douban
       end
 
       context "event" do
-        context "create_event" do
-          it "should return Event" do
-            event = @authorize.create_event("douban-ruby 单元测试", "event 好像不能自动删除", "大山子798艺术区 IT馆")
-            event.class.should == Douban::Event
-          end
-        end
+        #context "create_event" do
+        #  it "should return Event" do
+        #    event = @authorize.create_event("douban-ruby 单元测试", "event 好像不能自动删除", "大山子798艺术区 IT馆")
+        #    event.class.should == Douban::Event
+        #  end
+        #end
 
         context "get_event_participant_people" do
           it "should return [People] with different id" do

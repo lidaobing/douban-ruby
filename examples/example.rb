@@ -1,3 +1,4 @@
+require 'pp'
 require 'rubygems'
 require 'douban'
 
@@ -17,5 +18,6 @@ print "after login, press Enter to continue\n"
 
 gets
 
-douban.auth
-print douban.get_people
+pp douban.auth
+pp douban.access_token
+pp douban.get_people

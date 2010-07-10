@@ -95,7 +95,7 @@ module Douban
         atom=resp.body
         People.new(atom)
       else
-        nil
+        debug(resp)
       end
     end
 
@@ -110,7 +110,7 @@ module Douban
         end
         friends
       else
-        nil
+        debug(resp)
       end
     end
 
@@ -587,16 +587,39 @@ module Douban
     #   get_miniblog_comments(aMiniblog)     => MiniblogComments or nil
     #   get_miniblog_comments(obj)           => MiniblogComments or nil
     #
-    #   获取我说回复 (http://goo.gl/nTZK)
+    # 获取我说回复 (http://goo.gl/nTZK)
     def get_miniblog_comments(miniblog)
       miniblog_id = case miniblog
                     when Miniblog then miniblog.miniblog_id
                     else miniblog
                     end
 
-      resp = get("/miniblog/#{miniblog_id}/comments")
+      resp = get("/miniblog/#{u miniblog_id}/comments")
       if resp.code == "200"
         MiniblogComments.new(resp.body)
+      else
+        debug(resp)
+      end
+    end
+
+    # :call-seq:
+    #   create_miniblog_comment(aMiniblog, aString) => MiniblogComment or nil
+    #   create_miniblog_comment(obj, aString) => MiniblogComment or nil
+    #
+    # 回应我说 (http://goo.gl/j43Z)
+    def create_miniblog_comment(miniblog, content)
+      miniblog_id = case miniblog
+                    when Miniblog then miniblog.miniblog_id
+                    else miniblog
+                    end
+      entry = %Q{<?xml version='1.0' encoding='UTF-8'?>
+    <entry>
+        <content>#{h content}</content>
+    </entry>}
+
+      resp = post("/miniblog/#{u miniblog_id}/comments", entry, {"Content-Type"=>"application/atom+xml"})
+      if resp.code == "201"
+        MiniblogComment.new(resp.body)
       else
         debug(resp)
       end
