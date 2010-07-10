@@ -1,10 +1,11 @@
-=== 0.0.6 / 2010-XX-XX
+=== 0.0.6 / 2010-07-10
 * Douban::Authorize
   * add verify_token and delete_token
   * support get_book(:isbn => isbn)
   * support get_movie(:imdb => imdb)
   * add get_miniblog_comments
   * add create_miniblog_comment
+  * add delete_miniblog_comment
 * Douban::Book
   * add method: isbn, isbn10, isbn13
 * Douban::Movie

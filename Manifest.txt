@@ -11,7 +11,10 @@ lib/douban/equal.rb
 lib/douban/event.rb
 lib/douban/mail.rb
 lib/douban/miniblog.rb
+lib/douban/miniblog_comment.rb
+lib/douban/miniblog_comments.rb
 lib/douban/note.rb
+lib/douban/page_info.rb
 lib/douban/people.rb
 lib/douban/recommendation.rb
 lib/douban/recommendation_comment.rb
@@ -23,12 +26,16 @@ spec/douban/authorize_spec.rb
 spec/douban/collection_spec.rb
 spec/douban/event_spec.rb
 spec/douban/mail_spec.rb
+spec/douban/miniblog_comment_spec.rb
+spec/douban/miniblog_comments_spec.rb
 spec/douban/miniblog_spec.rb
 spec/douban/note_spec.rb
+spec/douban/page_info_spec.rb
 spec/douban/people_spec.rb
 spec/douban/recommendation_comment_spec.rb
 spec/douban/recommendation_spec.rb
 spec/douban/review_spec.rb
+spec/douban/subject_spec.rb
 spec/douban/tag_spec.rb
 spec/douban_spec.rb
 spec/spec_helper.rb
