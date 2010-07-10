@@ -151,6 +151,7 @@ module Douban
         it "should works" do
           comment = @authorize.create_miniblog_comment(374774226, "单元测试#{rand}")
           comment.class.should == MiniblogComment
+          @authorize.delete_miniblog_comment(comment).should == true
         end
       end
     end

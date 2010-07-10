@@ -31,5 +31,12 @@ module Douban
       @published = REXML::XPath.first(doc, "./published/text()").to_s rescue nil
       @content = REXML::XPath.first(doc, "./content/text()").to_s rescue nil
     end
+
+    def miniblog_id
+      /miniblog\/(\d+)\/comment/.match(@id)[1].to_i rescue nil
+    end
+    def comment_id
+      /\/(\d+)$/.match(@id)[1].to_i rescue nil
+    end
   end
 end

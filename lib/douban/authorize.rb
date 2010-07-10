@@ -625,6 +625,29 @@ module Douban
       end
     end
 
+    # :call-seq:
+    #   delete_miniblog_comment(aMiniblogComment) => true or false
+    #   delete_miniblog_comment(miniblog_id, comment_id) => true or false
+    # 删除我说
+    def delete_miniblog_comment(*args)
+      if args.size == 1 and args[0].kind_of?(MiniblogComment)
+        miniblog_id = args[0].miniblog_id
+        comment_id = args[0].comment_id
+      elsif args.size == 2
+        miniblog_id = args[0].to_s
+        comment_id = args[1].to_s
+      else
+        raise "unsupported argument error"
+      end
+
+      resp = delete("/miniblog/#{u miniblog_id}/comment/#{u comment_id}")
+      if resp.code == "200"
+        true
+      else
+        debug(resp, false)
+      end
+    end
+
     def get_note(note_id="")
       resp=get("/note/#{u(note_id.to_s)}")
       if resp.code=="200"

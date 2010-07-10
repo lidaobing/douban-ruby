@@ -25,6 +25,8 @@ module Douban
       comment.author.class.should == Author
       comment.published.should == "2010-07-07T03:19:07+08:00"
       comment.content.should == "都爱远射哈哈"
+      comment.miniblog_id.should == 378744647
+      comment.comment_id.should == 12638415
     end
 
     it "should correct deserialize from REXML::Document" do
