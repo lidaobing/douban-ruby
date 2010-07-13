@@ -1,3 +1,7 @@
+=== 0.0.7 / XXXX-XX-XX
+* Douban::Authorize
+  * get_miniblog_comments support start_index and max_results option.
+
 === 0.0.6 / 2010-07-10
 * Douban::Authorize
   * add verify_token and delete_token

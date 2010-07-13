@@ -145,6 +145,16 @@ module Douban
           comments.comments.size.should >= 2
           comments.comments[0].id.should_not == comments.comments[-1].id
         end
+
+        it "should support start_index" do
+          comments1 = @authorize.get_miniblog_comments(378744647)
+          comments2 = @authorize.get_miniblog_comments(378744647, :start_index => 2)
+          comments1.comments[1].id.should == comments2.comments[0].id
+        end
+
+        it "should support max_results" do
+          @authorize.get_miniblog_comments(378744647, :max_results=>1).comments.size.should == 1
+        end
       end
 
       context "create_miniblog_comment" do 

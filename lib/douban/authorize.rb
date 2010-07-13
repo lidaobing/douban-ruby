@@ -584,17 +584,27 @@ module Douban
     end
 
     # :call-seq:
-    #   get_miniblog_comments(aMiniblog)     => MiniblogComments or nil
-    #   get_miniblog_comments(obj)           => MiniblogComments or nil
+    #   get_miniblog_comments(aMiniblog, options)     => MiniblogComments or nil
+    #   get_miniblog_comments(miniblog_id, options)   => MiniblogComments or nil
     #
     # 获取我说回复 (http://goo.gl/nTZK)
-    def get_miniblog_comments(miniblog)
+    def get_miniblog_comments(miniblog, options={})
       miniblog_id = case miniblog
                     when Miniblog then miniblog.miniblog_id
                     else miniblog
                     end
 
-      resp = get("/miniblog/#{u miniblog_id}/comments")
+      url = "/miniblog/#{u miniblog_id}/comments?"
+      if options[:start_index]
+        url << "start-index=#{u options[:start_index]}&"
+      end
+      if options[:max_results]
+        url << "max-results=#{u options[:max_results]}&"
+      end
+
+      url = url[0..-2]
+
+      resp = get(url)
       if resp.code == "200"
         MiniblogComments.new(resp.body)
       else
