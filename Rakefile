@@ -31,6 +31,6 @@ end
  
 desc 'upload gem file'
 task :release => :build do
-  system "gem push douban-ruby-#{Douban::VERSION}"
+  system "gem push douban-ruby-#{Douban::VERSION}.gem"
 end
 
