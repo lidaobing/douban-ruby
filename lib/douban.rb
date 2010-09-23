@@ -50,8 +50,4 @@
 #  http://code.google.com/p/doubanclient-ruby/
 
 require 'douban/authorize'
-
-module Douban
-  VERSION      = "0.0.6"
-end
-
+require 'douban/version'

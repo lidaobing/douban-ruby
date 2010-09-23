@@ -1,30 +1,15 @@
 require 'rubygems'
-require 'hoe'
-$:.unshift(File.dirname(__FILE__) + "/lib")
-require 'douban'
+require 'bundler/setup'
+require 'spec/rake/spectask'
+require 'rake/rdoctask'
+require File.expand_path("../lib/douban/version", __FILE__)
 
 ENV["SPEC_OPTS"] ||= "-f nested --color -b"
 ENV["RDOC_OPTS"] ||= "-c UTF-8"
 
-Hoe.spec 'douban-ruby' do
-  developer "LI Daobing", "lidaobing@gmail.com"
-  developer "Hoooopo", "hoooopo@gmail.com"
-  extra_deps << ['oauth']
-end
 
-Hoe.plugin :minitest
-Hoe.plugin :git
-Hoe.plugin :gemcutter
-
-desc "Simple require on packaged files to make sure they are all there"
-task :verify => :package do
-  # An error message will be displayed if files are missing
-  if system %(ruby -e "require 'pkg/douban-#{Douban::VERSION}/lib/douban'")
-    puts "\nThe library files are present"
-  end
-end
-
-task :release => :verify
+Spec::Rake::SpecTask.new :spec
+task :default => :spec
 
 namespace :spec do
   desc "Run specs with RCov"
@@ -38,3 +23,14 @@ end
 Rake::RDocTask.new do |rd|
   rd.options << "--charset" << "UTF-8"
 end
+
+desc 'build gem file'
+task :build do
+  system "gem build douban-ruby.gemspec"
+end
+ 
+desc 'upload gem file'
+task :release => :build do
+  system "gem push douban-ruby-#{Douban::VERSION}"
+end
+
