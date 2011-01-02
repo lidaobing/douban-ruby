@@ -18,5 +18,7 @@ RSpec::Core::RakeTask.new :rcov do |t|
 end
 
 Rake::RDocTask.new do |rd|
+  rd.main = "README.rdoc"
+  rd.rdoc_files.include("README.rdoc", "History.rdoc", "lib/**/*.rb")
   rd.options << "--charset" << "UTF-8"
 end

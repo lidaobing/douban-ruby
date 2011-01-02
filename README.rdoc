@@ -38,7 +38,7 @@ douban ruby client. including OAuth support.
             # step 1, initial state, store request_token to session
             callback_url = url_for :action => :index
             redirect_url = douban.get_authorize_url(callback_url)
-            session[:request_token] = douban.request_token
+            session[:request_token] = douban.request_token :as_token
             redirect_to redirect_url
           else
             # step 3, have access_token, now you can use douban API
@@ -51,10 +51,10 @@ douban ruby client. including OAuth support.
             douban.request_token = session[:request_token]
             douban.auth
             reset_session
-            session[:access_token] = douban.access_token
+            session[:access_token] = douban.access_token :as_token
             redirect_to :action => :index
           else
-            # error branch, you return from douban, but request_token 
+            # error branch, you return from douban, but no request_token in session
             logger.info "return from oauth but no request_token"
             redirect_to :action => :index
           end

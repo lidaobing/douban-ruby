@@ -1,5 +1,7 @@
 === 0.0.8 / XXXX-XX-XX
 * switch to rspec 2
+* Douban::Authorize
+  * access_token, request_token support :as_token argument.
 
 === 0.0.7 / 2010-09-23
 * Douban::Authorize

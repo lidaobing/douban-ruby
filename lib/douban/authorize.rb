@@ -23,8 +23,6 @@ module Douban
     attr_reader :api_secret
     attr_reader :authorize_url
     attr_reader :consumer
-    attr_reader :request_token
-    attr_reader :access_token
 
     @@debug = false
     
@@ -1120,6 +1118,23 @@ module Douban
       @request_token = token
     end
 
+
+    # :call-seq:
+    #   request_token => OAuth::RequestToken
+    #   request_token :as_token => OAuth::Token
+    #
+    # if you want to serialize request_token, use :as_token will be much shorter
+    def request_token(arg=nil)
+      if arg.nil?
+        @request_token
+      elsif arg == :as_token
+        @request_token.nil? ? nil :
+          OAuth::Token.new(@request_token.token, @request_token.secret)
+      else
+        raise ArgumentError
+      end
+    end
+
     def access_token=(token)
       unless token.kind_of? OAuth::AccessToken
         token = OAuth::AccessToken.new(
@@ -1128,6 +1143,22 @@ module Douban
           token.secret)
       end
       @access_token = token
+    end
+
+    # :call-seq:
+    #   access_token => OAuth::AccessToken
+    #   access_token :as_token => OAuth::Token
+    #
+    # if you want to serialize access_token, use :as_token will be much shorter
+    def access_token(arg=nil)
+      if arg.nil?
+        @access_token
+      elsif arg == :as_token
+        @access_token.nil? ? nil :
+          OAuth::Token.new(@access_token.token, @access_token.secret)
+      else
+        raise ArgumentError
+      end
     end
 
     def get_recommendation(id)
