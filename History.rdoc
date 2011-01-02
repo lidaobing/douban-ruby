@@ -1,4 +1,4 @@
-=== 0.0.8 / XXXX-XX-XX
+=== 0.0.8 / 2011-01-02
 * switch to rspec 2
 * Douban::Authorize
   * access_token, request_token support :as_token argument.
