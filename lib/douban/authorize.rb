@@ -1,5 +1,3 @@
-require 'rubygems'
-gem 'oauth'
 require 'oauth'
 require 'oauth/consumer'
 require 'rexml/document'
