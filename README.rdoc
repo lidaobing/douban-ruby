@@ -6,7 +6,9 @@ http://github.com/lidaobing/douban-ruby
 
 douban ruby client. including OAuth support. 
 
-Douban API reference: http://www.douban.com/service/apidoc/reference/
+* RDoc: http://rubydoc.info/github/lidaobing/douban-ruby/master/frames
+* Douban API reference: http://www.douban.com/service/apidoc/reference/
+
 
 == Requirments
 
