@@ -1,3 +1,6 @@
+=== 0.0.8 / XXXX-XX-XX
+* switch to rspec 2
+
 === 0.0.7 / 2010-09-23
 * Douban::Authorize
   * get_miniblog_comments support start_index and max_results option.

@@ -1,4 +1,5 @@
-$: << File.join(File.dirname(__FILE__), '/../lib')
+require 'rspec'
 
-require 'bundler/setup'
-require 'spec'
+RSpec.configure do |c|
+  # ....
+end
