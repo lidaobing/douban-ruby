@@ -3,6 +3,8 @@
 # Copyright (c) 2008 Hooopo
 # Written and maintained by Hooopo<hoooopo@gmail.com>
 #
+# Copyright (C) 2010-2011 LI Daobing <lidaobing@gmail.com>
+#
 #
 # This program is free software. You can re-distribute and/or
 # modify this program under the same terms of ruby itself ---
@@ -49,5 +51,8 @@
 #==Install and Wiki
 #  http://code.google.com/p/doubanclient-ruby/
 
-require 'douban/authorize'
+
+module Douban
+  autoload :Authorize, 'douban/authorize'
+end
 require 'douban/version'
