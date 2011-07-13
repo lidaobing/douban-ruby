@@ -1153,26 +1153,40 @@ module Douban
     end
 
     def access_token=(token)
-      unless token.kind_of? OAuth::AccessToken
-        token = OAuth::AccessToken.new(
+      case token
+      when OAuth::AccessToken
+        @access_token = token
+      when OAuth::Token
+        @access_token = OAuth::AccessToken.new(
           new_access_consumer,
           token.token,
           token.secret)
+      when Hash
+        @access_token = OAuth::AccessToken.new(
+          new_access_consumer,
+          token[:token],
+          token[:secret])
+      else
+        raise ArgumentError
       end
-      @access_token = token
     end
 
     # :call-seq:
     #   access_token => OAuth::AccessToken
     #   access_token :as_token => OAuth::Token
+    #   access_token :as_hash => Hash
     #
-    # if you want to serialize access_token, use :as_token will be much shorter
+    # if you want to serialize access_token, use :as_token or :as_hash
     def access_token(arg=nil)
       if arg.nil?
         @access_token
       elsif arg == :as_token
         @access_token.nil? ? nil :
           OAuth::Token.new(@access_token.token, @access_token.secret)
+      elsif arg == :as_hash
+        @access_token.nil? ? nil :
+          {:token => @access_token.token,
+            :secret => @access_token.secret}
       else
         raise ArgumentError
       end
