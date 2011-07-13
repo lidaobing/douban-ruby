@@ -1,24 +1,25 @@
 PATH
   remote: .
   specs:
-    douban-ruby (0.0.8)
+    douban-ruby (0.0.9)
       oauth
 
 GEM
   remote: http://rubygems.org/
   specs:
     diff-lcs (1.1.2)
-    oauth (0.4.4)
-    rake (0.8.7)
+    oauth (0.4.5)
+    rake (0.9.2)
     rcov (0.9.9)
-    rspec (2.3.0)
-      rspec-core (~> 2.3.0)
-      rspec-expectations (~> 2.3.0)
-      rspec-mocks (~> 2.3.0)
-    rspec-core (2.3.1)
-    rspec-expectations (2.3.0)
+    rdoc (3.8)
+    rspec (2.6.0)
+      rspec-core (~> 2.6.0)
+      rspec-expectations (~> 2.6.0)
+      rspec-mocks (~> 2.6.0)
+    rspec-core (2.6.4)
+    rspec-expectations (2.6.0)
       diff-lcs (~> 1.1.2)
-    rspec-mocks (2.3.0)
+    rspec-mocks (2.6.0)
 
 PLATFORMS
   ruby
@@ -26,7 +27,7 @@ PLATFORMS
 DEPENDENCIES
   bundler (>= 1.0.0)
   douban-ruby!
-  oauth
   rake
   rcov
+  rdoc
   rspec (~> 2.0)

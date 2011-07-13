@@ -2,7 +2,7 @@ require 'rubygems'
 require 'bundler'
 Bundler::GemHelper.install_tasks
 require 'rspec/core/rake_task'
-require 'rake/rdoctask'
+require 'rdoc/task'
 require File.expand_path("../lib/douban/version", __FILE__)
 
 ENV["SPEC_OPTS"] ||= "-f nested --color -b"
