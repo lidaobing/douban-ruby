@@ -1122,14 +1122,19 @@ module Douban
     # :call-seq:
     #   request_token => OAuth::RequestToken
     #   request_token :as_token => OAuth::Token
+    #   request_token :as_hash => Hash
     #
-    # if you want to serialize request_token, use :as_token will be much shorter
+    # if you want to serialize request_token, use :as_token or :as_hash
     def request_token(arg=nil)
       if arg.nil?
         @request_token
       elsif arg == :as_token
         @request_token.nil? ? nil :
           OAuth::Token.new(@request_token.token, @request_token.secret)
+      elsif arg == :as_hash
+        @request_token.nil? ? nil :
+          {:token => @request_token.token,
+            :secret => @request_token.secret}
       else
         raise ArgumentError
       end

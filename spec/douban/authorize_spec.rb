@@ -12,6 +12,26 @@ module Douban
       @authorize = Authorize.new(@api_key, @secret_key)
     end
 
+    context "#request_token" do
+      it "should works" do
+        @authorize.get_authorize_url
+        @authorize.request_token.should be_a(OAuth::RequestToken)
+      end
+
+      it "should return OAuth::Token with :as_token param" do
+        @authorize.get_authorize_url
+        @authorize.request_token(:as_token).should be_a(OAuth::Token)
+      end
+
+      it "should return Hash with :as_hash param" do
+        @authorize.get_authorize_url
+        res = @authorize.request_token(:as_hash)
+        res.should be_a(Hash)
+        res[:token].should be_a(String)
+        res[:secret].should be_a(String)
+      end
+    end
+
     context "helper" do
       context "url_encode" do
         it "should support integer" do
