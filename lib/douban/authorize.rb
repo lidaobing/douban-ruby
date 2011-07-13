@@ -1108,14 +1108,26 @@ module Douban
       end
     end
 
+    # @param token can be OAuth::RequestToken or OAuth::Token or Hash
+    #
+    # @see #request_token
     def request_token=(token)
-      unless token.kind_of? OAuth::RequestToken
-        token = OAuth::RequestToken.new(
+      case token
+      when OAuth::RequestToken
+        @request_token = token
+      when OAuth::Token
+        @request_token = OAuth::RequestToken.new(
           new_request_consumer,
           token.token,
           token.secret)
+      when Hash
+        @request_token = OAuth::RequestToken.new(
+          new_request_consumer,
+          token[:token],
+          token[:secret])
+      else
+        raise ArgumentError
       end
-      @request_token = token
     end
 
 

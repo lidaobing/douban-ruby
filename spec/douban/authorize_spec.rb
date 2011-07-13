@@ -32,6 +32,22 @@ module Douban
       end
     end
 
+    context "#request_token=" do
+      before :each do
+        @request_token = "a" * 32
+        @request_secret = "b" * 16
+      end
+
+      it "should support OAuth::Token" do
+        @authorize.request_token = OAuth::Token.new(@request_token, @request_secret)
+        @authorize.request_token.should be_a(OAuth::RequestToken)
+      end
+      it "should support Hash" do
+        @authorize.request_token = {:token => @request_token, :secret => @request_secret}
+        @authorize.request_token.should be_a(OAuth::RequestToken)
+      end
+    end
+
     context "helper" do
       context "url_encode" do
         it "should support integer" do
@@ -57,11 +73,6 @@ module Douban
 
         @access_token = "c"*32
         @access_secret = "d"*16
-      end
-
-      it "should support set request token" do
-        @authorize.request_token = OAuth::Token.new(@request_token, @request_secret)
-        @authorize.request_token.kind_of?(OAuth::RequestToken).should == true
       end
 
       it "auth should works" do
