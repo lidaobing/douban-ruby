@@ -63,8 +63,12 @@ module Douban
         @link[link.attributes['rel']]=link.attributes['href']
       end
       REXML::XPath.each(doc,"./db:attribute") do |attribute|
-        @attribute||={}
-        @attribute[attribute.attributes['name']]=attribute.text
+        @attribute ||= {}
+        @attribute[attribute.attributes['name']] ||= []
+        @attribute[attribute.attributes['name']] << attribute.text
+      end
+      @attribute.keys.each do |key|
+        @attribute[key] = @attribute[key].uniq.join(",")
       end
       @rating={}
       rating=REXML::XPath.first(doc,"./gd:rating")

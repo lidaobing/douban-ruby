@@ -130,6 +130,10 @@ module Douban
       it "should support imdb" do
         movie = Movie.new(@s_movie)
         movie.imdb.should == "tt0435761"
+        movie.attribute["language"].should == "英语,西班牙语"
+        movie.attribute["aka"].should == "玩具总动员3,反斗奇兵3"
+        movie.attribute["pubdate"].should == "2010-06-16 (中国大陆)"
+        movie.attribute["director"].should == "Lee Unkrich"
       end
     end
   end
