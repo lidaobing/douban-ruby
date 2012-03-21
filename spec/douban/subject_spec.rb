@@ -114,7 +114,6 @@ module Douban
         <db:attribute name="cast">Don Rickles</db:attribute>
         <db:attribute name="cast">Michael Keaton</db:attribute>
         <db:attribute name="aka">反斗奇兵3</db:attribute>
-        <db:attribute name="aka">玩具总动员3</db:attribute>
         <db:tag count="6515" name="动画"/>
         <db:tag count="4202" name="Pixar"/>
         <db:tag count="3054" name="美国"/>
@@ -129,9 +128,10 @@ module Douban
       
       it "should support imdb" do
         movie = Movie.new(@s_movie)
+        movie.title = "玩具总动员3"
         movie.imdb.should == "tt0435761"
         movie.attribute["language"].should == "英语,西班牙语"
-        movie.attribute["aka"].should == "玩具总动员3,反斗奇兵3"
+        movie.attribute["aka"].should == "Toy Story 3,反斗奇兵3"
         movie.attribute["pubdate"].should == "2010-06-16 (中国大陆)"
         movie.attribute["director"].should == "Lee Unkrich"
       end

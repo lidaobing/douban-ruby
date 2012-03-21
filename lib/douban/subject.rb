@@ -65,7 +65,16 @@ module Douban
       REXML::XPath.each(doc,"./db:attribute") do |attribute|
         @attribute ||= {}
         @attribute[attribute.attributes['name']] ||= []
-        @attribute[attribute.attributes['name']] << attribute.text
+        if attribute.attributes['name'] == "aka"
+          if attribute.attributes["lang"] == "zh_CN"
+            @attribute[attribute.attributes['name']] << @title
+            @title = attribute.text
+          else
+            @attribute[attribute.attributes['name']] << attribute.text
+          end
+        else
+          @attribute[attribute.attributes['name']] << attribute.text
+        end
       end
       @attribute.keys.each do |key|
         @attribute[key] = @attribute[key].uniq.join(",")
