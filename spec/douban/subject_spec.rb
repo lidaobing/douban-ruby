@@ -38,7 +38,7 @@ module Douban
         <gd:rating average="8.0" max="10" min="0" numRaters="50"/>
 </entry>}
     end
-    
+
     it "should correct deserialize from string" do
       subject = Subject.new(@s)
       subject.id.should == "http://api.douban.com/book/subject/1088840"
@@ -46,22 +46,22 @@ module Douban
       subject.title.should == "无机化学(下)/高等学校教材"
       subject.category.should == {"term"=>"http://www.douban.com/2007#book", "scheme"=>"http://www.douban.com/2007#kind"}
       subject.author.class.should == Author
-      subject.link.should == {"self"=>"http://api.douban.com/book/subject/1088840", 
-        "alternate"=>"http://book.douban.com/subject/1088840/", 
-        "image"=>"http://img2.douban.com/spic/s1075910.jpg", 
+      subject.link.should == {"self"=>"http://api.douban.com/book/subject/1088840",
+        "alternate"=>"http://book.douban.com/subject/1088840/",
+        "image"=>"http://img2.douban.com/spic/s1075910.jpg",
         "collection"=>"http://api.douban.com/collection/266907549"}
       subject.summary.should == nil
-      subject.attribute.should == {"pubdate"=>"2005-1-1", "price"=>"26.5", "isbn10"=>"7040048809", "title"=>"无机化学(下)/高等学校教\346\235\220", "author"=>"武汉大学、吉林大\345\255\246", "isbn13"=>"9787040048803", "publisher"=>"高等教育出版社", 
+      subject.attribute.should == {"pubdate"=>"2005-1-1", "price"=>"26.5", "isbn10"=>"7040048809", "title"=>"无机化学(下)/高等学校教\346\235\220", "author"=>"武汉大学、吉林大\345\255\246", "isbn13"=>"9787040048803", "publisher"=>"高等教育出版社",
         "pages"=>"1185", "binding"=>"平装"}
       subject.tag.size.should == 8
       subject.tag[0].class.should == Tag
       subject.rating.should == {"max"=>"10", "average"=>"8.0", "min"=>"0", "numRaters"=>"50"}
     end
-    
+
     it "should support ==" do
       Subject.new(@s).should == Subject.new(@s)
     end
-    
+
     it "should correct deserialize from REXML::Document" do
       Subject.new(REXML::Document.new(@s)).should == Subject.new(@s)
     end
@@ -69,7 +69,7 @@ module Douban
     it "should correct deserialize from REXML::Element" do
       Subject.new(REXML::Document.new(@s).root).should == Subject.new(@s)
     end
-    
+
     context "book" do
       it "should support isbn" do
         book = Book.new(@s)
@@ -78,7 +78,7 @@ module Douban
         book.isbn.should == book.isbn13
       end
     end
-    
+
     context "movie" do
       before do
         @s_movie = %Q{<?xml version="1.0" encoding="UTF-8"?>
@@ -125,17 +125,14 @@ module Douban
         <gd:rating average="9.1" max="10" min="0" numRaters="18675"/>
 </entry>}
       end
-      
-      it "should support imdb" do
-        movie = Movie.new(@s_movie)
-        movie.title = "玩具总动员3"
-        movie.imdb.should == "tt0435761"
-        movie.attribute["language"].should == "英语,西班牙语"
-        movie.attribute["aka"].should == "Toy Story 3,反斗奇兵3"
-        movie.attribute["pubdate"].should == "2010-06-16 (中国大陆)"
-        movie.attribute["director"].should == "Lee Unkrich"
-      end
+
+      subject { Movie.new(@s_movie) }
+      its(:title) { should == "玩具总动员3" }
+      its(:imdb) { should == "tt0435761" }
+      specify { subject.attribute["language"].should == "英语,西班牙语" }
+      specify { subject.attribute["pubdate"].should == "2010-06-16 (中国大陆)" }
+      specify { subject.attribute["director"].should == "Lee Unkrich" }
     end
   end
 end
-  
+
