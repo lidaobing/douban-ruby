@@ -72,17 +72,17 @@ module Douban
 
     end
 
-    it "should correct deserialize from string" do
-      mail = Mail.new(@single_mail)
-      mail.id.should == 'http://api.douban.com/doumail/82937520'
-      mail.title.should == 'hello2'
-      mail.author.class.should == Author
-      mail.author.uri == "http://api.douban.com/people/1018716"
-      mail.published.should == '2010-07-02T23:04:20+08:00'
-      mail.link.should == {"self"=>"http://api.douban.com/doumail/82937520", "alternate"=>"http://www.douban.com/doumail/82937520/"}
-      mail.content.should == "world2"
-      mail.receiver.class.should == Author
-      mail.receiver.uri.should == "http://api.douban.com/people/41502874"
+    context "when correct deserialize from string" do
+      subject { Mail.new(@single_mail) }
+      its(:id) {should == 'http://api.douban.com/doumail/82937520'}
+      its(:title) {should == 'hello2'}
+      specify { subject.author.class.should == Author }
+      specify { subject.author.uri.should == "http://api.douban.com/people/1018716" }
+      its(:published) { should == '2010-07-02T23:04:20+08:00' }
+      its(:link) { should == {"self"=>"http://api.douban.com/doumail/82937520", "alternate"=>"http://www.douban.com/doumail/82937520/"} }
+      its(:content) { should == "world2"}
+      specify { subject.receiver.class.should == Author }
+      specify { subject.receiver.uri.should == "http://api.douban.com/people/41502874" }
     end
 
     it "should correct deserialize from REXML::Element" do
