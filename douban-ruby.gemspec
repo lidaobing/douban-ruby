@@ -18,6 +18,7 @@ Gem::Specification.new do |s|
   s.rubyforge_project         = "douban-ruby"
 
   s.add_dependency "oauth"
+  s.add_dependency "activesupport"
   s.add_development_dependency "bundler", ">= 1.0.0"
   s.add_development_dependency 'rspec', '~> 2.0'
   s.add_development_dependency 'rake'
