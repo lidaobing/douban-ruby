@@ -31,6 +31,7 @@ module Douban
         when nil then nil
         else REXML::Document.new(atom).root
       end
+      @doc = doc
 
       id=REXML::XPath.first(doc,"./id")
       @id=id.text if id
@@ -65,19 +66,7 @@ module Douban
       REXML::XPath.each(doc,"./db:attribute") do |attribute|
         @attribute ||= {}
         @attribute[attribute.attributes['name']] ||= []
-        if attribute.attributes['name'] == "aka"
-          if attribute.attributes["lang"] == "zh_CN"
-            @attribute[attribute.attributes['name']] << @title
-            @title = attribute.text
-          else
-            @attribute[attribute.attributes['name']] << attribute.text
-          end
-        else
-          @attribute[attribute.attributes['name']] << attribute.text
-        end
-      end
-      @attribute.keys.each do |key|
-        @attribute[key] = @attribute[key].uniq.join(",")
+        @attribute[attribute.attributes['name']] << attribute.text
       end
       @rating={}
       rating=REXML::XPath.first(doc,"./gd:rating")
@@ -88,41 +77,59 @@ module Douban
         @rating['max']=rating.attributes['max']
       end
     end #initialize
-   
+
     def subject_id
       /\/(\d+)$/.match(@id)[1].to_i rescue nil
-    end 
-   
+    end
+
+    def akas(lang = nil)
+      if lang.nil?
+        @attribute["aka"]
+      else
+        res = []
+        REXML::XPath.each(@doc,"./db:attribute") do |attribute|
+          if attribute.attributes["name"] == 'aka' and attribute.attributes["lang"] == lang
+            res << attribute.text
+          end
+        end
+        res
+      end
+    end
+
+    def aka(lang)
+      akas(lang).first
+    end
+
   end # class Subject
-  
+
   class Movie<Subject
     def initialize(atom)
       super(atom)
     end
-    
+
     def imdb
-      /(tt\d+)\/$/.match(@attribute["imdb"])[1] rescue nil
+      /(tt\d+)\/$/.match(@attribute["imdb"].first)[1] rescue nil
     end
   end
-  
+
   class Book<Subject
     def initialize(atom)
       super(atom)
     end
-    
+
     def isbn10
-      @attribute["isbn10"] rescue nil
+      @attribute["isbn10"].first rescue nil
     end
-    
+
     def isbn13
-      @attribute["isbn13"] rescue nil
+      @attribute["isbn13"].first rescue nil
     end
-    
+
     def isbn
       isbn13 ? isbn13 : isbn10
     end
   end
-  
+
   class Music<Subject
     def initialize(atom)
       super(atom)

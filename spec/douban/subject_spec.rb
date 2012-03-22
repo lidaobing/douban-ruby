@@ -51,8 +51,16 @@ module Douban
         "image"=>"http://img2.douban.com/spic/s1075910.jpg",
         "collection"=>"http://api.douban.com/collection/266907549"}
       subject.summary.should == nil
-      subject.attribute.should == {"pubdate"=>"2005-1-1", "price"=>"26.5", "isbn10"=>"7040048809", "title"=>"无机化学(下)/高等学校教\346\235\220", "author"=>"武汉大学、吉林大\345\255\246", "isbn13"=>"9787040048803", "publisher"=>"高等教育出版社",
-        "pages"=>"1185", "binding"=>"平装"}
+      subject.attribute.should == {"pubdate"=>["2005-1-1"],
+        "price"=>["26.5"],
+        "isbn10"=>["7040048809"],
+        "title"=>["无机化学(下)/高等学校教\346\235\220"],
+        "author"=>["武汉大学、吉林大\345\255\246"],
+        "isbn13"=>["9787040048803"],
+        "publisher"=>["高等教育出版社"],
+        "pages"=>["1185"],
+        "binding"=>["平装"]
+      }
       subject.tag.size.should == 8
       subject.tag[0].class.should == Tag
       subject.rating.should == {"max"=>"10", "average"=>"8.0", "min"=>"0", "numRaters"=>"50"}
@@ -71,12 +79,10 @@ module Douban
     end
 
     context "book" do
-      it "should support isbn" do
-        book = Book.new(@s)
-        book.isbn10.should == "7040048809"
-        book.isbn13.should == "9787040048803"
-        book.isbn.should == book.isbn13
-      end
+      subject { Book.new(@s) }
+      its(:isbn10) { should == "7040048809" }
+      its(:isbn13) { should == "9787040048803" }
+      specify { subject.isbn.should == subject.isbn13 }
     end
 
     context "movie" do
@@ -127,11 +133,14 @@ module Douban
       end
 
       subject { Movie.new(@s_movie) }
-      its(:title) { should == "玩具总动员3" }
+      its(:title) { should == "Toy Story 3" }
       its(:imdb) { should == "tt0435761" }
-      specify { subject.attribute["language"].should == "英语,西班牙语" }
-      specify { subject.attribute["pubdate"].should == "2010-06-16 (中国大陆)" }
-      specify { subject.attribute["director"].should == "Lee Unkrich" }
+      its(:akas) { should == ["玩具总动员3", "反斗奇兵3"] }
+      specify { subject.akas("zh_CN").should == ["玩具总动员3"] }
+      specify { subject.aka("zh_CN").should == "玩具总动员3" }
+      specify { subject.attribute["language"].should == ["英语","西班牙语"] }
+      specify { subject.attribute["pubdate"].should == ["2010-06-16 (中国大陆)"] }
+      specify { subject.attribute["director"].should == ["Lee Unkrich"] }
     end
   end
 end
