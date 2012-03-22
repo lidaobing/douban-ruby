@@ -1,3 +1,9 @@
+=== 0.0.10 / 2012-03-22
+* Douban::Subject
+  * support multiple attribute (thx to huacnlee)
+  * attribute stores in array
+  * add #aka, #akas method.
+
 === 0.0.9 / 2011-07-13
 * Douban::Authorize
   * access_token, request_token support :as_hash argument.
@@ -35,9 +41,9 @@
 
 === 0.0.4 / 2010-07-03
 * Douban::Authorize
-  * all create_* functions (except create_mail) will return an Object if 
+  * all create_* functions (except create_mail) will return an Object if
     success, otherwise nil, in old version, it will return true or false.
-    create_mail does not work like other functions, it's should be named 
+    create_mail does not work like other functions, it's should be named
     as send_mail.
   * some refactors on the model classes.
 
