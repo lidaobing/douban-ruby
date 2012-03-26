@@ -7,8 +7,8 @@ module Douban
   describe Authorize do
     before(:each) do
       Authorize.debug = true
-      @api_key = '042bc009d7d4a04d0c83401d877de0e7'
-      @secret_key = 'a9bb2d7f8cc00110'
+      @api_key = ENV['DOUBAN_API_KEY'] || '042bc009d7d4a04d0c83401d877de0e7'
+      @secret_key = ENV['DOUBAN_SECRET_KEY'] || 'a9bb2d7f8cc00110'
       @authorize = Authorize.new(@api_key, @secret_key)
     end
 
@@ -93,9 +93,9 @@ module Douban
   context "logged in with oauth" do
     before(:each) do
       Authorize.debug = true
-      @access_token = 'be84e4bc8d0581d03b8eae35a7108570'
-      @access_secret = '16eeaa7b1053323c'
-      @uid = '43100799'
+      @access_token = ENV['DOUBAN_ACCESS_TOKEN'] || 'be84e4bc8d0581d03b8eae35a7108570'
+      @access_secret = ENV['DOUBAN_ACCESS_SECRET'] || '16eeaa7b1053323c'
+      @uid = ENV['DOUBAN_UID'] || '43100799'
       @authorize.access_token = OAuth::Token.new(@access_token, @access_secret)
     end
 
@@ -189,7 +189,7 @@ module Douban
         end
       end
 
-      context "create_miniblog_comment" do 
+      context "create_miniblog_comment" do
         it "should works" do
           comment = @authorize.create_miniblog_comment(374774226, "单元测试#{rand}")
           comment.class.should == MiniblogComment
@@ -513,35 +513,35 @@ module Douban
             book = @authorize.get_book(1088840)
             book.class.should == Book
           end
-          
+
           it "should support :id => id" do
             @authorize.get_book(:id => 1088840).should == @authorize.get_book(1088840)
           end
-          
+
           it "should support :isbn => isbn" do
             @authorize.get_book(:isbn => 9787040048803).should == @authorize.get_book(1088840)
           end
-          
+
           it "should support Book" do
             book = @authorize.get_book(1088840)
             @authorize.get_book(book).should == book
           end
         end
-        
+
         context "get_movie" do
           it "should return Movie" do
             movie = @authorize.get_movie(1858711)
             movie.class.should == Movie
           end
-          
+
           it "should support :id => id" do
             @authorize.get_movie(:id => 1858711).should == @authorize.get_movie(1858711)
           end
-          
+
           it "should support :imdb => imdb" do
             @authorize.get_movie(:imdb => 'tt0435761').should == @authorize.get_movie(1858711)
           end
-          
+
           it "should support Movie" do
             movie = @authorize.get_movie(1858711)
             @authorize.get_movie(movie).should == movie
@@ -606,7 +606,7 @@ module Douban
           end
         end
       end
-      
+
       context "verify_token" do
         it "should return true" do
           @authorize.verify_token.should == true
