@@ -188,10 +188,27 @@ module Douban
           @authorize.get_miniblog_comments(378744647, :max_results=>1).comments.size.should == 1
         end
       end
-
       context "create_miniblog_comment" do
         it "should works" do
-          comment = @authorize.create_miniblog_comment(374774226, "单元测试#{rand}")
+=begin
+HTTP/1.1 201 Created
+Content-Type: text/xml; charset=utf-8
+Content-Length: 701
+
+<?xml version="1.0" encoding="UTF-8"?>
+<entry xmlns="http://www.w3.org/2005/Atom" xmlns:db="http://www.douban.com/xmlns/" xmlns:gd="http://schemas.google.com/g/2005" xmlns:openSearch="http://a9.com/-/spec/opensearchrss/1.0/" xmlns:opensearch="http://a9.com/-/spec/opensearchrss/1.0/">
+        <id>http://api.douban.com/miniblog/378744647/comment/122711444</id>
+        <author>
+                <link href="http://api.douban.com/people/43100799" rel="self"/>
+                <link href="http://www.douban.com/people/43100799/" rel="alternate"/>
+                <name>douban-ruby</name>
+                <uri>http://api.douban.com/people/43100799</uri>
+        </author>
+        <published>2012-03-27T12:58:45+08:00</published>
+        <content>单元测试0.6508066526913802</content>
+</entry>
+=end
+          comment = @authorize.create_miniblog_comment(378744647, "单元测试#{rand}")
           comment.class.should == MiniblogComment
           @authorize.delete_miniblog_comment(comment).should == true
         end
